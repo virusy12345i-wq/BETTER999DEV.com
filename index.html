@@ -2,91 +2,81 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVAX RP | العودة للأصل</title>
-
+    <title>NOVAX RP | النسخة المعتمدة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        :root {
-            --p-neon: #bc13fe; --a-neon: #00f2ff;
-            --bg: #000000; --panel: rgba(10, 10, 15, 0.9);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-        body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; }
-
-        /* [MASTER BACKGROUND] - رجعت لك الشبكة يا وحش */
-        #bg-canvas { position: fixed; inset: 0; z-index: -10; background: #000; }
-        .grid-layer { position: fixed; inset: 0; background-image: linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -9; }
-
-        /* [CURSOR] */
-        #c-sys { position: fixed; inset: 0; pointer-events: none; z-index: 1000000; }
-        .c-dot { position: absolute; width: 8px; height: 8px; background: var(--p-neon); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px var(--p-neon); }
-        .c-ring { position: absolute; width: 40px; height: 40px; border: 2px solid var(--a-neon); border-radius: 50%; transform: translate(-50%, -50%); transition: 0.1s; }
-
-        /* [HEADER] */
-        header {
-            position: fixed; top: 0; width: 100%; padding: 30px 60px;
-            background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--p-neon);
-            display: flex; justify-content: space-between; align-items: center; z-index: 9999;
-        }
+        :root { --p: #bc13fe; --a: #00f2ff; --bg: #000; --card: rgba(10,10,15,0.9); }
         
-        /* LOGIN TOP LEFT */
-        .auth-zone { display: flex; align-items: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; }
+
+        /* الخلفية اللي تحبها (ممنوع اللمس) */
+        #bg-canvas { position: fixed; inset: 0; z-index: -10; }
+        .grid { position: fixed; inset: 0; background: linear-gradient(90deg, rgba(188,19,254,0.03) 1px, transparent 1px), linear-gradient(rgba(188,19,254,0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: -9; }
+
+        /* الماوس النيون */
+        #cursor { position: fixed; width: 10px; height: 10px; background: var(--p); border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 15px var(--p); }
+        #ring { position: fixed; width: 40px; height: 40px; border: 2px solid var(--a); border-radius: 50%; pointer-events: none; z-index: 10000; transition: 0.1s; }
+
+        /* الهيدر */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 25px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--p); z-index: 1000;
+        }
+
+        /* تسجيل الدخول فوق يسار - ثابت */
+        .auth-zone { order: -1; } /* لجعلها أقصى اليسار في الـ flex */
         .discord-btn {
             background: #5865F2; color: #fff; padding: 10px 20px; border-radius: 5px;
-            text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px;
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
         }
-        .user-profile { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--a-neon); }
-        .user-profile img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--p-neon); }
+        .user-info { display: none; align-items: center; gap: 10px; border: 1px solid var(--a); padding: 5px 15px; border-radius: 50px; }
+        .user-info img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--p); }
 
-        .nav-links { display: flex; gap: 15px; position: absolute; left: 50%; transform: translateX(-50%); }
-        .n-btn {
-            padding: 8px 20px; border: 1px solid var(--p-neon); background: transparent;
-            color: #fff; font-family: 'Orbitron'; font-size: 11px; transition: 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-        }
-        .n-btn:hover, .n-btn.active { background: var(--p-neon); color: #000; box-shadow: 0 0 20px var(--p-neon); }
+        .nav-links { display: flex; gap: 20px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .n-btn { background: none; border: 1px solid var(--p); color: #fff; padding: 8px 25px; font-family: 'Orbitron'; font-size: 12px; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+        .n-btn:hover, .n-btn.active { background: var(--p); color: #000; box-shadow: 0 0 20px var(--p); }
 
-        .logo { font-family: 'Orbitron'; font-size: 25px; font-weight: 900; letter-spacing: 5px; cursor: pointer; }
-        .logo span { color: var(--p-neon); }
+        .logo { font-family: 'Orbitron'; font-size: 28px; letter-spacing: 5px; cursor: pointer; }
+        .logo span { color: var(--p); }
 
-        /* [CONTENT] */
-        .wrapper { max-width: 1400px; margin: 0 auto; padding: 200px 20px; text-align: center; }
-        .sec { display: none; }
-        .sec.active { display: block; animation: fade 0.5s forwards; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        /* المحتوى */
+        .main-container { height: 100vh; padding-top: 150px; overflow-y: auto; scroll-behavior: smooth; }
+        .sec { display: none; padding: 50px; max-width: 1200px; margin: 0 auto; }
+        .sec.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .hero h1 { font-family: 'Orbitron'; font-size: 8vw; text-shadow: 0 0 50px var(--p-neon); }
-        
-        /* [ADMIN PANEL STYLE] */
-        .admin-grid { display: grid; grid-template-columns: 250px 1fr; gap: 30px; text-align: right; }
-        .admin-side { background: var(--panel); border: 1px solid #ff003c; padding: 20px; }
-        .admin-main { background: var(--panel); border: 1px solid #ff003c; padding: 40px; }
+        /* كروت المتجر */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: var(--card); border: 1px solid #222; padding: 30px; border-radius: 10px; transition: 0.3s; }
+        .card:hover { border-color: var(--p); transform: translateY(-10px); }
+
+        /* لوحة الإدارة */
+        .admin-layout { display: grid; grid-template-columns: 250px 1fr; gap: 30px; text-align: right; }
+        .admin-sidebar { background: var(--card); padding: 20px; border-left: 2px solid var(--p); }
+        .admin-sidebar button { width: 100%; padding: 15px; background: none; color: #fff; border: none; border-bottom: 1px solid #222; text-align: right; }
     </style>
 </head>
-<body onload="init()">
+<body onload="start()">
 
     <canvas id="bg-canvas"></canvas>
-    <div class="grid-layer"></div>
-
-    <div id="c-sys">
-        <div class="c-ring" id="c-ri"></div>
-        <div class="c-dot" id="c-do"></div>
-    </div>
+    <div class="grid"></div>
+    <div id="cursor"></div>
+    <div id="ring"></div>
 
     <header>
         <div class="auth-zone">
-            <a href="#" id="login-btn" class="discord-btn" onclick="fakeLogin()">
-                <i class="fab fa-discord"></i> دخول
+            <a href="#" id="login-link" class="discord-btn" onclick="login()">
+                <i class="fab fa-discord"></i> تسجيل الدخول
             </a>
-            <div id="profile" class="user-profile">
-                <span id="u-name"></span>
-                <img id="u-img" src="" alt="">
+            <div id="user-profile" class="user-info">
+                <span id="user-name" style="font-size: 12px;"></span>
+                <img id="user-img" src="">
             </div>
         </div>
 
@@ -94,105 +84,119 @@
             <button class="n-btn active" onclick="tab('home', this)">الرئيسية</button>
             <button class="n-btn" onclick="tab('apply', this)">التقديم</button>
             <button class="n-btn" onclick="tab('store', this)">المتجر</button>
+            <button class="n-btn" onclick="tab('map', this)">الخريطة</button>
         </nav>
 
-        <div class="logo" onclick="adminAuth()">NOVAX<span>RP</span></div>
+        <div class="logo" onclick="checkAdmin()">NOVAX<span>RP</span></div>
     </header>
 
-    <main class="wrapper">
+    <div class="main-container">
         <section id="home" class="sec active">
-            <div class="hero">
-                <h1>NO<span>VA</span>X</h1>
-                <p style="letter-spacing: 15px; color: var(--a-neon);">THE ORIGINAL VISION</p>
-            </div>
+            <h1 style="font-family:'Orbitron'; font-size:10vw; text-align:center; text-shadow:0 0 50px var(--p);">NOVAX</h1>
+            <p style="text-align:center; letter-spacing:20px; color:var(--a); font-size:1.5rem;">FUTURE OF RP</p>
         </section>
 
         <section id="apply" class="sec">
-            <div style="max-width:600px; margin:0 auto; background:var(--panel); padding:40px; border:1px solid var(--p-neon);">
-                <h2>تقديم وايت ليست</h2>
-                <input type="text" placeholder="اسم الديسكورد" style="width:100%; padding:15px; margin:20px 0; background:#000; border:1px solid #333; color:#fff;">
-                <button class="n-btn" style="width:100%; padding:15px;" onclick="Swal.fire('تم!', 'وصل الطلب للإدارة', 'success')">إرسال</button>
+            <div class="card" style="max-width:700px; margin:0 auto;">
+                <h2 style="color:var(--p)">تقديم طلب انضمام</h2>
+                <input type="text" placeholder="اسمك في الديسكورد" style="width:100%; padding:15px; margin:20px 0; background:#000; border:1px solid #333; color:#fff;">
+                <textarea placeholder="لماذا تريد الانضمام؟" rows="5" style="width:100%; padding:15px; background:#000; border:1px solid #333; color:#fff;"></textarea>
+                <button class="n-btn" style="width:100%; margin-top:20px; padding:15px;" onclick="Swal.fire('تم الإرسال','انتظر رد الإدارة','success')">إرسال الطلب</button>
+            </div>
+        </section>
+
+        <section id="store" class="sec">
+            <div class="grid-3">
+                <div class="card"><h3>باقة VIP</h3><h2 style="color:var(--a)">$20</h2><button class="n-btn" style="width:100%">شراء</button></div>
+                <div class="card"><h3>حزمة سيارات</h3><h2 style="color:var(--a)">$35</h2><button class="n-btn" style="width:100%">شراء</button></div>
+                <div class="card"><h3>رتبة داعم</h3><h2 style="color:var(--a)">$10</h2><button class="n-btn" style="width:100%">شراء</button></div>
             </div>
         </section>
 
         <section id="admin" class="sec">
-            <div class="admin-grid">
-                <div class="admin-side">
-                    <h3 style="color:#ff003c">تحكم الإدارة</h3>
-                    <p style="margin-top:20px;">- مراجعة الطلبات</p>
-                    <p>- قائمة الباند</p>
+            <div class="admin-layout">
+                <div class="admin-sidebar">
+                    <button>الطلبات الجديدة (5)</button>
+                    <button>قائمة المحظورين</button>
+                    <button onclick="tab('home')">خروج</button>
                 </div>
-                <div class="admin-main">
-                    <h2>طلبات بانتظار الموافقة</h2>
-                    <div style="margin-top:20px; padding:15px; border:1px solid #333;">
-                        اللاعب: Virusz | الحالة: انتظار | <button style="color:lime">قبول</button>
+                <div class="card">
+                    <h2>الطلبات الواردة</h2>
+                    <hr style="border:1px solid #222; margin:20px 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:15px;">
+                        <span>اللاعب: Ahmed_RP</span>
+                        <div>
+                            <button style="color:lime; background:none; border:none; cursor:pointer;">قبول</button>
+                            <button style="color:red; background:none; border:none; cursor:pointer; margin-right:15px;">رفض</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
+    </div>
 
     <script>
-        // 1. الماوس
-        const dot=document.getElementById('c-do'), ring=document.getElementById('c-ri');
-        let mx=0, my=0, rx=0, ry=0;
-        window.onmousemove=e=>{ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; }
-        function m(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(m); }
-        m();
+        // نظام الماوس
+        const dot = document.getElementById('cursor'), ring = document.getElementById('ring');
+        window.onmousemove = e => {
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+            ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+        };
 
-        // 2. الخلفية (النقاط والخطوط اللي تحبها)
-        const cnv=document.getElementById('bg-canvas'), ctx=cnv.getContext('2d');
-        let pts=[];
-        function init(){
-            cnv.width=innerWidth; cnv.height=innerHeight; pts=[];
+        // نظام الخلفية (النقاط والخطوط)
+        const cnv = document.getElementById('bg-canvas'), ctx = cnv.getContext('2d');
+        let pts = [];
+        function start() {
+            cnv.width = innerWidth; cnv.height = innerHeight;
             for(let i=0; i<100; i++) pts.push({x:Math.random()*cnv.width, y:Math.random()*cnv.height, vx:(Math.random()-0.5), vy:(Math.random()-0.5)});
-            draw();
+            animate();
         }
-        function draw(){
+        function animate() {
             ctx.clearRect(0,0,cnv.width,cnv.height);
-            ctx.fillStyle="#bc13fe";
-            pts.forEach((p,i)=>{
-                p.x+=p.vx; p.y+=p.vy;
-                if(p.x<0||p.x>cnv.width) p.vx*=-1; if(p.y<0||p.y>cnv.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
-                for(let j=i+1; j<pts.length; j++){
+            ctx.fillStyle = "#bc13fe";
+            pts.forEach((p,i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>cnv.width) p.vx*=-1;
+                if(p.y<0 || p.y>cnv.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<pts.length; j++) {
                     let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
-                    if(d<150){
-                        ctx.strokeStyle=`rgba(0,242,255,${1-d/150})`;
-                        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+                    if(d < 150) {
+                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - d/150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
                     }
                 }
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(animate);
         }
 
-        // 3. التنقل
-        function tab(id, b){
-            document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+        // التنقل بين الأقسام
+        function tab(id, btn) {
+            document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.n-btn').forEach(btn=>btn.classList.remove('active'));
-            if(b) b.classList.add('active');
+            document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
         }
 
-        // 4. الديسكورد
-        function fakeLogin(){
-            localStorage.setItem('user', 'Virusz_Fan');
+        // تسجيل الدخول (محاكاة)
+        function login() {
+            localStorage.setItem('novax_user', 'Virusz_Admin');
             location.reload();
         }
-        if(localStorage.getItem('user')){
-            document.getElementById('login-btn').style.display='none';
-            document.getElementById('profile').style.display='flex';
-            document.getElementById('u-name').innerText = localStorage.getItem('user');
-            document.getElementById('u-img').src = 'https://i.pravatar.cc/100?img=3';
+        if(localStorage.getItem('novax_user')) {
+            document.getElementById('login-link').style.display = 'none';
+            document.getElementById('user-profile').style.display = 'flex';
+            document.getElementById('user-name').innerText = localStorage.getItem('novax_user');
+            document.getElementById('user-img').src = 'https://i.pravatar.cc/100?img=12';
         }
 
-        // 5. دخول الإدارة (اضغط على اللوغو)
-        function adminAuth(){
-            Swal.fire({ title:'رمز الإدارة', input:'password', background:'#000', color:'#fff' }).then(r=>{
-                if(r.value==='123') tab('admin');
+        // الدخول للإدارة (اضغط اللوغو)
+        function checkAdmin() {
+            Swal.fire({ title: 'رمز الإدارة', input: 'password', background: '#000', color: '#fff' }).then(res => {
+                if(res.value === '123') tab('admin');
             });
         }
-        window.onresize=init;
     </script>
 </body>
 </html>
