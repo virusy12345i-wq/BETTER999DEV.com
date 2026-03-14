@@ -3,126 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVAX RP | القمة البرمجية</title>
+    <title>NOVAX RP | النظام السيادي المتكامل</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* [1] GLOBAL QUANTUM VARIABLES */
+        /* [1] GLOBAL QUANTUM VARIABLES - تفصيل الألوان */
         :root {
-            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.7);
-            --a-neon: #00f2ff; --a-glow: rgba(0, 242, 255, 0.7);
-            --g-neon: #ffcf40; --g-glow: rgba(255, 207, 64, 0.6);
-            --r-neon: #ff003c; --bg-main: #000000;
-            --panel-bg: rgba(5, 5, 8, 0.98);
-            --f-main: 'Cairo', sans-serif; --f-tech: 'Orbitron', sans-serif;
+            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
+            --a-neon: #00f2ff; --a-glow: rgba(0, 242, 255, 0.6);
+            --r-neon: #ff003c; --r-glow: rgba(255, 0, 60, 0.6);
+            --g-neon: #00ff88; --g-glow: rgba(0, 255, 136, 0.6);
+            --y-neon: #ffcf40; --y-glow: rgba(255, 207, 64, 0.6);
+            --bg-0: #000000; --bg-1: #050508; --bg-2: #0a0a0f;
+            --glass: rgba(5, 5, 8, 0.95);
+            --f-main: 'Cairo', sans-serif;
+            --f-tech: 'Orbitron', sans-serif;
             --f-code: 'Share Tech Mono', monospace;
+            --trans: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* [2] SUPREME RESET */
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; user-select: none; }
-        body { background: var(--bg-main); color: #fff; font-family: var(--f-main); overflow-x: hidden; min-height: 100vh; }
+        /* [2] CORE RESET - تصفير شامل */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; border: none; text-decoration: none; list-style: none; cursor: none !important; }
+        body { background: var(--bg-0); color: #fff; font-family: var(--f-main); overflow-x: hidden; min-height: 100vh; line-height: 1.6; }
 
-        /* [3] THE MASTER CURSOR (TRIPLE LAYER) */
-        #c-sys { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000000; }
-        .c-dot { position: absolute; width: 10px; height: 10px; background: var(--p-neon); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px var(--p-neon); }
-        .c-ring { position: absolute; width: 40px; height: 40px; border: 2px solid var(--a-neon); border-radius: 50%; transform: translate(-50%, -50%); transition: 0.1s; }
-        .c-frame { position: absolute; width: 60px; height: 60px; border: 1px dashed var(--p-neon); border-radius: 50%; transform: translate(-50%, -50%); animation: rot 10s linear infinite; opacity: 0.4; }
-        @keyframes rot { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        /* [3] THE MASTER CURSOR - نظام الماوس الثلاثي الضخم */
+        #c-sys { position: fixed; inset: 0; pointer-events: none; z-index: 10000000; }
+        .c-dot { position: absolute; width: 12px; height: 12px; background: var(--p-neon); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 25px var(--p-neon); z-index: 100; }
+        .c-ring { position: absolute; width: 50px; height: 50px; border: 2px solid var(--a-neon); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 20px var(--a-neon); }
+        .c-frame { position: absolute; width: 80px; height: 80px; border: 1px dashed var(--p-neon); border-radius: 50%; transform: translate(-50%, -50%); animation: fRot 20s linear infinite; opacity: 0.3; }
+        @keyframes fRot { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* [4] BACKGROUND NEURAL SYSTEM */
-        #n-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; background: radial-gradient(circle, #0d001a 0%, #000 100%); }
-        .tech-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px); background-size: 60px 60px; z-index: -9; }
+        /* [4] BACKGROUND SYSTEMS - طبقات الخلفية المتعددة */
+        #n-canvas { position: fixed; inset: 0; z-index: -10; background: radial-gradient(circle at center, #0d001a 0%, #000 100%); }
+        .grid-master { position: fixed; inset: 0; background-image: linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px); background-size: 80px 80px; z-index: -9; opacity: 0.5; }
+        .scanline { position: fixed; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(188,19,254,0.02) 50%); background-size: 100% 4px; z-index: -8; pointer-events: none; }
 
-        /* [5] NAVIGATION SUPREMACY */
-        header {
-            position: fixed; top: 0; width: 100%; padding: 35px 80px;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--p-neon); display: flex;
-            justify-content: space-between; align-items: center; z-index: 9999;
+        /* [5] HEADER ARCHITECTURE - الهيدر العملاق */
+        header.master-nav {
+            position: fixed; top: 0; width: 100%; padding: 40px 100px;
+            background: rgba(0, 0, 0, 0.98); backdrop-filter: blur(40px);
+            border-bottom: 3px solid var(--p-neon); display: flex;
+            justify-content: space-between; align-items: center; z-index: 99999;
+            box-shadow: 0 10px 80px rgba(0,0,0,1);
         }
-        .logo { font-family: var(--f-tech); font-size: 40px; font-weight: 900; letter-spacing: 10px; }
-        .logo span { color: var(--p-neon); text-shadow: 0 0 20px var(--p-neon); }
-        .nav-items { display: flex; gap: 20px; }
-        .n-btn {
-            padding: 15px 35px; border: 1px solid var(--p-neon); background: transparent;
-            color: #fff; font-family: var(--f-tech); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            transition: 0.4s; font-size: 13px; font-weight: bold;
+        .nav-logo { font-family: var(--f-tech); font-size: 45px; font-weight: 900; letter-spacing: 12px; color: #fff; }
+        .nav-logo span { color: var(--p-neon); text-shadow: 0 0 30px var(--p-neon); }
+        
+        .nav-menu { display: flex; gap: 20px; }
+        .nav-link { 
+            padding: 18px 35px; background: rgba(255,255,255,0.02); border: 1px solid var(--p-neon); 
+            color: #fff; font-family: var(--f-tech); font-size: 13px; font-weight: 800;
+            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%); transition: var(--trans);
         }
-        .n-btn:hover, .n-btn.active { background: var(--p-neon); color: #000; box-shadow: 0 0 30px var(--p-neon); transform: translateY(-5px); }
+        .nav-link:hover, .nav-link.active { background: var(--p-neon); color: #000; transform: translateY(-8px); box-shadow: 0 0 40px var(--p-neon); }
 
-        /* [6] MAIN WRAPPER */
-        .master-wrapper { max-width: 1600px; margin: 0 auto; padding: 220px 40px 100px; }
-        .section { display: none; opacity: 0; }
-        .section.active { display: block; animation: fadeIn 1s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-box { display: flex; align-items: center; gap: 15px; border-right: 2px solid rgba(255,255,255,0.1); padding-right: 30px; }
+        .user-disc { display: none; align-items: center; gap: 15px; }
+        .user-disc img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--a-neon); box-shadow: 0 0 15px var(--a-neon); }
+        .user-info-text { font-family: var(--f-code); font-size: 14px; color: var(--a-neon); }
 
-        /* [7] HOME SECTOR - THE HUB */
-        .hero { text-align: center; }
-        .hero h1 { font-family: var(--f-tech); font-size: 12vw; line-height: 0.9; margin-bottom: 20px; }
-        .glitch-text { font-family: var(--f-code); font-size: 2rem; color: var(--a-neon); letter-spacing: 20px; margin-bottom: 60px; }
+        /* [6] SECTIONS WRAPPER */
+        .master-wrapper { max-width: 1700px; margin: 0 auto; padding: 250px 60px 150px; }
+        .sec { display: none; opacity: 0; transform: translateY(100px); }
+        .sec.active { display: block; animation: revealSec 1.5s var(--trans) forwards; }
+        @keyframes revealSec { to { opacity: 1; transform: translateY(0); } }
 
-        /* إحصائيات المدينة */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-top: 50px; }
-        .stat-box { background: var(--panel-bg); border: 1px solid var(--p-neon); padding: 40px; text-align: center; position: relative; overflow: hidden; }
-        .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--p-neon); }
-        .stat-num { font-family: var(--f-tech); font-size: 3.5rem; color: #fff; }
-        .stat-label { font-family: var(--f-main); color: var(--a-neon); letter-spacing: 3px; font-weight: bold; }
+        /* [7] HOME SECTION - القمة */
+        .hero-title { font-family: var(--f-tech); font-size: 13vw; font-weight: 900; text-align: center; line-height: 0.8; margin-bottom: 40px; }
+        .hero-sub { font-family: var(--f-code); font-size: 2.2rem; text-align: center; letter-spacing: 35px; color: var(--a-neon); margin-bottom: 120px; }
 
-        /* [8] STORE SECTOR - ADVANCED */
-        .store-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .item-showcase { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .product-card { background: var(--panel-bg); border: 1px solid rgba(188, 19, 254, 0.3); padding: 30px; transition: 0.4s; }
-        .product-card:hover { border-color: var(--p-neon); transform: scale(1.03); }
-        .product-card h3 { font-family: var(--f-tech); color: var(--a-neon); margin-bottom: 15px; }
-        .price-tag { font-family: var(--f-code); font-size: 2rem; color: var(--g-neon); margin-bottom: 20px; }
-        .buy-btn { width: 100%; padding: 15px; background: var(--p-neon); color: #000; font-weight: 900; font-family: var(--f-tech); }
+        .live-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 100px; }
+        .stat-item { background: var(--bg-1); border: 1px solid var(--p-neon); padding: 50px; text-align: center; position: relative; overflow: hidden; }
+        .stat-item::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--p-neon); box-shadow: 0 0 20px var(--p-neon); }
+        .stat-val { font-family: var(--f-tech); font-size: 4.5rem; color: #fff; margin-bottom: 10px; }
+        .stat-lab { font-family: var(--f-main); font-size: 1.2rem; color: var(--a-neon); letter-spacing: 5px; font-weight: bold; }
 
-        /* سجل المشتريات المباشر */
-        .live-logs { background: #050508; border: 1px solid var(--a-neon); height: 600px; display: flex; flex-direction: column; }
-        .log-header { background: var(--a-neon); color: #000; padding: 15px; font-weight: 900; font-family: var(--f-tech); text-align: center; }
-        .log-body { flex: 1; padding: 20px; font-family: var(--f-code); font-size: 13px; overflow-y: auto; }
-        .log-line { margin-bottom: 10px; border-bottom: 1px solid rgba(0,242,255,0.1); padding-bottom: 5px; }
+        /* [8] ADMIN SUPREMACY PANEL - لوحة الإدارة المطلقة */
+        .admin-layout { display: grid; grid-template-columns: 350px 1fr; gap: 40px; }
+        .admin-sidebar { background: var(--bg-1); border: 2px solid var(--r-neon); padding: 40px; height: fit-content; }
+        .admin-sidebar h2 { font-family: var(--f-tech); color: var(--r-neon); text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--r-neon); padding-bottom: 20px; }
+        .admin-nav-item { display: block; padding: 20px; color: #fff; background: rgba(255,0,60,0.05); margin-bottom: 15px; border-right: 4px solid var(--r-neon); transition: 0.3s; font-weight: bold; }
+        .admin-nav-item:hover { background: var(--r-neon); color: #000; transform: translateX(-15px); }
 
-        /* [9] LAWS SECTOR - دستور المدينة */
-        .laws-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .law-box { background: rgba(255,255,255,0.02); border-right: 5px solid var(--p-neon); padding: 40px; }
-        .law-box h4 { font-family: var(--f-tech); color: var(--p-neon); font-size: 1.8rem; margin-bottom: 20px; }
-        .law-box p { font-size: 1.2rem; line-height: 1.8; opacity: 0.8; }
+        .admin-view { background: var(--bg-2); border: 1px solid var(--r-neon); padding: 60px; min-height: 800px; }
+        .admin-card-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 60px; }
+        .admin-card { background: #000; border: 1px solid rgba(255,0,60,0.3); padding: 30px; border-bottom: 5px solid var(--r-neon); }
+        .admin-card h4 { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 15px; }
+        .admin-card .val { font-family: var(--f-tech); font-size: 32px; color: var(--r-neon); }
 
-        /* [10] APPLICATION SECTOR - التقديم الاحترافي */
-        .app-form { max-width: 900px; margin: 0 auto; background: var(--panel-bg); border: 2px solid var(--p-neon); padding: 60px; box-shadow: 0 0 50px rgba(188,19,254,0.2); }
-        .step-container { display: none; }
-        .step-container.active { display: block; animation: slideUp 0.5s forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .input-row { margin-bottom: 30px; }
-        .input-row label { display: block; font-family: var(--f-tech); color: var(--a-neon); margin-bottom: 10px; }
-        .input-row input, .input-row textarea, .input-row select { width: 100%; background: #111; border: 1px solid var(--p-neon); padding: 20px; color: #fff; font-size: 1.1rem; }
-        .ctrl-btns { display: flex; justify-content: space-between; margin-top: 40px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        .data-table th { background: var(--r-neon); color: #000; padding: 20px; text-align: right; font-family: var(--f-tech); }
+        .data-table td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .badge { padding: 8px 15px; font-size: 12px; font-weight: 900; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+        .badge-wait { background: var(--y-neon); color: #000; }
+        .badge-done { background: var(--g-neon); color: #000; }
 
-        /* [11] INTERACTIVE MAP - خريطة المدينة */
-        .map-frame { width: 100%; height: 700px; border: 2px solid var(--a-neon); background: url('https://i.imgur.com/G5Y8uVf.png') center/cover; position: relative; }
-        .map-point { position: absolute; width: 20px; height: 20px; background: var(--r-neon); border-radius: 50%; box-shadow: 0 0 15px var(--r-neon); cursor: pointer; }
-        .map-point::after { content: attr(data-label); position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: #000; padding: 5px 10px; font-size: 12px; white-space: nowrap; border: 1px solid var(--a-neon); }
+        /* [9] DISCORD LOGIN SCREEN - بوابة الدخول */
+        #gate-screen { position: fixed; inset: 0; background: #000; z-index: 20000000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .gate-logo { font-family: var(--f-tech); font-size: 8rem; letter-spacing: 40px; margin-bottom: 50px; }
+        .disc-login-btn { 
+            background: #5865F2; color: #fff; padding: 30px 60px; border-radius: 15px; 
+            font-size: 1.8rem; font-weight: 900; display: flex; align-items: center; gap: 25px;
+            transition: 0.5s; text-decoration: none; border: 4px solid transparent;
+        }
+        .disc-login-btn:hover { transform: scale(1.1) translateY(-10px); box-shadow: 0 0 60px #5865F2; border-color: #fff; }
 
-        /* [12] FOOTER */
-        footer { margin-top: 100px; padding: 80px; text-align: center; border-top: 2px solid var(--p-neon); font-family: var(--f-tech); letter-spacing: 15px; opacity: 0.5; }
+        /* [10] STORE & MAP - المتجر والخريطة */
+        .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .map-container { width: 100%; height: 800px; border: 4px solid var(--p-neon); background: url('https://i.imgur.com/G5Y8uVf.png') center/cover; position: relative; }
+        .poi { position: absolute; width: 30px; height: 30px; background: var(--a-neon); border-radius: 50%; box-shadow: 0 0 20px var(--a-neon); cursor: pointer; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
 
-        /* [13] PRELOADER */
-        #loader { position: fixed; inset: 0; background: #000; z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .load-bar { width: 400px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 30px; position: relative; }
-        .load-fill { position: absolute; height: 100%; width: 0; background: var(--p-neon); box-shadow: 0 0 20px var(--p-neon); }
+        /* [11] FOOTER */
+        footer { padding: 150px 0; text-align: center; border-top: 3px solid var(--p-neon); font-family: var(--f-tech); letter-spacing: 20px; opacity: 0.3; background: #000; }
     </style>
 </head>
 <body onload="bootSystem()">
 
-    <div id="loader">
-        <h1 style="font-family:var(--f-tech); font-size:5rem; letter-spacing:30px;">NOVAX</h1>
-        <div class="load-bar"><div class="load-fill" id="l-fill"></div></div>
-        <p id="l-msg" style="margin-top:20px; font-family:var(--f-code); color:var(--a-neon);">SYS_INIT...</p>
+    <div id="gate-screen">
+        <div class="gate-logo">NOVAX</div>
+        <p style="font-family:var(--f-code); color:var(--a-neon); font-size:1.5rem; margin-bottom:60px;">[ SYSTEM_LOCKED_WAITING_FOR_AUTH ]</p>
+        <a href="#" id="disc-link" class="disc-login-btn">
+            <i class="fab fa-discord"></i> دخول عبر الديسكورد
+        </a>
     </div>
 
     <div id="c-sys">
@@ -132,188 +139,186 @@
     </div>
 
     <canvas id="n-canvas"></canvas>
-    <div class="tech-grid"></div>
+    <div class="grid-master"></div>
+    <div class="scanline"></div>
 
-    <header>
-        <div class="logo">NOVAX<span>RP</span></div>
-        <nav class="nav-items">
-            <button class="n-btn active" onclick="tab('home', this)">الرئيسية</button>
-            <button class="n-btn" onclick="tab('laws', this)">الدستور</button>
-            <button class="n-btn" onclick="tab('store', this)">المتجر</button>
-            <button class="n-btn" onclick="tab('map', this)">الخريطة</button>
-            <button class="n-btn" onclick="tab('apply', this)">التقديم</button>
-        </nav>
-        <div id="user-info" style="font-family:var(--f-code); color:var(--a-neon);">ID: UNKNOWN</div>
+    <header class="master-nav">
+        <div class="nav-logo">NOVAX<span>RP</span></div>
+        <div class="nav-menu">
+            <button class="nav-link active" onclick="goto('home', this)">الرئيسية</button>
+            <button class="nav-link" onclick="goto('laws', this)">الدستور</button>
+            <button class="nav-link" onclick="goto('store', this)">المتجر</button>
+            <button class="nav-link" onclick="goto('map', this)">الخريطة</button>
+            <button class="nav-link" onclick="goto('apply', this)">التقديم</button>
+            <button class="nav-link" style="border-color:var(--r-neon); color:var(--r-neon);" onclick="authAdmin()">الإدارة</button>
+        </div>
+        <div class="auth-box">
+            <div id="user-display" class="user-disc">
+                <div class="user-info-text">
+                    <div id="u-name">NAME</div>
+                    <div id="u-id" style="font-size:10px; opacity:0.5;">ID: 0000</div>
+                </div>
+                <img id="u-avatar" src="" alt="">
+            </div>
+        </div>
     </header>
 
     <main class="master-wrapper">
 
-        <section id="tab-home" class="section active">
-            <div class="hero">
-                <h1>NO<span>VA</span>X</h1>
-                <div class="glitch-text">BEYOND THE LIMITS</div>
-                <div class="stats-grid">
-                    <div class="stat-box"><div class="stat-num">312</div><div class="stat-label">لاعب الآن</div></div>
-                    <div class="stat-box"><div class="stat-num">12k</div><div class="stat-label">عضو ديسكورد</div></div>
-                    <div class="stat-box"><div class="stat-num">54</div><div class="stat-label">عصابة مسجلة</div></div>
-                    <div class="stat-box"><div class="stat-num">LIVE</div><div class="stat-label">حالة السيرفر</div></div>
-                </div>
-                <div style="margin-top:80px;">
-                    <button class="n-btn" style="padding:25px 80px; font-size:1.5rem;" onclick="tab('apply')">ابدأ مسيرتك الآن</button>
-                </div>
+        <section id="sec-home" class="sec active">
+            <h1 class="hero-title">NO<span>VA</span>X</h1>
+            <h2 class="hero-sub">[ THE FINAL REALITY ]</h2>
+
+            <div class="live-stats">
+                <div class="stat-item"><div class="stat-val">421</div><div class="stat-label">مواطن متصل</div></div>
+                <div class="stat-item"><div class="stat-val">100%</div><div class="stat-label">استقرار النظام</div></div>
+                <div class="stat-item"><div class="stat-val">2.4k</div><div class="stat-label">عملية تجارية</div></div>
+                <div class="stat-item"><div class="stat-val">68</div><div class="stat-label">عصابة مسيطرة</div></div>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:50px;">
+                <button class="nav-link" style="padding:30px 100px; font-size:1.5rem;" onclick="goto('apply')">توقيع الهوية</button>
+                <button class="nav-link" style="padding:30px 100px; font-size:1.5rem; border-color:var(--a-neon); color:var(--a-neon);">ديسكورد المجتمع</button>
             </div>
         </section>
 
-        <section id="tab-laws" class="section">
-            <h2 style="font-family:var(--f-tech); margin-bottom:50px; font-size:3rem; color:var(--p-neon);">دستور المدينة الملكي</h2>
-            <div class="laws-wrap">
-                <div class="law-box"><h4>01. التقمص الكامل</h4><p>يجب الالتزام بشخصيتك الافتراضية في كل الأوقات. الحديث خارج الشخصية يؤدي للنفي الفوري.</p></div>
-                <div class="law-box"><h4>02. الخوف من السلاح</h4><p>حياتك غالية. عند التهديد بالسلاح يجب عليك إظهار الخوف الواقعي وتنفيذ الأوامر.</p></div>
-                <div class="law-box"><h4>03. المناطق الخضراء</h4><p>يمنع القتل أو الخطف في مناطق المستشفيات، مراكز الشرطة، والساحات العامة المحددة.</p></div>
-                <div class="law-box"><h4>04. نظام البلاغات</h4><p>في حال وقوع مشكلة، لا توقف السيناريو. توجه للديسكورد وقدم تذكرة رسمية.</p></div>
-            </div>
-        </section>
+        <section id="sec-admin" class="sec">
+            <div class="admin-layout">
+                <aside class="admin-sidebar">
+                    <h2>ADMIN STRATOS</h2>
+                    <nav>
+                        <a href="#" class="admin-nav-item"><i class="fas fa-terminal"></i> سجل العمليات المباشر</a>
+                        <a href="#" class="admin-nav-item"><i class="fas fa-user-shield"></i> مراجعة طلبات التقديم</a>
+                        <a href="#" class="admin-nav-item"><i class="fas fa-ban"></i> إدارة المحظورين</a>
+                        <a href="#" class="admin-nav-item"><i class="fas fa-database"></i> قاعدة بيانات اللاعبين</a>
+                        <a href="#" class="admin-nav-item"><i class="fas fa-broadcast-tower"></i> إرسال إعلان عالمي</a>
+                        <a href="#" class="admin-nav-item" style="margin-top:200px; border-color:var(--p-neon);" onclick="goto('home')">خروج من الوحدة</a>
+                    </nav>
+                </aside>
 
-        <section id="tab-store" class="section">
-            <div class="store-container">
-                <div class="item-showcase">
-                    <div class="product-card">
-                        <h3>باقة المواطن الملكي</h3>
-                        <div class="price-tag">$45.00</div>
-                        <ul style="margin-bottom:20px; list-style:inside square; color:rgba(255,255,255,0.6);">
-                            <li>سيارة Lamborghini نيون</li>
-                            <li>شقة فاخرة + جراج</li>
-                            <li>ملابس حصرية (NoVaX Edition)</li>
-                        </ul>
-                        <button class="buy-btn" onclick="buy('ROYAL_PACK')">شراء الآن</button>
+                <div class="admin-view">
+                    <div class="admin-card-row">
+                        <div class="admin-card"><h4>طلبات Whitelist</h4><div class="val">143 الطلبات</div></div>
+                        <div class="admin-card"><h4>تقارير اللاعبين</h4><div class="val">12 بلاغ</div></div>
+                        <div class="admin-card"><h4>دخل المتجر اليوم</h4><div class="val">$1,240</div></div>
                     </div>
-                    <div class="product-card" style="border-color:var(--g-neon);">
-                        <h3 style="color:var(--g-neon);">رتبة EMPEROR (دائم)</h3>
-                        <div class="price-tag" style="color:var(--g-neon);">$150.00</div>
-                        <ul style="margin-bottom:20px; list-style:inside square; color:rgba(255,255,255,0.6);">
-                            <li>أولوية دخول قصوى (Queue)</li>
-                            <li>تأسيس عصابة بـ 15 عضو</li>
-                            <li>قصر خاص في جزيرة كايو</li>
-                        </ul>
-                        <button class="buy-btn" style="background:var(--g-neon);" onclick="buy('EMPEROR_RANK')">امتلاك العرش</button>
-                    </div>
-                </div>
-                <div class="live-logs">
-                    <div class="log-header">سجل المتجر المباشر (LIVE)</div>
-                    <div class="log-body" id="store-feed">
-                        <div class="log-line">> @Admin: أضاف سيارة جديدة للمتجر..</div>
-                        <div class="log-line">> @User_44: اشترى باقة "المواطن الملكي" ✅</div>
-                    </div>
+
+                    <h3 style="font-family:var(--f-tech); color:var(--r-neon); margin-bottom:30px;">طلبات بانتظار المراجعة</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم اللاعب (ديسكورد)</th>
+                                <th>تاريخ التقديم</th>
+                                <th>العمر</th>
+                                <th>الحالة</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-apps-body">
+                            <tr>
+                                <td>Virusz_Test#0001</td>
+                                <td>2026/03/14 07:35</td>
+                                <td>24</td>
+                                <td><span class="badge badge-wait">بانتظار الإدارة</span></td>
+                                <td>
+                                    <button class="nav-link" style="padding:10px 20px; font-size:10px; border-color:var(--g-neon); color:var(--g-neon);" onclick="this.closest('tr').remove()">قبول</button>
+                                    <button class="nav-link" style="padding:10px 20px; font-size:10px; border-color:var(--r-neon); color:var(--r-neon);" onclick="this.closest('tr').remove()">رفض</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
-        <section id="tab-map" class="section">
-            <h2 style="font-family:var(--f-tech); margin-bottom:40px;">الخريطة التفاعلية للمدينة</h2>
-            <div class="map-frame">
-                <div class="map-point" style="top:45%; left:52%;" data-label="ساحة المدينة العامة"></div>
-                <div class="map-point" style="top:20%; left:30%; background:var(--a-neon); box-shadow:0 0 15px var(--a-neon);" data-label="المقر الرئيسي للشرطة"></div>
-                <div class="map-point" style="top:70%; left:80%; background:var(--g-neon); box-shadow:0 0 15px var(--g-neon);" data-label="منطقة التجارة السوداء"></div>
-            </div>
-        </section>
-
-        <section id="tab-apply" class="section">
-            <div class="app-form">
-                <div class="step-container active" id="step-1">
-                    <h2 style="font-family:var(--f-tech); margin-bottom:40px;">المرحلة 1: البيانات الشخصية</h2>
-                    <div class="input-row"><label>اسم الشخصية (ثلاثي)</label><input type="text" placeholder="مثال: خالد منصور العتيبي"></div>
-                    <div class="input-row"><label>العمر الحقيقي</label><input type="number" placeholder="يجب أن تكون +18"></div>
-                    <div class="ctrl-btns"><button class="n-btn" style="width:100%;" onclick="nextStep(2)">المرحلة التالية</button></div>
-                </div>
-                <div class="step-container" id="step-2">
-                    <h2 style="font-family:var(--f-tech); margin-bottom:40px;">المرحلة 2: اختبار التقمص</h2>
-                    <div class="input-row"><label>ماذا تفعل إذا رأيت حادث سير أمامك؟</label><textarea rows="4"></textarea></div>
-                    <div class="input-row"><label>اشرح مفهوم RDM بأسلوبك</label><textarea rows="4"></textarea></div>
-                    <div class="ctrl-btns"><button class="n-btn" onclick="nextStep(1)">رجوع</button><button class="n-btn" onclick="submitApp()">إرسال الطلب النهائي</button></div>
-                </div>
+        <section id="sec-map" class="sec">
+            <h2 style="font-family:var(--f-tech); font-size:3rem; margin-bottom:40px;">الخارطة التكتيكية (LIVE MAP)</h2>
+            <div class="map-container">
+                <div class="poi" style="top:20%; left:40%;" title="مركز الشرطة الرئيسي"></div>
+                <div class="poi" style="top:60%; left:70%; background:var(--r-neon); box-shadow:0 0 20px var(--r-neon);" title="منطقة نزاع عصابات"></div>
+                <div class="poi" style="top:45%; left:50%; background:var(--g-neon); box-shadow:0 0 20px var(--g-neon);" title="المستشفى المركزي"></div>
             </div>
         </section>
 
     </main>
 
     <footer>
-        NOVAX ROLEPLAY &copy; 2026 | THE SOVEREIGN SYSTEM | ALL SYSTEMS OPERATIONAL
+        NOVAX RP &copy; 2026 | THE SOVEREIGN SYSTEM v99.0 | BUILT BY VIRUSZ
     </footer>
 
     <script>
-        // 1. Mouse Tracking
-        const dot = document.getElementById('c-do'), ring = document.getElementById('c-ri'), frame = document.getElementById('c-fr');
+        // [1] DISCORD AUTH CONFIG
+        const CLIENT_ID = '1349605510655938560'; // ضع الآيدي الخاص بك هنا
+        const REDIRECT_URI = encodeURIComponent(window.location.href.split('#')[0]);
+        const AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify`;
+        document.getElementById('disc-link').href = AUTH_URL;
+
+        // [2] MOUSE ENGINE
+        const dot=document.getElementById('c-do'), ring=document.getElementById('c-ri'), frame=document.getElementById('c-fr');
         let mx=0, my=0, rx=0, ry=0;
-        window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
-        function move() { rx += (mx-rx)*0.1; ry += (my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; frame.style.left=rx+'px'; frame.style.top=ry+'px'; requestAnimationFrame(move); }
-        move();
+        window.onmousemove = e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; }
+        function syncMouse() { rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; frame.style.left=rx+'px'; frame.style.top=ry+'px'; requestAnimationFrame(syncMouse); }
+        syncMouse();
 
-        // 2. Neural Net
-        const c = document.getElementById('n-canvas'), ctx = c.getContext('2d');
-        let p = [];
-        function init() { c.width=window.innerWidth; c.height=window.innerHeight; p=[]; for(let i=0; i<150; i++) p.push({x:Math.random()*c.width, y:Math.random()*c.height, vx:(Math.random()-0.5)*1, vy:(Math.random()-0.5)*1}); }
-        function draw() {
-            ctx.clearRect(0,0,c.width,c.height); ctx.fillStyle="#bc13fe";
-            p.forEach((i, idx) => {
-                i.x+=i.vx; i.y+=i.vy; if(i.x<0||i.x>c.width) i.vx*=-1; if(i.y<0||i.y>c.height) i.vy*=-1;
-                ctx.beginPath(); ctx.arc(i.x, i.y, 2, 0, Math.PI*2); ctx.fill();
-                for(let j=idx+1; j<p.length; j++){
-                    let d = Math.hypot(i.x-p[j].x, i.y-p[j].y);
-                    if(d<150){ ctx.strokeStyle=`rgba(0,242,255,${1-d/150})`; ctx.beginPath(); ctx.moveTo(i.x,i.y); ctx.lineTo(p[j].x,p[j].y); ctx.stroke(); }
+        // [3] NEURAL CANVAS
+        const cnv=document.getElementById('n-canvas'), ctx=cnv.getContext('2d');
+        let pts=[];
+        function initCnv() { cnv.width=innerWidth; cnv.height=innerHeight; pts=[]; for(let i=0; i<120; i++) pts.push({x:Math.random()*cnv.width, y:Math.random()*cnv.height, vx:(Math.random()-0.5)*1.2, vy:(Math.random()-0.5)*1.2}); }
+        function drawCnv() {
+            ctx.clearRect(0,0,cnv.width,cnv.height); ctx.fillStyle="#bc13fe";
+            pts.forEach((p, idx) => {
+                p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>cnv.width) p.vx*=-1; if(p.y<0||p.y>cnv.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
+                for(let j=idx+1; j<pts.length; j++){
+                    let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
+                    if(d<180){ ctx.strokeStyle=`rgba(0,242,255,${1-d/180})`; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
                 }
-            }); requestAnimationFrame(draw);
+            }); requestAnimationFrame(drawCnv);
         }
-        init(); draw();
+        initCnv(); drawCnv();
 
-        // 3. System Boot
-        function bootSystem() {
-            let prg = 0;
-            const fill = document.getElementById('l-fill'), msg = document.getElementById('l-msg');
-            const tasks = ["LOAD_ASSETS", "CONNECT_NEURAL", "SYNC_DISCORD", "BOOT_STORE", "READY"];
-            const itv = setInterval(() => {
-                prg += Math.random()*5;
-                if(prg>=100){ prg=100; clearInterval(itv); gsap.to('#loader', {opacity:0, duration:1, onComplete:()=>document.getElementById('loader').remove()}); }
-                fill.style.width = prg+'%';
-                msg.innerText = tasks[Math.floor((prg/100)*4)] + "...";
-            }, 50);
-        }
-
-        // 4. Tab Switching
-        function tab(id, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab-'+id).classList.add('active');
-            btn.classList.add('active');
-            addLog("NAV_TO: " + id.toUpperCase());
+        // [4] AUTH LOGIC
+        function handleDiscord() {
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            const token = params.get('access_token');
+            if(token) {
+                fetch('https://discord.com/api/users/@me', { headers: { authorization: `Bearer ${token}` }})
+                .then(r => r.json()).then(user => {
+                    document.getElementById('gate-screen').style.display = 'none';
+                    document.getElementById('user-display').style.display = 'flex';
+                    document.getElementById('u-name').innerText = user.username;
+                    document.getElementById('u-id').innerText = 'ID: ' + user.id;
+                    document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                    localStorage.setItem('novax_session', JSON.stringify(user));
+                });
+            }
         }
 
-        // 5. Application Logic
-        function nextStep(s) {
-            document.querySelectorAll('.step-container').forEach(st => st.classList.remove('active'));
-            document.getElementById('step-'+s).classList.add('active');
+        // [5] CORE NAVIGATION
+        function goto(id, btn) {
+            document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+            document.getElementById('sec-'+id).classList.add('active');
+            if(btn) btn.classList.add('active');
+            gsap.from('#sec-'+id, {y:50, opacity:0, duration:1, ease: "expo.out"});
         }
 
-        function submitApp() {
-            Swal.fire({ title:'تم الإرسال!', text:'سيتم مراجعة طلبك وطلبك للمقابلة عبر الديسكورد.', icon:'success', background:'#050508', color:'#fff', confirmButtonColor:'#bc13fe' });
-            addLog("APPLICATION_SUBMITTED");
-        }
-
-        // 6. Live Store Feed
-        function buy(item) {
-            Swal.fire({ title:'تأكيد العملية', text:'هل أنت متأكد من رغبتك في شراء '+item+'؟', icon:'warning', showCancelButton:true, confirmButtonColor:'#bc13fe' }).then((r)=>{
-                if(r.isConfirmed) {
-                    addLog("PURCHASE_SUCCESS: " + item);
-                    const feed = document.getElementById('store-feed');
-                    const div = document.createElement('div');
-                    div.className = 'log-line';
-                    div.innerText = `> @You: اشترى ${item} للتو! 💎`;
-                    feed.prepend(div);
-                }
+        function authAdmin() {
+            Swal.fire({
+                title: 'وحدة التحكم السيادية',
+                text: 'أدخل رمز التشفير الإداري',
+                input: 'password',
+                background: '#050508',
+                color: '#fff',
+                confirmButtonColor: '#ff003c'
+            }).then(res => {
+                if(res.value === '123') { goto('admin'); }
+                else { Swal.fire({icon:'error', title:'اختراق مرفوض', background:'#050508', color:'#fff'}); }
             });
         }
 
-        function addLog(m) { console.log("[NOVAX_LOG]: " + m); }
-        window.onresize = init;
+        function bootSystem() { handleDiscord(); console.log("NOVAX_SYSTEM_OPERATIONAL_V99"); }
+        window.onresize = initCnv;
     </script>
 </body>
 </html>
