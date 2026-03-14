@@ -2,228 +2,519 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>NOVAX RP | THE ARCHITECT EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVAX RP | النظام السيادي</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --p: #bc13fe; --a: #00f2ff; --bg: #000; --panel: rgba(5, 5, 10, 0.95); }
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-        body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; }
-
-        /* Background Matrix (The Net) */
-        #canvas { position: fixed; inset: 0; z-index: -10; }
-        .grid { position: fixed; inset: 0; background: linear-gradient(90deg, rgba(188,19,254,0.05) 1px, transparent 1px), linear-gradient(rgba(188,19,254,0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -9; }
-
-        /* System Cursor */
-        #dot { position: fixed; width: 8px; height: 8px; background: var(--p); border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 15px var(--p); }
-        #ring { position: fixed; width: 35px; height: 35px; border: 2px solid var(--a); border-radius: 50%; pointer-events: none; z-index: 10000; transition: 0.1s ease-out; }
-
-        /* Header Engine */
-        header {
-            position: fixed; top: 0; width: 100%; padding: 25px 50px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--p); z-index: 1000;
+        /* [CORE VARIABLES - NEON PROTOCOL] */
+        :root {
+            --p-neon: #bc13fe;
+            --p-glow: rgba(188, 19, 254, 0.6);
+            --a-neon: #00f2ff;
+            --a-glow: rgba(0, 242, 255, 0.6);
+            --r-neon: #ff003c;
+            --g-neon: #00ff88;
+            --bg-deep: #000000;
+            --panel-bg: rgba(8, 8, 12, 0.98);
+            --border-val: 1px solid rgba(188, 19, 254, 0.3);
+            --font-main: 'Cairo', sans-serif;
+            --font-tech: 'Orbitron', sans-serif;
         }
 
-        /* Top Left Auth - Zero Restrictions */
-        .auth { order: -1; }
-        .disc-btn {
-            background: #5865F2; color: #fff; padding: 12px 25px; border-radius: 4px;
-            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 13px;
-            transition: 0.3s; border: 1px solid transparent;
-        }
-        .disc-btn:hover { box-shadow: 0 0 20px #5865F2; border-color: #fff; }
-        .profile { display: none; align-items: center; gap: 12px; border: 1px solid var(--a); padding: 5px 15px; border-radius: 50px; background: rgba(0,242,255,0.05); }
-        .profile img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--p); }
-
-        /* Nav & Logo */
-        .nav { display: flex; gap: 20px; position: absolute; left: 50%; transform: translateX(-50%); }
-        .btn { background: none; border: 1px solid var(--p); color: #fff; padding: 10px 30px; font-family: 'Orbitron'; font-size: 11px; transition: 0.3s; clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%); }
-        .btn:hover, .btn.active { background: var(--p); color: #000; box-shadow: 0 0 25px var(--p); }
-        .logo { font-family: 'Orbitron'; font-size: 30px; letter-spacing: 6px; font-weight: 900; }
-        .logo span { color: var(--p); text-shadow: 0 0 15px var(--p); }
-
-        /* Core Sections */
-        .wrapper { height: 100vh; padding-top: 140px; overflow-y: auto; }
-        .section { display: none; padding: 60px; max-width: 1300px; margin: 0 auto; animation: scan 0.4s ease-out; }
-        .section.active { display: block; }
-        @keyframes scan { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Functional Elements */
-        .grid-ui { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-        .card { background: var(--panel); border: 1px solid #1a1a1a; padding: 40px; position: relative; transition: 0.3s; }
-        .card:hover { border-color: var(--a); transform: scale(1.02); box-shadow: 0 0 30px rgba(0,242,255,0.1); }
-        .card h2 { color: var(--p); margin-bottom: 15px; font-family: 'Orbitron'; }
+        /* [SYSTEM RESET] */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; user-select: none; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--p-neon); box-shadow: 0 0 10px var(--p-neon); }
         
-        input, textarea { width: 100%; padding: 15px; background: #000; border: 1px solid #222; color: #fff; margin-top: 10px; font-family: 'Cairo'; }
-        input:focus { border-color: var(--a); outline: none; }
+        body {
+            background: var(--bg-deep);
+            color: #ffffff;
+            font-family: var(--font-main);
+            overflow: hidden; /* Controlled via wrapper */
+            height: 100vh;
+        }
 
-        /* Admin Terminal */
-        .admin-grid { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
-        .sidebar { background: var(--panel); border: 1px solid var(--p); padding: 20px; }
-        .sidebar button { width: 100%; padding: 15px; background: none; border: none; color: #fff; text-align: right; border-bottom: 1px solid #111; transition: 0.3s; }
-        .sidebar button:hover { background: var(--p); color: #000; }
+        /* [MASTER BACKGROUND - THE NET] */
+        #render-canvas { position: fixed; inset: 0; z-index: -10; background: radial-gradient(circle at center, #0a001a 0%, #000 100%); }
+        .grid-overlay {
+            position: fixed; inset: 0;
+            background-image: 
+                linear-gradient(rgba(188, 19, 254, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(188, 19, 254, 0.05) 1px, transparent 1px);
+            background-size: 45px 45px;
+            z-index: -9;
+            perspective: 1000px;
+        }
+
+        /* [DYNAMIC CURSOR ENGINE] */
+        .cursor-dot {
+            position: fixed; width: 8px; height: 8px; background: var(--p-neon);
+            border-radius: 50%; pointer-events: none; z-index: 99999;
+            box-shadow: 0 0 15px var(--p-neon), 0 0 30px var(--p-neon);
+            transform: translate(-50%, -50%);
+        }
+        .cursor-ring {
+            position: fixed; width: 45px; height: 45px; border: 2px solid var(--a-neon);
+            border-radius: 50%; pointer-events: none; z-index: 99998;
+            transition: width 0.2s, height 0.2s, transform 0.15s ease-out;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--a-glow);
+        }
+
+        /* [HEADER ARCHITECTURE] */
+        header {
+            position: fixed; top: 0; width: 100%; height: 100px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 60px; background: rgba(0,0,0,0.9);
+            border-bottom: 2px solid var(--p-neon); z-index: 9000;
+            backdrop-filter: blur(15px);
+        }
+
+        /* LOGIN ZONE - TOP LEFT (REQUIRED) */
+        .auth-sector { display: flex; align-items: center; gap: 20px; }
+        .discord-login-btn {
+            background: #5865F2; color: #fff; padding: 10px 25px; border-radius: 5px;
+            text-decoration: none; font-weight: 900; font-family: var(--font-tech);
+            font-size: 13px; display: flex; align-items: center; gap: 10px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+        }
+        .discord-login-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px #5865F2; border-color: #fff; }
+
+        .profile-card { display: none; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); padding: 5px 15px; border: 1px solid var(--a-neon); border-radius: 50px; }
+        .profile-card img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--p-neon); }
+
+        /* NAVIGATION CENTER */
+        .main-nav { display: flex; gap: 15px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .nav-link {
+            padding: 10px 25px; background: transparent; border: 1px solid var(--p-neon);
+            color: #fff; font-family: var(--font-tech); font-size: 12px; font-weight: 700;
+            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%); transition: 0.4s;
+        }
+        .nav-link:hover, .nav-link.active { background: var(--p-neon); color: #000; box-shadow: 0 0 30px var(--p-neon); }
+
+        .branding { font-family: var(--font-tech); font-size: 32px; font-weight: 900; letter-spacing: 5px; }
+        .branding span { color: var(--p-neon); text-shadow: 0 0 20px var(--p-neon); }
+
+        /* [CONTENT WRAPPER] */
+        .system-wrapper {
+            height: 100vh; padding-top: 120px; overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .view-section { display: none; padding: 60px; opacity: 0; transform: translateY(30px); transition: 0.6s ease-out; }
+        .view-section.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* [DASHBOARD - HOME] */
+        .hero-module { text-align: center; margin-top: 5vh; }
+        .hero-module h1 { font-family: var(--font-tech); font-size: 10rem; line-height: 0.8; margin-bottom: 20px; }
+        .hero-module .glitch-text { color: var(--a-neon); font-size: 1.5rem; letter-spacing: 20px; font-family: 'Share Tech Mono'; }
+
+        /* [CARDS & UI ELEMENTS] */
+        .glass-panel {
+            background: var(--panel-bg); border: var(--border-val); padding: 40px;
+            border-radius: 5px; position: relative; overflow: hidden;
+            transition: 0.4s;
+        }
+        .glass-panel:hover { border-color: var(--a-neon); box-shadow: 0 0 40px rgba(0, 242, 255, 0.1); }
+        .glass-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--p-neon);
+        }
+
+        /* [TABLES & DATA] */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+        .data-table th { background: var(--p-neon); color: #000; padding: 15px; font-family: var(--font-tech); text-align: center; }
+        .data-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; background: rgba(255,255,255,0.02); }
+
+        /* [FORM ENGINE] */
+        .input-box { margin-bottom: 25px; }
+        .input-box label { display: block; margin-bottom: 10px; color: var(--a-neon); font-size: 14px; font-weight: bold; }
+        .input-box input, .input-box textarea {
+            width: 100%; background: #050505; border: 1px solid #222; padding: 18px;
+            color: #fff; font-family: var(--font-main); transition: 0.3s;
+        }
+        .input-box input:focus { border-color: var(--p-neon); box-shadow: 0 0 15px var(--p-glow); outline: none; }
+
+        /* [ADMIN RADAR] */
+        .admin-grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
+        .admin-sidebar { background: var(--panel-bg); border: 1px solid var(--r-neon); padding: 25px; }
+        .adm-link {
+            display: block; padding: 15px; color: #fff; text-decoration: none; margin-bottom: 10px;
+            border-right: 4px solid transparent; transition: 0.3s; font-weight: bold;
+        }
+        .adm-link:hover { background: rgba(255, 0, 60, 0.1); border-color: var(--r-neon); padding-right: 25px; }
+
+        /* [STORE MODULE] */
+        .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .product-card { text-align: center; border: 1px solid #111; padding: 30px; background: rgba(255,255,255,0.02); transition: 0.4s; }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--g-neon); }
+        .price-tag { font-family: var(--font-tech); font-size: 2.5rem; color: var(--g-neon); margin: 15px 0; }
+
+        /* [UTILITIES] */
+        .neon-btn {
+            width: 100%; padding: 15px; background: transparent; border: 1px solid var(--p-neon);
+            color: #fff; font-weight: 900; font-family: var(--font-tech); transition: 0.3s;
+        }
+        .neon-btn:hover { background: var(--p-neon); color: #000; box-shadow: 0 0 30px var(--p-neon); }
     </style>
 </head>
-<body onload="init()">
+<body onload="initSystemEngine()">
 
-    <canvas id="canvas"></canvas>
-    <div class="grid"></div>
-    <div id="dot"></div>
-    <div id="ring"></div>
+    <canvas id="render-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <div class="cursor-dot" id="dot"></div>
+    <div class="cursor-ring" id="ring"></div>
 
     <header>
-        <div class="auth">
-            <a href="#" id="login" class="disc-btn" onclick="sysLogin()"><i class="fab fa-discord"></i> LOGIN</a>
-            <div id="user" class="profile">
-                <span id="name" style="font-weight: 900; font-size: 13px;"></span>
-                <img id="avatar" src="">
+        <div class="auth-sector">
+            <a href="#" id="login-trigger" class="discord-login-btn" onclick="executeAuth()">
+                <i class="fab fa-discord"></i> تسجيل الدخول
+            </a>
+            <div id="user-info-bar" class="profile-card">
+                <span id="user-display-name" style="font-weight: 900; font-size: 14px;"></span>
+                <img id="user-display-avatar" src="" alt="AVATAR">
             </div>
         </div>
-        <nav class="nav">
-            <button class="btn active" onclick="go('home', this)">MAIN</button>
-            <button class="btn" onclick="go('rules', this)">RULES</button>
-            <button class="btn" onclick="go('store', this)">STORE</button>
-            <button class="btn" onclick="go('apply', this)">WHITELIST</button>
+
+        <nav class="main-nav">
+            <button class="nav-link active" onclick="switchView('home', this)">الرئيسية</button>
+            <button class="nav-link" onclick="switchView('rules', this)">القوانين</button>
+            <button class="nav-link" onclick="switchView('apply', this)">التقديم</button>
+            <button class="nav-link" onclick="switchView('store', this)">المتجر</button>
+            <button class="nav-link" onclick="switchView('map', this)">الخريطة</button>
         </nav>
-        <div class="logo" onclick="adminLink()">NOVAX<span>RP</span></div>
+
+        <div class="branding" onclick="accessSecureTerminal()">NOVAX<span>RP</span></div>
     </header>
 
-    <div class="wrapper">
-        <section id="home" class="section active">
-            <div style="text-align: center; margin-top: 50px;">
-                <h1 style="font-family:'Orbitron'; font-size: 12vw; line-height: 0.8;">NOVAX</h1>
-                <p style="letter-spacing: 25px; color: var(--a); font-size: 1.5rem; margin-top: 20px;">DOMINATION SYSTEM</p>
-            </div>
-        </section>
-
-        <section id="rules" class="section">
-            <div class="card">
-                <h2>قوانين المدينة العليا</h2>
-                <div style="line-height: 2; font-size: 1.1rem; color: #ccc;">
-                    <p>1. الاحترام المتبادل بين السكان.</p>
-                    <p>2. يمنع الخروج عن التقمص (FailRP) تحت أي ظرف.</p>
-                    <p>3. القتل بدون سبب (RDM) يعرضك للنفي الفوري.</p>
-                    <p>4. الالتزام بتعليمات الإدارة العليا في العمليات الكبرى.</p>
+    <div class="system-wrapper">
+        
+        <section id="view-home" class="view-section active">
+            <div class="hero-module">
+                <h1>NO<span>VA</span>X</h1>
+                <div class="glitch-text">الجيل القادم من الـ RP</div>
+                
+                <div style="display: flex; justify-content: center; gap: 30px; margin-top: 60px;">
+                    <div class="glass-panel" style="width: 250px;">
+                        <h2 style="font-family: var(--font-tech);">382</h2>
+                        <small style="color: var(--a-neon);">لاعب نشط الآن</small>
+                    </div>
+                    <div class="glass-panel" style="width: 250px; border-color: var(--g-neon);">
+                        <h2 style="color: var(--g-neon);">LIVE</h2>
+                        <small>حالة السيرفر</small>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="store" class="section">
-            <div class="grid-ui">
-                <div class="card"><h2>VIP GOLD</h2><p>أولوية دخول + سيارة فريدة</p><button class="btn" style="width:100%; margin-top:20px;">$50</button></div>
-                <div class="card"><h2>BLACK MARKET</h2><p>أسلحة نادرة + مخزن سري</p><button class="btn" style="width:100%; margin-top:20px;">$30</button></div>
-                <div class="card"><h2>BUSINESS</h2><p>امتلاك شركة أو معرض سيارات</p><button class="btn" style="width:100%; margin-top:20px;">$100</button></div>
+        <section id="view-rules" class="view-section">
+            <div class="glass-panel">
+                <h2 style="font-family: var(--font-tech); color: var(--p-neon); border-bottom: 2px solid var(--p-neon); padding-bottom: 15px; margin-bottom: 30px;">دستور مدينة NOVAX</h2>
+                <div style="line-height: 2.2; font-size: 1.1rem;">
+                    <p><i class="fas fa-check-circle" style="color: var(--a-neon);"></i> يمنع منعاً باتاً الخروج عن طور الشخصية (FailRP).</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--a-neon);"></i> الاحترام المتبادل بين اللاعبين داخل وخارج اللعبة واجب مقدس.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--a-neon);"></i> يمنع استخدام ثغرات اللعبة (Exploiting) وسوف يؤدي ذلك للنفي الفوري.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--a-neon);"></i> القتل العشوائي (RDM) والدهس المتعمد (VDM) عقوبتها السجن المؤبد.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--a-neon);"></i> يجب الالتزام بقوانين السطو والسرقة المحددة في الديسكورد الرسمي.</p>
+                </div>
             </div>
         </section>
 
-        <section id="apply" class="section">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2>تقديم طلب انضمام (WHITELIST)</h2>
-                <input type="text" id="app_name" placeholder="اسمك في الديسكورد">
-                <input type="number" id="app_age" placeholder="العمر الحقيقي">
-                <textarea id="app_reason" rows="5" placeholder="لماذا تختار مدينة NOVAX؟"></textarea>
-                <button class="btn" style="width:100%; margin-top:30px; padding:20px;" onclick="sendApp()">إرسال البيانات إلى السيرفر</button>
+        <section id="view-apply" class="view-section">
+            <div class="glass-panel" style="max-width: 900px; margin: 0 auto;">
+                <h2 style="font-family: var(--font-tech); margin-bottom: 30px;">طلب الحصول على الهوية (Whitelist)</h2>
+                <div class="input-box">
+                    <label>اسمك في الديسكورد (Discord Username)</label>
+                    <input type="text" id="inp-name" placeholder="أدخل اسمك الكامل هنا...">
+                </div>
+                <div class="input-box">
+                    <label>العمر الحقيقي</label>
+                    <input type="number" id="inp-age" placeholder="يجب أن تكون 18+">
+                </div>
+                <div class="input-box">
+                    <label>حدثنا عن خبرتك في تقمص الأدوار</label>
+                    <textarea id="inp-exp" rows="5" placeholder="اذكر السيرفرات السابقة أو خبرتك العامة..."></textarea>
+                </div>
+                <button class="neon-btn" onclick="submitOfficialForm()">إرسال الطلب للمعالجة</button>
             </div>
         </section>
 
-        <section id="admin" class="section">
+        <section id="view-store" class="view-section">
+            <h2 style="text-align: center; font-family: var(--font-tech); margin-bottom: 50px; font-size: 3rem;">متجر المدينة الإلكتروني</h2>
+            <div class="store-grid">
+                <div class="product-card">
+                    <h3 style="color: var(--a-neon);">الباقة الملكية (VIP)</h3>
+                    <div class="price-tag">$29.99</div>
+                    <ul style="list-style: none; opacity: 0.7; font-size: 13px; margin-bottom: 25px;">
+                        <li>سيارتين حصرية</li>
+                        <li>أولوية دخول (Queue Bypass)</li>
+                        <li>رتبة ذهبية في الديسكورد</li>
+                    </ul>
+                    <button class="neon-btn" onclick="triggerPurchase('VIP')">شراء الآن</button>
+                </div>
+                <div class="product-card" style="border-color: var(--p-neon);">
+                    <h3 style="color: var(--p-neon);">حزمة الأسلحة النادرة</h3>
+                    <div class="price-tag">$19.99</div>
+                    <ul style="list-style: none; opacity: 0.7; font-size: 13px; margin-bottom: 25px;">
+                        <li>سكنات أسلحة خاصة</li>
+                        <li>مخزن ذخيرة مضاعف</li>
+                        <li>مفتاح الخزنة السرية</li>
+                    </ul>
+                    <button class="neon-btn" onclick="triggerPurchase('Weapon Pack')">شراء الآن</button>
+                </div>
+                <div class="product-card">
+                    <h3 style="color: var(--g-neon);">غسيل أموال سريع</h3>
+                    <div class="price-tag">$10.00</div>
+                    <ul style="list-style: none; opacity: 0.7; font-size: 13px; margin-bottom: 25px;">
+                        <li>تنظيف 500,000$</li>
+                        <li>بدون عمولة بنكية</li>
+                        <li>توصيل للموقع فوراً</li>
+                    </ul>
+                    <button class="neon-btn" onclick="triggerPurchase('Money Wash')">شراء الآن</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-map" class="view-section">
+            <div class="glass-panel" style="height: 700px; padding: 0; position: relative; border-color: var(--a-neon);">
+                <div style="position: absolute; top: 20px; right: 20px; z-index: 5; background: rgba(0,0,0,0.8); padding: 15px; border: 1px solid var(--a-neon);">
+                    <h4 style="color: var(--a-neon); font-family: var(--font-tech);">الرادار التفاعلي</h4>
+                    <p style="font-size: 12px; margin-top: 5px;">يظهر أماكن الخدمات الحيوية</p>
+                </div>
+                <div style="width: 100%; height: 100%; background: url('https://i.imgur.com/G5Y8uVf.png') center/cover;"></div>
+            </div>
+        </section>
+
+        <section id="view-admin" class="view-section">
             <div class="admin-grid">
-                <div class="sidebar">
-                    <h3 style="color:var(--a); margin-bottom:20px;">TERMINAL ADM</h3>
-                    <button>إدارة اللاعبين</button>
-                    <button>الطلبات الواردة (12)</button>
-                    <button>سجل العمليات</button>
-                    <button onclick="go('home')">خروج</button>
-                </div>
-                <div class="card">
-                    <h2 style="color:var(--a)">قائمة التقديمات</h2>
-                    <table style="width:100%; text-align:right; margin-top:20px;">
-                        <tr style="border-bottom: 2px solid var(--p);">
-                            <th style="padding:10px;">الاسم</th>
-                            <th>الحالة</th>
-                            <th>الإجراء</th>
-                        </tr>
-                        <tr>
-                            <td style="padding:15px;">Virusz_99</td>
-                            <td style="color:orange;">PENDING</td>
-                            <td><button style="color:lime; background:none; border:none;">ACCEPT</button></td>
-                        </tr>
+                <aside class="admin-sidebar">
+                    <h2 style="font-family: var(--font-tech); color: var(--r-neon); border-bottom: 2px solid var(--r-neon); margin-bottom: 25px; padding-bottom: 10px;">لوحة الإدارة</h2>
+                    <nav>
+                        <a href="#" class="adm-link">سجل التقديمات</a>
+                        <a href="#" class="adm-link">إدارة المحظورين</a>
+                        <a href="#" class="adm-link">التحكم بالمتجر</a>
+                        <a href="#" class="adm-link">إعدادات النظام</a>
+                        <a href="#" class="adm-link" style="margin-top: 50px; color: var(--r-neon);" onclick="switchView('home')">تسجيل الخروج</a>
+                    </nav>
+                </aside>
+                <main class="glass-panel">
+                    <h3 style="color: var(--a-neon); font-family: var(--font-tech);">طلبات Whitelist الواردة</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>العمر</th>
+                                <th>الحالة</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="application-list-body">
+                            <tr>
+                                <td>User_X1</td>
+                                <td>22</td>
+                                <td style="color: orange;">بانتظار المراجعة</td>
+                                <td>
+                                    <button style="background: var(--g-neon); border: none; padding: 5px 10px; font-weight: bold;">قبول</button>
+                                    <button style="background: var(--r-neon); color: #fff; border: none; padding: 5px 10px; font-weight: bold; margin-right: 5px;">رفض</button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
-                </div>
+                </main>
             </div>
         </section>
+
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        const dot = document.getElementById('dot'), ring = document.getElementById('ring');
-        window.onmousemove = e => {
-            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
-            ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
-        };
+        // 1. [MOUSE ENGINE]
+        const dot = document.getElementById('dot');
+        const ring = document.getElementById('ring');
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
 
-        const cnv = document.getElementById('canvas'), ctx = cnv.getContext('2d');
-        let pts = [];
-        function init() {
-            cnv.width = innerWidth; cnv.height = innerHeight;
-            pts = Array.from({length: 100}, () => ({
-                x: Math.random()*cnv.width, y: Math.random()*cnv.height,
-                vx: (Math.random()-0.5)*1.2, vy: (Math.random()-0.5)*1.2
-            }));
-            animate(); checkSess();
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = ringX + 'px';
+            ring.style.top = ringY + 'px';
+            requestAnimationFrame(animateCursor);
         }
+        animateCursor();
 
-        function animate() {
-            ctx.clearRect(0,0,cnv.width,cnv.height);
-            ctx.fillStyle = "#bc13fe";
-            pts.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>cnv.width) p.vx *= -1;
-                if(p.y<0 || p.y>cnv.height) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
-                for(let j=i+1; j<pts.length; j++){
-                    let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
-                    if(d < 150){
-                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - d/150})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
-                    }
-                }
+        // 2. [NAVIGATION ENGINE]
+        function switchView(viewId, btn) {
+            const sections = document.querySelectorAll('.view-section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            sections.forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
             });
-            requestAnimationFrame(animate);
+
+            const target = document.getElementById('view-' + viewId);
+            target.style.display = 'block';
+            setTimeout(() => target.classList.add('active'), 50);
+
+            navLinks.forEach(link => link.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+
+            // Scroll to top
+            document.querySelector('.system-wrapper').scrollTop = 0;
         }
 
-        function go(id, b) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
-            if(b) b.classList.add('active');
+        // 3. [VISUAL BACKGROUND ENGINE]
+        const canvas = document.getElementById('render-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initPoints();
         }
 
-        function sysLogin() {
-            localStorage.setItem('session', 'ADMIN_V');
-            location.reload();
-        }
-
-        function checkSess() {
-            if(localStorage.getItem('session')){
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('user').style.display = 'flex';
-                document.getElementById('name').innerText = 'OPERATOR_X';
-                document.getElementById('avatar').src = 'https://i.pravatar.cc/100?u=99';
+        function initPoints() {
+            points = [];
+            const count = Math.floor((canvas.width * canvas.height) / 15000);
+            for(let i=0; i<count; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8
+                });
             }
         }
 
-        function adminLink() {
-            Swal.fire({ title: 'ACCESS CODE', input: 'password', background: '#05050a', color: '#fff', confirmButtonColor: '#bc13fe' }).then(r => {
-                if(r.value === '123') go('admin');
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#bc13fe";
+            ctx.lineWidth = 0.5;
+
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                for(let j=i+1; j<points.length; j++) {
+                    const p2 = points[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 180) {
+                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/180})`;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(render);
+        }
+
+        // 4. [AUTH LOGIC]
+        function executeAuth() {
+            Swal.fire({
+                title: 'تسجيل دخول ديسكورد',
+                text: 'هل تمنح NOVAX صلاحية الوصول لملفك الشخصي؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#5865F2',
+                confirmButtonText: 'نعم، دخول',
+                cancelButtonText: 'إلغاء',
+                background: '#08080c',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem('novax_auth', 'true');
+                    syncAuthState();
+                    Swal.fire({ icon: 'success', title: 'تم تسجيل الدخول', showConfirmButton: false, timer: 1500, background: '#08080c', color: '#fff' });
+                }
             });
         }
 
-        function sendApp() {
-            if(!document.getElementById('app_name').value) return;
-            Swal.fire({ icon: 'success', title: 'SENT', text: 'تم إرسال طلبك بنجاح', background: '#05050a', color: '#fff' });
+        function syncAuthState() {
+            if(localStorage.getItem('novax_auth') === 'true') {
+                document.getElementById('login-trigger').style.display = 'none';
+                document.getElementById('user-info-bar').style.display = 'flex';
+                document.getElementById('user-display-name').innerText = 'Virusz_Operator';
+                document.getElementById('user-display-avatar').src = 'https://i.pravatar.cc/150?u=novax';
+            }
+        }
+
+        // 5. [ADMIN SECURE ACCESS]
+        function accessSecureTerminal() {
+            Swal.fire({
+                title: 'النظام الأمني للمشرفين',
+                input: 'password',
+                inputPlaceholder: 'أدخل شفرة الوصول الفائقة',
+                background: '#08080c',
+                color: '#fff',
+                confirmButtonColor: '#bc13fe'
+            }).then((res) => {
+                if(res.value === '123') {
+                    switchView('admin');
+                } else if(res.value) {
+                    Swal.fire({ icon: 'error', title: 'تم رفض الوصول', text: 'الشفرة غير صحيحة', background: '#08080c', color: '#fff' });
+                }
+            });
+        }
+
+        // 6. [FUNCTIONAL ACTIONS]
+        function submitOfficialForm() {
+            const n = document.getElementById('inp-name').value;
+            if(!n) return Swal.fire('خطأ', 'يرجى ملء البيانات كاملة', 'error');
+            
+            Swal.fire({
+                title: 'جاري الإرسال...',
+                html: 'يتم الآن حقن البيانات في قاعدة بيانات الإدارة',
+                timer: 2000,
+                didOpen: () => Swal.showLoading(),
+                background: '#08080c', color: '#fff'
+            }).then(() => {
+                Swal.fire('تم بنجاح', 'سوف نرد عليك في الديسكورد قريباً', 'success');
+                // إضافة تجريبية للجدول
+                const list = document.getElementById('application-list-body');
+                list.innerHTML += `<tr><td>${n}</td><td>${document.getElementById('inp-age').value}</td><td style="color:orange;">انتظار</td><td>[معالجة]</td></tr>`;
+            });
+        }
+
+        function triggerPurchase(item) {
+            Swal.fire({
+                title: 'تأكيد الشراء',
+                text: `هل أنت متأكد من شراء ${item}؟`,
+                showCancelButton: true,
+                confirmButtonText: 'إتمام العملية',
+                background: '#08080c', color: '#fff'
+            }).then(r => { if(r.isConfirmed) Swal.fire('شكراً لك!', 'تمت إضافة المنتج لحسابك', 'success'); });
+        }
+
+        // Initialize Everything
+        window.addEventListener('resize', resize);
+        function initSystemEngine() {
+            resize();
+            render();
+            syncAuthState();
+            console.log("NOVAX SYSTEM: ONLINE - NO DEFECTS DETECTED.");
         }
     </script>
 </body>
