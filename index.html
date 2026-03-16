@@ -3,307 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVAX RP | THE ULTIMATE CORE</title>
+    <title>NOVAX RP | الموقع الرسمي</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* [1. CSS VARIABLES & THEME] */
+        /* [1] الأساسيات والتصميم العام */
         :root {
-            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
-            --a-neon: #00f2ff; --a-glow: rgba(0, 242, 255, 0.6);
-            --r-neon: #ff003c; --g-neon: #00ff88;
-            --bg-deep: #020205; --panel-bg: rgba(8, 8, 15, 0.98);
-            --font-main: 'Cairo', sans-serif; --font-tech: 'Orbitron', sans-serif;
-            --border-glow: 1px solid rgba(188, 19, 254, 0.3);
+            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.4);
+            --a-neon: #00f2ff; --r-neon: #ff003c; --g-neon: #00ff88;
+            --bg-body: #020205; --panel: rgba(10, 10, 20, 0.98);
         }
 
-        /* [2. GLOBAL RESET & CURSOR] */
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; user-select: none; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--p-neon); border-radius: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-body); color: #fff; overflow-x: hidden; line-height: 1.6; }
         
-        body { 
-            background: var(--bg-deep); color: #fff; 
-            font-family: var(--font-main); overflow: hidden; 
-            height: 100vh; position: relative;
-        }
+        /* الخلفية (تم تحسينها لتكون خفيفة على المعالج i3) */
+        .static-bg { position: fixed; inset: 0; z-index: -1; background: linear-gradient(45deg, #050010 0%, #000 100%); }
+        .grid-lines { position: fixed; inset: 0; z-index: -1; background: linear-gradient(rgba(188, 19, 254, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(188, 19, 254, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
 
-        #bg-canvas { position: fixed; inset: 0; z-index: -10; }
-        .grid-mask {
-            position: fixed; inset: 0; z-index: -9;
-            background: 
-                linear-gradient(90deg, rgba(188, 19, 254, 0.03) 1px, transparent 1px),
-                linear-gradient(rgba(188, 19, 254, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            mask-image: radial-gradient(circle at center, black, transparent 80%);
-        }
-
-        .cursor-dot { position: fixed; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 100000; mix-blend-mode: difference; transition: transform 0.1s; }
-        .cursor-ring { 
-            position: fixed; width: 40px; height: 40px; border: 1.5px solid var(--p-neon); 
-            border-radius: 50%; pointer-events: none; z-index: 99999;
-            box-shadow: 0 0 15px var(--p-glow); transition: 0.15s ease-out;
-        }
-
-        /* [3. HEADER & NAVIGATION] */
+        /* [2] الهيدر (Header) */
         header {
-            position: fixed; top: 0; width: 100%; height: 100px;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--p-neon);
+            position: sticky; top: 0; width: 100%; height: 90px;
+            background: rgba(0, 0, 0, 0.95); border-bottom: 3px solid var(--p-neon);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 60px; z-index: 9000;
+            padding: 0 5%; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
+        .brand { font-family: 'Orbitron'; font-size: 32px; font-weight: 900; letter-spacing: 3px; cursor: pointer; }
+        .brand span { color: var(--p-neon); text-shadow: 0 0 15px var(--p-neon); }
 
-        .branding { 
-            font-family: var(--font-tech); font-size: 30px; font-weight: 900; 
-            letter-spacing: 4px; text-shadow: 0 0 15px var(--p-neon);
-            cursor: pointer;
-        }
-        .branding span { color: var(--p-neon); }
-
-        .nav-center { display: flex; gap: 15px; position: absolute; left: 50%; transform: translateX(-50%); }
-        .nav-item {
+        nav { display: flex; gap: 15px; }
+        .nav-link {
             background: transparent; border: 1px solid var(--p-neon); color: #fff;
-            padding: 10px 25px; font-family: var(--font-tech); font-size: 12px;
-            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: bold;
+            padding: 10px 20px; font-family: 'Orbitron'; font-size: 12px; font-weight: bold;
+            transition: 0.3s; clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%); text-decoration: none;
         }
-        .nav-item:hover, .nav-item.active { background: var(--p-neon); color: #000; box-shadow: 0 0 25px var(--p-neon); transform: translateY(-3px); }
+        .nav-link:hover, .nav-link.active { background: var(--p-neon); color: #000; box-shadow: 0 0 20px var(--p-neon); transform: translateY(-3px); }
 
-        .auth-zone { display: flex; align-items: center; gap: 20px; }
-        .login-trigger {
-            background: #5865F2; color: #fff; padding: 12px 25px; border-radius: 4px;
-            text-decoration: none; font-weight: 900; font-family: var(--font-tech);
-            font-size: 13px; display: flex; align-items: center; gap: 10px;
-            border: 1px solid transparent; transition: 0.3s;
-        }
-        .login-trigger:hover { box-shadow: 0 0 30px #5865F2; transform: scale(1.05); }
+        /* [3] المحتوى الرئيسي */
+        .container { padding: 50px 5%; max-width: 1400px; margin: 0 auto; min-height: 80vh; }
+        .page { display: none; animation: slideUp 0.6s ease-out forwards; }
+        .page.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .user-pill {
-            display: none; align-items: center; gap: 12px;
-            background: rgba(255,255,255,0.05); padding: 6px 18px;
-            border: 1px solid var(--a-neon); border-radius: 50px;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-        }
-        .user-pill img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--p-neon); }
-
-        /* [4. MAIN WRAPPER & SECTIONS] */
-        .viewport { 
-            height: 100vh; padding-top: 130px; overflow-y: auto; 
-            scroll-behavior: smooth; position: relative;
-        }
-        .section { 
-            display: none; padding: 60px; max-width: 1300px; margin: 0 auto;
-            opacity: 0; transform: translateY(40px); transition: 0.7s ease-out;
-        }
-        .section.active { display: block; opacity: 1; transform: translateY(0); }
-
-        /* [5. HOME HERO] */
-        .hero-title {
-            text-align: center; margin-top: 8vh;
-        }
-        .hero-title h1 { 
-            font-family: var(--font-tech); font-size: 12rem; line-height: 0.8;
-            background: linear-gradient(to bottom, #fff 40%, var(--p-neon));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px var(--p-glow));
-        }
-        .hero-subtitle {
-            font-family: 'Share Tech Mono'; font-size: 1.5rem; letter-spacing: 25px;
-            color: var(--a-neon); margin-top: 20px; text-transform: uppercase;
-        }
-
-        /* [6. MODULES & CARDS] */
+        /* [4] البطاقات (Cards) */
         .glass-card {
-            background: var(--panel-bg); border: var(--border-glow); padding: 40px;
-            border-radius: 5px; position: relative; overflow: hidden;
-            transition: 0.4s;
+            background: var(--panel); border: 1px solid rgba(188, 19, 254, 0.2);
+            padding: 40px; border-radius: 10px; position: relative; margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .glass-card:hover { border-color: var(--a-neon); box-shadow: 0 0 50px rgba(0, 242, 255, 0.1); }
-        .glass-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--p-neon);
-        }
+        .glass-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--p-neon); }
 
-        /* [7. STORE GRID] */
-        .store-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 35px; }
-        .item-card {
-            background: rgba(255,255,255,0.02); border: 1px solid #151515;
-            padding: 25px; text-align: center; position: relative; transition: 0.5s;
+        /* [5] المتجر (Store) */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .product-card {
+            background: #080810; border: 1px solid #1a1a1a; padding: 25px; border-radius: 8px;
+            text-align: center; transition: 0.4s; position: relative;
         }
-        .item-card:hover { transform: translateY(-15px) scale(1.02); border-color: var(--g-neon); }
-        .item-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 4px; margin-bottom: 20px; border: 1px solid #333; }
-        .price-label { font-family: var(--font-tech); font-size: 2.5rem; color: var(--g-neon); margin: 15px 0; }
-        
-        /* [8. ADMIN INTERFACE] */
-        .admin-grid { display: grid; grid-template-columns: 320px 1fr; gap: 40px; }
-        .admin-nav { background: #050508; border-right: 2px solid var(--r-neon); padding: 30px; }
-        .admin-link {
-            display: flex; align-items: center; gap: 15px; padding: 18px;
-            color: #888; text-decoration: none; border-radius: 4px;
-            transition: 0.3s; font-weight: bold; margin-bottom: 10px;
-        }
-        .admin-link:hover, .admin-link.active { background: rgba(255, 0, 60, 0.1); color: var(--r-neon); padding-right: 30px; }
+        .product-card:hover { border-color: var(--a-neon); transform: translateY(-10px); box-shadow: 0 10px 40px rgba(0, 242, 255, 0.1); }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 20px; }
+        .price-tag { font-family: 'Orbitron'; font-size: 2rem; color: var(--g-neon); margin: 15px 0; }
 
-        /* [9. BUTTONS & INPUTS] */
-        .input-group { margin-bottom: 25px; }
-        .input-group label { display: block; margin-bottom: 12px; color: var(--a-neon); font-weight: bold; font-size: 14px; }
-        input, textarea, select {
-            width: 100%; background: #000; border: 1px solid #222; padding: 18px;
-            color: #fff; font-family: var(--font-main); transition: 0.3s;
+        /* [6] الإدارة (Admin) */
+        .admin-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+        .admin-sidebar { background: #05050a; border: 1px solid var(--r-neon); padding: 20px; border-radius: 8px; }
+        .admin-btn {
+            display: block; padding: 15px; color: #fff; text-decoration: none;
+            border-bottom: 1px solid #111; transition: 0.3s; font-weight: bold;
         }
-        input:focus { border-color: var(--p-neon); outline: none; box-shadow: 0 0 15px var(--p-glow); }
+        .admin-btn:hover { background: rgba(255, 0, 60, 0.1); color: var(--r-neon); padding-right: 30px; }
 
-        .btn-neon {
-            width: 100%; padding: 18px; background: transparent; border: 2px solid var(--p-neon);
-            color: #fff; font-family: var(--font-tech); font-weight: 900;
-            text-transform: uppercase; letter-spacing: 2px; transition: 0.4s;
+        /* [7] النماذج (Forms) */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: var(--a-neon); margin-bottom: 10px; font-weight: bold; }
+        input, textarea {
+            width: 100%; background: #000; border: 1px solid #222; padding: 15px;
+            color: #fff; font-size: 16px; border-radius: 4px; transition: 0.3s;
         }
-        .btn-neon:hover { background: var(--p-neon); color: #000; box-shadow: 0 0 40px var(--p-neon); }
+        input:focus { border-color: var(--p-neon); box-shadow: 0 0 10px var(--p-glow); outline: none; }
+        .submit-btn {
+            width: 100%; padding: 18px; background: var(--p-neon); border: none;
+            color: #000; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
+            text-transform: uppercase; transition: 0.4s; margin-top: 10px;
+        }
+        .submit-btn:hover { box-shadow: 0 0 30px var(--p-neon); transform: scale(1.02); }
 
-        /* [10. UTILS] */
-        .badge-live { background: var(--r-neon); padding: 4px 12px; border-radius: 3px; font-size: 10px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        /* [8] الصفحة الرئيسية (Hero) */
+        .hero-section { text-align: center; padding: 100px 0; }
+        .hero-section h1 { font-family: 'Orbitron'; font-size: 8rem; line-height: 1; text-shadow: 0 0 50px var(--p-neon); margin-bottom: 20px; }
+        .hero-section p { font-size: 1.5rem; letter-spacing: 15px; color: var(--a-neon); text-transform: uppercase; }
+
     </style>
 </head>
-<body onload="bootSystem()">
+<body onload="initSystem()">
 
-    <canvas id="bg-canvas"></canvas>
-    <div class="grid-mask"></div>
-    <div class="cursor-dot" id="dot"></div>
-    <div class="cursor-ring" id="ring"></div>
+    <div class="static-bg"></div>
+    <div class="grid-lines"></div>
 
     <header>
-        <div class="auth-zone">
-            <a href="javascript:void(0)" id="login-btn" class="login-trigger" onclick="handleDiscordLogin()">
-                <i class="fab fa-discord"></i> دخول النظام
-            </a>
-            <div id="user-info" class="user-pill">
-                <span id="display-name" style="font-size: 14px; font-weight: 900;"></span>
-                <img id="display-avatar" src="">
-            </div>
-        </div>
-
-        <nav class="nav-center">
-            <button class="nav-item active" onclick="switchTab('home', this)">الرئيسية</button>
-            <button class="nav-item" onclick="switchTab('apply', this)">التقديم</button>
-            <button class="nav-item" onclick="switchTab('store', this)">المتجر</button>
-            <button class="nav-item" onclick="switchTab('rules', this)">القوانين</button>
-            <button id="admin-nav-btn" class="nav-item" style="display:none; border-color: var(--r-neon); color: var(--r-neon);" onclick="switchTab('admin', this)">الإدارة</button>
+        <div class="brand" onclick="openAdminPanel()">NOVAX<span>RP</span></div>
+        <nav>
+            <a href="#" class="nav-link active" onclick="navigate('home', this)">الرئيسية</a>
+            <a href="#" class="nav-link" onclick="navigate('apply', this)">التقديم</a>
+            <a href="#" class="nav-link" onclick="navigate('store', this)">المتجر</a>
+            <a href="#" class="nav-link" onclick="navigate('rules', this)">القوانين</a>
+            <a href="#" id="admin-nav" class="nav-link" style="display:none; border-color: var(--r-neon); color: var(--r-neon);" onclick="navigate('admin', this)">الإدارة</a>
         </nav>
-
-        <div class="branding" onclick="verifyAdmin()">NOVAX<span>RP</span></div>
+        <div id="auth-section">
+            <button class="nav-link" style="border-color: #5865f2;" onclick="discordLogin()">دخول <i class="fab fa-discord"></i></button>
+        </div>
     </header>
 
-    <div class="viewport">
-        
-        <section id="tab-home" class="section active">
-            <div class="hero-title">
+    <div class="container">
+
+        <section id="page-home" class="page active">
+            <div class="hero-section">
                 <h1>NOVAX</h1>
-                <div class="hero-subtitle">NEXT GENERATION RP</div>
-                
-                <div style="display: flex; justify-content: center; gap: 40px; margin-top: 80px;">
-                    <div class="glass-card" style="width: 300px;">
-                        <h2 style="font-family: var(--font-tech); font-size: 3rem;">512</h2>
-                        <p style="color: var(--a-neon);">القدرة الاستيعابية</p>
+                <p>Advanced Reality</p>
+                <div style="margin-top: 50px; display: flex; justify-content: center; gap: 20px;">
+                    <div class="glass-card" style="width: 250px; padding: 20px;">
+                        <h2 style="color: var(--g-neon);">LIVE</h2>
+                        <small>حالة السيرفر</small>
                     </div>
-                    <div class="glass-card" style="width: 300px; border-color: var(--g-neon);">
-                        <h2 style="color: var(--g-neon);">ONLINE</h2>
-                        <p>حالة الاتصال</p>
+                    <div class="glass-card" style="width: 250px; padding: 20px;">
+                        <h2 style="color: var(--a-neon);">64/128</h2>
+                        <small>اللاعبين</small>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="tab-apply" class="section">
-            <div class="glass-card" style="max-width: 900px; margin: 0 auto;">
-                <h2 style="font-family: var(--font-tech); color: var(--p-neon); margin-bottom: 30px;">طلب الحصول على الهوية (Whitelist)</h2>
-                <div class="input-group">
-                    <label>الاسم الثلاثي (بالعربي)</label>
-                    <input type="text" id="form-name" placeholder="أدخل اسمك الحقيقي...">
+        <section id="page-apply" class="page">
+            <div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+                <h2 style="font-family: 'Orbitron'; color: var(--p-neon); margin-bottom: 30px;">طلب انضمام للمدينة</h2>
+                <div class="form-group">
+                    <label>الاسم بالكامل (داخل اللعبة)</label>
+                    <input type="text" id="app-name" placeholder="مثال: Ahmed_Aliraqi">
                 </div>
-                <div class="input-group">
-                    <label>العمر (يجب أن يكون فوق 17+)</label>
-                    <input type="number" id="form-age">
+                <div class="form-group">
+                    <label>العمر الحقيقي</label>
+                    <input type="number" id="app-age" placeholder="يجب أن يكون 17+">
                 </div>
-                <div class="input-group">
-                    <label>لماذا اخترت مدينة NOVAX؟</label>
-                    <textarea id="form-reason" rows="4" placeholder="اكتب نبذة عنك وعن خبرتك..."></textarea>
+                <div class="form-group">
+                    <label>حدثنا عن خبرتك في الـ Roleplay</label>
+                    <textarea id="app-exp" rows="5" placeholder="اذكر السيرفرات السابقة..."></textarea>
                 </div>
-                <button class="btn-neon" onclick="sendApplication()">إرسال الملف للإدارة</button>
+                <button class="submit-btn" onclick="submitApplication()">إرسال الملف للإدارة</button>
             </div>
         </section>
 
-        <section id="tab-store" class="section">
-            <h2 style="text-align: center; font-family: var(--font-tech); margin-bottom: 60px; font-size: 3rem;">سوق NOVAX الرقمي</h2>
-            <div class="store-container" id="store-render">
-                <div class="item-card">
+        <section id="page-store" class="page">
+            <h2 style="text-align: center; font-family: 'Orbitron'; margin-bottom: 50px; font-size: 3rem;">متجر النخبة</h2>
+            <div class="store-grid" id="store-items">
+                <div class="product-card">
                     <img src="https://i.imgur.com/8P9vBfK.jpg" alt="VIP">
-                    <h3 style="color: var(--a-neon);">الباقة الماسية (Diamond)</h3>
-                    <div class="price-label">$49.99</div>
-                    <button class="btn-neon" onclick="processPurchase('Diamond VIP')">اطلب الآن</button>
+                    <h3>رتبة VIP الماسية</h3>
+                    <div class="price-tag">$30</div>
+                    <button class="submit-btn" onclick="buyItem('Diamond VIP')">شراء الآن</button>
                 </div>
-                <div class="item-card" style="border-color: var(--p-neon);">
-                    <img src="https://i.imgur.com/6X9mR6O.jpg" alt="Weapons">
-                    <h3 style="color: var(--p-neon);">حزمة الأسلحة الخاصة</h3>
-                    <div class="price-label">$24.50</div>
-                    <button class="btn-neon" onclick="processPurchase('Weapons Bundle')">اطلب الآن</button>
+                <div class="product-card">
+                    <img src="https://i.imgur.com/6X9mR6O.jpg" alt="Weapon">
+                    <h3>حزمة الأسلحة المتطورة</h3>
+                    <div class="price-tag">$20</div>
+                    <button class="submit-btn" onclick="buyItem('Weapon Bundle')">شراء الآن</button>
                 </div>
-                <div class="item-card">
-                    <img src="https://i.imgur.com/E8w9k9Q.jpg" alt="Money">
-                    <h3 style="color: var(--g-neon);">غسيل أموال سريع</h3>
-                    <div class="price-label">$15.00</div>
-                    <button class="btn-neon" onclick="processPurchase('Money Wash')">اطلب الآن</button>
+                <div class="product-card">
+                    <img src="https://i.imgur.com/E8w9k9Q.jpg" alt="Car">
+                    <h3>سيارة مخصصة (Custom Car)</h3>
+                    <div class="price-tag">$15</div>
+                    <button class="submit-btn" onclick="buyItem('Custom Car')">شراء الآن</button>
                 </div>
             </div>
         </section>
 
-        <section id="tab-rules" class="section">
+        <section id="page-rules" class="page">
             <div class="glass-card">
-                <h2 style="font-family: var(--font-tech); border-bottom: 2px solid var(--p-neon); padding-bottom: 15px; margin-bottom: 30px;">دستور وقوانين NOVAX</h2>
-                <div style="line-height: 2.5; font-size: 1.2rem;">
-                    <p><i class="fas fa-microchip" style="color: var(--a-neon);"></i> يمنع الخروج عن طور الشخصية (FailRP) بأي شكل.</p>
-                    <p><i class="fas fa-microchip" style="color: var(--a-neon);"></i> الاحترام المتبادل هو أساس مجتمعنا.</p>
-                    <p><i class="fas fa-microchip" style="color: var(--a-neon);"></i> استخدام البرامج المساعدة (Cheats) يعني النفي المؤبد.</p>
-                    <p><i class="fas fa-microchip" style="color: var(--a-neon);"></i> السرقة والسطو لها قوانين خاصة موجودة في الديسكورد.</p>
+                <h2 style="font-family: 'Orbitron'; border-bottom: 2px solid var(--p-neon); padding-bottom: 15px; margin-bottom: 30px;">دستور مدينة NOVAX</h2>
+                <div style="font-size: 1.2rem; line-height: 2.5;">
+                    <p><i class="fas fa-check-circle" style="color: var(--g-neon);"></i> يمنع منعاً باتاً استغلال الثغرات (Bugs) في السيرفر.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--g-neon);"></i> يجب احترام جميع اللاعبين والابتعاد عن الإهانة الشخصية.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--g-neon);"></i> الخروج عن طور الشخصية (FailRP) يعرضك للتبنيد الفوري.</p>
+                    <p><i class="fas fa-check-circle" style="color: var(--g-neon);"></i> القتل بدون سبب (VDM/RDM) غير مسموح به إطلاقاً.</p>
                 </div>
             </div>
         </section>
 
-        <section id="tab-admin" class="section">
-            <div class="admin-grid">
-                <div class="admin-nav">
-                    <h2 style="font-family: var(--font-tech); color: var(--r-neon); margin-bottom: 40px;">لوحة التحكم</h2>
-                    <a href="#" class="admin-link active"><i class="fas fa-users"></i> إدارة الطلبات</a>
-                    <a href="#" class="admin-link"><i class="fas fa-shopping-cart"></i> التحكم بالمتجر</a>
-                    <a href="#" class="admin-link"><i class="fas fa-broadcast-tower"></i> إرسال إعلان</a>
-                    <a href="#" class="admin-link" style="margin-top: 100px; color: #ff003c;" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</a>
+        <section id="page-admin" class="page">
+            <div class="admin-layout">
+                <div class="admin-sidebar">
+                    <h3 style="color: var(--r-neon); margin-bottom: 20px;">نظام التحكم</h3>
+                    <a href="#" class="admin-btn" onclick="alert('قريباً: إدارة اللاعبين')">إدارة اللاعبين</a>
+                    <a href="#" class="admin-btn" onclick="alert('قريباً: سجلات الشراء')">سجلات الشراء</a>
+                    <a href="#" class="admin-btn" style="color: var(--r-neon);" onclick="location.reload()">تسجيل خروج</a>
                 </div>
                 <div class="glass-card">
-                    <h3 style="color: var(--a-neon); margin-bottom: 25px;">إرسال إعلان Embed للسيرفر</h3>
-                    <div class="input-group">
+                    <h3>إرسال إعلان عام للديسكورد</h3>
+                    <div class="form-group" style="margin-top: 20px;">
                         <label>عنوان الإعلان</label>
-                        <input type="text" id="admin-emb-title" placeholder="مثال: تحديث جديد...">
+                        <input type="text" id="adm-title" placeholder="تنبيه هام...">
                     </div>
-                    <div class="input-group">
+                    <div class="form-group">
                         <label>نص الإعلان</label>
-                        <textarea id="admin-emb-body" rows="6"></textarea>
+                        <textarea id="adm-body" rows="5" placeholder="اكتب محتوى الإعلان هنا..."></textarea>
                     </div>
-                    <div class="input-group">
-                        <label>رابط صورة الإعلان (اختياري)</label>
-                        <input type="text" id="admin-emb-img">
-                    </div>
-                    <button class="btn-neon" style="border-color: var(--a-neon);" onclick="dispatchAdminEmbed()">نشر الإعلان فوراً</button>
-                    
-                    <hr style="margin: 40px 0; border: 0; border-top: 1px solid #222;">
-                    
-                    <h3 style="color: var(--g-neon); margin-bottom: 20px;">إضافة منتج للمتجر</h3>
-                    <input type="text" id="new-item-url" placeholder="رابط صورة المنتج الجديد..." style="margin-bottom: 15px;">
-                    <button class="btn-neon" style="border-color: var(--g-neon);" onclick="addNewStoreItem()">تحديث واجهة المتجر</button>
+                    <button class="submit-btn" style="background: var(--r-neon);" onclick="sendAdminWebhook()">نشر الإعلان فوراً</button>
                 </div>
             </div>
         </section>
@@ -311,218 +216,130 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURATION ---
-        const DISCORD_CLIENT_ID = 'YOUR_CLIENT_ID'; // ضع هنا ايدي بوتك
-        const WEBHOOK_URL = 'YOUR_WEBHOOK_URL'; // رابط ويب هوك التقديمات والإعلانات
+        // --- 1. الإعدادات ---
+        const DISCORD_WEBHOOK = "YOUR_WEBHOOK_URL"; // استبدل برابط الويب هوك الخاص بك
+        const ADMIN_PASS = "123"; // كلمة سر لوحة الإدارة
 
-        // --- 2. MOUSE & VISUAL ENGINE ---
-      // نظام تحريك الماوس المخصص
-const dot = document.getElementById('dot');
-const ring = document.getElementById('ring');
-
-window.addEventListener('mousemove', (e) => {
-    // تحديث مكان النقطة الصغيرة فوراً
-    dot.style.left = e.clientX + 'px';
-    dot.style.top = e.clientY + 'px';
-    
-    // تحديث مكان الحلقة الكبيرة (سيتم تحريكها بسلاسة عبر الأنميشن)
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-        function animateCursor() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
-            requestAnimationFrame(animateCursor);
+        // --- 2. نظام التنقل ---
+        function navigate(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if(element) element.classList.add('active');
+            
+            window.scrollTo(0, 0);
         }
-        animateCursor();
 
-        // --- 3. BACKGROUND PARTICLES ---
-        const canvas = document.getElementById('bg-canvas'), ctx = canvas.getContext('2d');
-        let points = [];
+        // --- 3. نظام التقديم (Webhook) ---
+        function submitApplication() {
+            const name = document.getElementById('app-name').value;
+            const age = document.getElementById('app-age').value;
+            const exp = document.getElementById('app-exp').value;
 
-        function initCanvas() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            points = [];
-            for(let i=0; i<80; i++) {
-                points.push({
-                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                    vx: (Math.random()-0.5)*0.6, vy: (Math.random()-0.5)*0.6
-                });
+            if(!name || !age || !exp) {
+                return Swal.fire('خطأ', 'يرجى تعبئة كافة الحقول!', 'error');
             }
-        }
 
-        function drawBackground() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#bc13fe";
-            points.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
-                
-                for(let j=i+1; j<points.length; j++) {
-                    let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d < 160) {
-                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - d/160})`;
-                        ctx.lineWidth = 0.4; ctx.beginPath();
-                        ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y);
-                        ctx.stroke();
-                    }
-                }
-            });
-            requestAnimationFrame(drawBackground);
-        }
-
-        // --- 4. NAVIGATION LOGIC ---
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.section').forEach(s => {
-                s.classList.remove('active'); s.style.display = 'none';
-            });
-            const target = document.getElementById('tab-' + tabId);
-            target.style.display = 'block';
-            setTimeout(() => target.classList.add('active'), 50);
-
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            document.querySelector('.viewport').scrollTop = 0;
-        }
-
-        // --- 5. DISCORD AUTHENTICATION ---
-        function handleDiscordLogin() {
-            const redirectUri = encodeURIComponent(window.location.href);
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
-            window.location.href = authUrl;
-        }
-
-        function checkDiscordCallback() {
-            const params = new URLSearchParams(window.location.hash.slice(1));
-            const token = params.get('access_token');
-            if(token) {
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    localStorage.setItem('novax_user', JSON.stringify(data));
-                    window.location.hash = "";
-                    applyUserData();
-                    Swal.fire({ icon: 'success', title: `أهلاً بك يا ${data.username}`, background: '#000', color: '#fff' });
-                });
-            } else if(localStorage.getItem('novax_user')) {
-                applyUserData();
-            }
-        }
-
-        function applyUserData() {
-            const user = JSON.parse(localStorage.getItem('novax_user'));
-            if(user) {
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('user-info').style.display = 'flex';
-                document.getElementById('display-name').innerText = user.username;
-                document.getElementById('display-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                
-                // تفعيل الإدارة لأسماء محددة (للتجربة)
-                if(user.username.toLowerCase().includes('admin') || user.username.toLowerCase().includes('operator')) {
-                    document.getElementById('admin-nav-btn').style.display = 'block';
-                }
-            }
-        }
-
-        // --- 6. FORM & WEBHOOK SYSTEM ---
-        function sendApplication() {
-            const name = document.getElementById('form-name').value;
-            const age = document.getElementById('form-age').value;
-            const msg = document.getElementById('form-reason').value;
-            const user = JSON.parse(localStorage.getItem('novax_user')) || { username: 'غير مسجل' };
-
-            if(!name || !age) return Swal.fire('تنبيه', 'يرجى إكمال الحقول الأساسية', 'warning');
-
-            const payload = {
+            const data = {
                 embeds: [{
-                    title: "🚀 طلب انضمام جديد للـ Whitelist",
+                    title: "🚀 طلب تقديم (Whitelist) جديد",
                     color: 12325374,
                     fields: [
-                        { name: "👤 اسم اللاعب", value: name, inline: true },
+                        { name: "👤 الاسم", value: name, inline: true },
                         { name: "📅 العمر", value: age, inline: true },
-                        { name: "🆔 ديسكورد", value: user.username, inline: true },
-                        { name: "📝 السبب والخبرة", value: msg }
+                        { name: "📝 الخبرة", value: exp }
                     ],
-                    thumbnail: { url: document.getElementById('display-avatar').src },
+                    footer: { text: "نظام NOVAX التلقائي" },
                     timestamp: new Date()
                 }]
             };
 
-            fetch(WEBHOOK_URL, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             }).then(() => {
-                Swal.fire('تم الإرسال', 'سيتم مراجعة طلبك والرد عليك في الديسكورد', 'success');
+                Swal.fire('تم الإرسال!', 'تم إرسال طلبك للإدارة، انتظر الرد في الديسكورد.', 'success');
+                document.querySelectorAll('input, textarea').forEach(i => i.value = "");
             });
         }
 
-        function dispatchAdminEmbed() {
-            const title = document.getElementById('admin-emb-title').value;
-            const body = document.getElementById('admin-emb-body').value;
-            const img = document.getElementById('admin-emb-img').value;
-
-            const payload = {
-                embeds: [{
-                    title: title,
-                    description: body,
-                    image: { url: img },
-                    color: 16711740,
-                    footer: { text: "إدارة NOVAX RP Official" }
-                }]
-            };
-
-            fetch(WEBHOOK_URL, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => Swal.fire('تم النشر', 'وصل الإعلان للسيرفر بنجاح', 'success'));
-        }
-
-        // --- 7. DYNAMIC STORE ---
-        function addNewStoreItem() {
-            const url = document.getElementById('new-item-url').value;
-            if(!url) return;
-            const container = document.getElementById('store-render');
-            const newHtml = `
-                <div class="item-card">
-                    <img src="${url}" alt="New Item">
-                    <h3 style="color: var(--a-neon);">منتج مخصص جديد</h3>
-                    <div class="price-label">$??.??</div>
-                    <button class="btn-neon">اطلب الآن</button>
-                </div>
-            `;
-            container.innerHTML += newHtml;
-            Swal.fire('تم التحديث', 'الصورة الجديدة تظهر الآن في المتجر', 'success');
-        }
-
-        // --- 8. SECURITY ---
-        function verifyAdmin() {
+        // --- 4. نظام المتجر ---
+        function buyItem(itemName) {
             Swal.fire({
-                title: 'نظام التحقق الأمني',
-                input: 'password',
-                inputPlaceholder: 'أدخل شفرة الإدارة',
-                background: '#050508', color: '#fff',
-                confirmButtonColor: '#bc13fe'
-            }).then(res => {
-                if(res.value === '123') { // باسورد افتراضي
-                    switchTab('admin', document.getElementById('admin-nav-btn'));
-                    document.getElementById('admin-nav-btn').style.display = 'block';
+                title: 'تأكيد الطلب',
+                text: `هل أنت متأكد من رغبتك في شراء: ${itemName}؟`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#bc13fe',
+                confirmButtonText: 'نعم، شراء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const data = { content: `📢 **طلب شراء جديد**\nالمنتج: ${itemName}\nيرجى التواصل مع المشتري.` };
+                    fetch(DISCORD_WEBHOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+                    Swal.fire('تم الطلب', 'تم إرسال طلبك للمسؤولين.', 'success');
                 }
             });
         }
 
-        // --- 9. BOOT ---
-        window.onresize = initCanvas;
-        function bootSystem() {
-            initCanvas();
-            drawBackground();
-            checkDiscordCallback();
-            console.log("NOVAX SYSTEM: ONLINE - ALL MODULES LOADED.");
+        // --- 5. نظام الإدارة ---
+        function openAdminPanel() {
+            Swal.fire({
+                title: 'دخول المسؤولين',
+                input: 'password',
+                inputPlaceholder: 'أدخل كلمة السر',
+                background: '#05050a',
+                color: '#fff',
+                confirmButtonColor: '#bc13fe'
+            }).then((res) => {
+                if(res.value === ADMIN_PASS) {
+                    document.getElementById('admin-nav').style.display = 'block';
+                    navigate('admin', document.getElementById('admin-nav'));
+                } else if(res.value) {
+                    Swal.fire('خطأ', 'كلمة السر غير صحيحة!', 'error');
+                }
+            });
+        }
+
+        function sendAdminWebhook() {
+            const title = document.getElementById('adm-title').value;
+            const body = document.getElementById('adm-body').value;
+
+            if(!title || !body) return Swal.fire('خطأ', 'أكمل بيانات الإعلان', 'error');
+
+            const data = {
+                embeds: [{
+                    title: "📢 إعلان رسمي من الإدارة",
+                    description: `**${title}**\n\n${body}`,
+                    color: 16711740,
+                    footer: { text: "إدارة NOVAX RP" }
+                }]
+            };
+
+            fetch(DISCORD_WEBHOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+            .then(() => Swal.fire('تم النشر', 'تم إرسال الإعلان لسيرفر الديسكورد.', 'success'));
+        }
+
+        // --- 6. محاكاة الدخول ---
+        function discordLogin() {
+            Swal.fire({
+                title: 'جاري الاتصال بـ Discord',
+                text: 'هذه الميزة تتطلب Client ID فعال، تم تفعيل وضع المحاكاة لجهازك.',
+                timer: 2000,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            }).then(() => {
+                localStorage.setItem('isLogged', 'true');
+                document.getElementById('auth-section').innerHTML = '<span style="color:var(--g-neon)">متصل <i class="fas fa-circle"></i></span>';
+            });
+        }
+
+        function initSystem() {
+            console.log("NOVAX System v3.0 Online.");
+            if(localStorage.getItem('isLogged')) {
+                document.getElementById('auth-section').innerHTML = '<span style="color:var(--g-neon)">متصل <i class="fas fa-circle"></i></span>';
+            }
         }
     </script>
 </body>
