@@ -316,13 +316,19 @@
         const WEBHOOK_URL = 'YOUR_WEBHOOK_URL'; // رابط ويب هوك التقديمات والإعلانات
 
         // --- 2. MOUSE & VISUAL ENGINE ---
-        const dot = document.getElementById('dot'), ring = document.getElementById('ring');
-        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+      // نظام تحريك الماوس المخصص
+const dot = document.getElementById('dot');
+const ring = document.getElementById('ring');
 
-        window.onmousemove = (e) => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-        };
+window.addEventListener('mousemove', (e) => {
+    // تحديث مكان النقطة الصغيرة فوراً
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+    
+    // تحديث مكان الحلقة الكبيرة (سيتم تحريكها بسلاسة عبر الأنميشن)
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
 
         function animateCursor() {
             ringX += (mouseX - ringX) * 0.15;
