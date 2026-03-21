@@ -3,193 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT RP | المركز الرئيسي</title>
+    <title>RESPECT RP | THE ULTIMATE HUB</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Changa:wght@400;800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
             --p-purple: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
-            --bg: #050505; --card: #0d0d10; --white: #ffffff;
+            --bg: #030305; --card: #0d0d10; --accent: #15151a;
         }
 
+        /* [1] الأساسيات */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
-        body { background: var(--bg); color: var(--white); overflow-x: hidden; }
+        body { background: var(--bg); color: #fff; overflow-x: hidden; cursor: crosshair; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: var(--p-purple); border-radius: 10px; }
 
-        /* [1] الهيدر */
-        nav { position: fixed; top: 0; width: 100%; height: 80px; display: flex; justify-content: space-between; align-items: center; padding: 0 8%; z-index: 1000; backdrop-filter: blur(15px); border-bottom: 2px solid var(--p-purple); }
-        .logo { font-family: 'Orbitron'; font-size: 28px; font-weight: 900; }
+        /* [2] الهيدر الإمبراطوري */
+        nav { position: fixed; top: 0; width: 100%; height: 90px; display: flex; justify-content: space-between; align-items: center; padding: 0 8%; z-index: 1000; background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--p-purple); box-shadow: 0 0 30px var(--p-glow); }
+        .logo { font-family: 'Orbitron'; font-size: 32px; font-weight: 900; letter-spacing: 2px; }
         .logo span { color: var(--p-purple); text-shadow: 0 0 15px var(--p-purple); }
-        .nav-links { display: flex; gap: 30px; list-style: none; }
-        .nav-links a { text-decoration: none; color: #fff; font-weight: 700; transition: 0.3s; }
-        .nav-links a:hover { color: var(--p-purple); }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #fff; font-weight: 900; font-size: 18px; transition: 0.3s; position: relative; }
+        .nav-links a:hover { color: var(--p-purple); text-shadow: 0 0 10px var(--p-purple); }
 
-        /* [2] الواجهة الرئيسية (Hero) */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, rgba(188, 19, 254, 0.1) 0%, transparent 70%); }
-        .hero h1 { font-family: 'Changa'; font-size: 80px; line-height: 1; margin-bottom: 20px; }
-        .hero h1 span { color: var(--p-purple); filter: drop-shadow(0 0 20px var(--p-purple)); }
-        .btn-main { background: var(--p-purple); color: #000; padding: 15px 50px; border-radius: 8px; font-weight: 900; text-decoration: none; font-size: 20px; box-shadow: 0 0 30px var(--p-glow); transition: 0.4s; }
-        .btn-main:hover { transform: scale(1.1); background: #fff; }
+        /* [3] واجهة البطل (Hero Section) */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; background: radial-gradient(circle, rgba(188, 19, 254, 0.15) 0%, transparent 70%); z-index: -1; }
+        .hero h1 { font-family: 'Changa'; font-size: 110px; line-height: 1; margin-bottom: 20px; text-transform: uppercase; }
+        .hero h1 span { color: var(--p-purple); filter: drop-shadow(0 0 30px var(--p-purple)); }
+        .hero p { font-size: 24px; color: #888; max-width: 900px; margin-bottom: 50px; font-weight: 700; }
+        
+        .btn-supreme { 
+            background: var(--p-purple); color: #000; padding: 22px 70px; border-radius: 12px; font-weight: 900; 
+            text-decoration: none; font-size: 24px; box-shadow: 0 0 50px var(--p-glow); transition: 0.5s; 
+            border: 2px solid transparent; 
+        }
+        .btn-supreme:hover { background: #fff; box-shadow: 0 0 70px #fff; transform: scale(1.1) rotate(-1deg); }
 
-        /* [3] قسم القوانين (Detailed Rules) */
-        .section { padding: 100px 10%; }
-        .section-title { font-family: 'Changa'; font-size: 45px; text-align: center; margin-bottom: 60px; }
-        .section-title span { color: var(--p-purple); }
+        /* [4] أقسام المحتوى (Sections) */
+        .content-section { padding: 120px 10%; border-bottom: 1px solid #111; }
+        .title-box { text-align: center; margin-bottom: 100px; }
+        .title-box h2 { font-family: 'Changa'; font-size: 60px; color: #fff; }
+        .title-box span { color: var(--p-purple); }
 
-        .rules-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .rule-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #1a1a1a; transition: 0.4s; }
-        .rule-card:hover { border-color: var(--p-purple); transform: translateY(-10px); }
-        .rule-card h3 { color: var(--p-purple); margin-bottom: 20px; font-size: 24px; }
-        .rule-card ul { list-style: none; color: #aaa; line-height: 1.8; }
-        .rule-card li::before { content: "• "; color: var(--p-purple); }
+        /* [5] نظام القوانين (The Law System) */
+        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 40px; }
+        .rule-card { background: var(--card); padding: 50px; border-radius: 30px; border: 1px solid #1a1a1a; transition: 0.5s; position: relative; overflow: hidden; }
+        .rule-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--p-purple); }
+        .rule-card:hover { border-color: var(--p-purple); transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        .rule-card i { font-size: 50px; color: var(--p-purple); margin-bottom: 30px; display: block; }
+        .rule-card h3 { font-size: 30px; margin-bottom: 20px; font-family: 'Changa'; }
+        .rule-card ul { list-style: none; color: #aaa; font-size: 18px; line-height: 2; }
+        .rule-card li::before { content: '◈'; color: var(--p-purple); margin-left: 10px; font-weight: 900; }
 
-        /* [4] نظام التفعيل (Application) */
-        .apply-form { max-width: 800px; margin: 0 auto; background: #0a0a0c; padding: 60px; border-radius: 30px; border: 2px solid var(--p-purple); }
-        .input-group { margin-bottom: 25px; text-align: right; }
-        .input-group label { display: block; margin-bottom: 10px; font-weight: 700; color: var(--p-purple); }
-        .input-group input, .input-group textarea { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; font-size: 16px; }
-        .input-group input:focus { border-color: var(--p-purple); outline: none; }
+        /* [6] التحديثات (Server Updates) */
+        .update-item { background: var(--accent); padding: 30px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 30px; border: 1px solid #222; }
+        .update-date { font-family: 'Orbitron'; color: var(--p-purple); font-weight: 900; font-size: 20px; min-width: 150px; }
+        .update-text { font-size: 18px; font-weight: 700; color: #ddd; }
+        .update-tag { background: var(--p-purple); color: #000; padding: 5px 15px; border-radius: 5px; font-weight: 900; font-size: 12px; }
 
-        /* [5] لوحة التحكم (Admin Preview) */
-        .admin-box { background: #111; padding: 30px; border-radius: 15px; margin-top: 50px; border: 1px dashed var(--p-purple); }
-        .status-dot { height: 12px; width: 12px; background: #00ff88; border-radius: 50%; display: inline-block; margin-left: 10px; box-shadow: 0 0 10px #00ff88; }
+        /* [7] نظام التفعيل (Application) */
+        .apply-container { max-width: 1000px; margin: 0 auto; background: linear-gradient(145deg, #0d0d10, #150a1d); padding: 80px; border-radius: 40px; border: 3px solid var(--p-purple); }
+        .form-input { width: 100%; background: #000; border: 1px solid #333; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 30px; font-size: 18px; transition: 0.4s; }
+        .form-input:focus { border-color: var(--p-purple); box-shadow: 0 0 30px var(--p-glow); outline: none; }
+
+        /* [8] لوحة التحكم (Admin Dashboard UI) */
+        .admin-panel { background: #000; border: 2px solid var(--p-purple); border-radius: 20px; padding: 40px; margin-top: 50px; }
+        .status-grid { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+        .status-box { text-align: center; padding: 30px; background: var(--card); border-radius: 15px; min-width: 200px; }
+        .status-box h4 { font-family: 'Orbitron'; font-size: 40px; color: var(--p-purple); }
 
     </style>
 </head>
-<body>
+<body onload="initNovax()">
 
     <nav>
         <div class="logo">RESPECT<span>.</span>SA</div>
         <ul class="nav-links">
             <li><a href="#home">الرئيسية</a></li>
             <li><a href="#rules">القوانين</a></li>
+            <li><a href="#updates">التحديثات</a></li>
             <li><a href="#apply">التفعيل</a></li>
-            <li><a href="#status">حالة السيرفر</a></li>
+            <li><a href="#store">المتجر</a></li>
         </ul>
-        <a href="#" class="btn-main" style="padding: 10px 25px; font-size: 16px;">دخول السيرفر</a>
+        <a href="#" class="btn-supreme" style="padding: 12px 30px; font-size: 18px;">الديسكورد</a>
     </nav>
 
     <section class="hero" id="home">
-        <h1 class="reveal">عالم <span>الواقعية</span> بين يديك</h1>
-        <p class="reveal" style="color: #888; margin-bottom: 40px; font-size: 20px;">سيرفر ريسبكت: المكان الذي تبدأ فيه قصتك الأسطورية.</p>
-        <a href="#apply" class="btn-main reveal">سجل هويتك الآن</a>
+        <div class="hero-bg"></div>
+        <h1 class="reveal">سيادة <span>ريسبكت</span></h1>
+        <p class="reveal">نحن لا نقدم سيرفر لعب فحسب، نحن نبني واقعاً بديلاً. انضم لأقوى مجتمع رول بلاي عربي بمميزات حصرية وتحديثات لا تتوقف.</p>
+        <div style="display: flex; gap: 30px;" class="reveal">
+            <a href="#apply" class="btn-supreme">سجل مواطنتك</a>
+            <a href="#rules" class="btn-supreme" style="background: transparent; border: 2px solid var(--p-purple); color: #fff;">القوانين</a>
+        </div>
     </section>
 
-    <section class="section" id="rules">
-        <h2 class="section-title">قوانين <span>المملكة</span></h2>
-        <div class="rules-container">
+    <section class="content-section" id="rules">
+        <div class="title-box">
+            <h2>دليل <span>المواطن</span></h2>
+            <p style="color: #666; margin-top: 15px;">يجب قراءة القوانين بعناية لتجنب النفي المؤبد من المدينة.</p>
+        </div>
+        <div class="rules-grid">
             <div class="rule-card reveal">
-                <h3>📜 القوانين العامة</h3>
+                <i class="fas fa-gavel"></i>
+                <h3>⚖️ قوانين الرول بلاي</h3>
                 <ul>
-                    <li>يمنع منعا باتا الخروج عن التقمص (OOC).</li>
-                    <li>احترام جميع اللاعبين والإدارة واجب.</li>
-                    <li>يمنع استخدام أي ثغرات برمجية (Glitch).</li>
+                    <li>الالتزام بالتقمص التام في جميع الأوقات (IC).</li>
+                    <li>يمنع استخدام أي معلومات خارج اللعبة (Meta Gaming).</li>
+                    <li>يجب إعطاء قيمة لحياتك في مواقف التهديد (Value Life).</li>
                 </ul>
             </div>
             <div class="rule-card reveal">
-                <h3>⚔️ قوانين القتال</h3>
+                <i class="fas fa-skull"></i>
+                <h3>💀 الجرائم والقتال</h3>
                 <ul>
-                    <li>يمنع القتل العشوائي (RDM) نهائياً.</li>
-                    <li>يمنع صدم السيارات بشكل عشوائي (VDM).</li>
-                    <li>يجب وجود سبب درامي قوي لأي اشتباك.</li>
+                    <li>يمنع القتل العشوائي (RDM) وصدم الناس (VDM).</li>
+                    <li>يجب وجود قصة درامية موثقة لأي عملية خطف أو قتل.</li>
+                    <li>يمنع السرقة أو القتل في المناطق الخضراء (Safe Zones).</li>
                 </ul>
             </div>
             <div class="rule-card reveal">
-                <h3>🚑 قوانين الحياة</h3>
+                <i class="fas fa-user-shield"></i>
+                <h3>🛡️ التعامل مع الإدارة</h3>
                 <ul>
-                    <li>يجب إعطاء قيمة لحياتك (Value Life).</li>
-                    <li>يمنع العودة لمكان الموت قبل 15 دقيقة.</li>
-                    <li>الالتزام بتعليمات المسعفين والشرطة.</li>
+                    <li>احترام الطاقم الإداري وعدم مقاطعة "السين".</li>
+                    <li>عند وجود مشكلة، يتم فتح تذكرة (Ticket) حصراً.</li>
+                    <li>الكذب على الإدارة يؤدي لحظر نهائي فوري.</li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <section class="section" id="apply">
-        <h2 class="section-title">طلب <span>المواطنة</span></h2>
-        <div class="apply-form reveal">
-            <div class="input-group">
-                <label>الاسم الحقيقي</label>
-                <input type="text" id="name" placeholder="ادخل اسمك الكامل">
-            </div>
-            <div class="input-group">
-                <label>العمر</label>
-                <input type="number" id="age" placeholder="عمرك">
-            </div>
-            <div class="input-group">
-                <label>اسم الشخصية (RP)</label>
-                <input type="text" id="rpname" placeholder="Name_Surname">
-            </div>
-            <div class="input-group">
-                <label>قصة الشخصية</label>
-                <textarea id="story" rows="4" placeholder="اكتب نبذة عن ماضيك وأهدافك..."></textarea>
-            </div>
-            <button class="btn-main" style="width: 100%; border: none; cursor: pointer;" onclick="sendApply()">إرسال الطلب لـ Discord</button>
+    <section class="content-section" id="updates" style="background: #050508;">
+        <div class="title-box">
+            <h2>سجل <span>التطوير</span></h2>
         </div>
-    </section>
-
-    <section class="section" id="status" style="background: #08080a;">
-        <h2 class="section-title">إحصائيات <span>مباشرة</span></h2>
-        <div style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;">
-            <div class="admin-box reveal">
-                <span class="status-dot"></span>
-                <strong>حالة السيرفر:</strong> يعمل بنجاح (128/256)
+        <div class="reveal" style="max-width: 900px; margin: 0 auto;">
+            <div class="update-item">
+                <div class="update-date">21/03/2026</div>
+                <div class="update-tag">NEW SCRIPT</div>
+                <div class="update-text">إضافة نظام "متجر الملابس المتطور" مع دعم البراندات العالمية.</div>
             </div>
-            <div class="admin-box reveal" style="border-color: #5865F2;">
-                <i class="fab fa-discord" style="color: #5865F2;"></i>
-                <strong>ديسكورد:</strong> 15,420 عضو
+            <div class="update-item">
+                <div class="update-date">15/03/2026</div>
+                <div class="update-tag">OPTIMIZATION</div>
+                <div class="update-text">تحسين أداء السيرفر وتقليل استهلاك الرام بنسبة 40%.</div>
+            </div>
+            <div class="update-item">
+                <div class="update-date">10/03/2026</div>
+                <div class="update-tag">MAP UPDATE</div>
+                <div class="update-text">افتتاح مركز الشرطة الجديد (LSPD) بتصميم حصري.</div>
             </div>
         </div>
     </section>
 
-    <footer style="text-align: center; padding: 40px; border-top: 1px solid #111;">
-        <p style="color: #444;">&copy; 2026 RESPECT RP. DESIGNED BY NOVAX KERNEL.</p>
+    <section class="content-section" id="apply">
+        <div class="title-box">
+            <h2>طلب <span>التفعيل</span></h2>
+        </div>
+        <div class="apply-container reveal">
+            <div id="form-body">
+                <input type="text" id="user_name" class="form-input" placeholder="اسمك الحقيقي">
+                <input type="number" id="user_age" class="form-input" placeholder="عمرك الحقيقي">
+                <input type="text" id="rp_name" class="form-input" placeholder="اسم الشخصية (الاسم_اللقب)">
+                <textarea id="rp_bio" class="form-input" rows="5" placeholder="قصة شخصيتك وأهدافك في المدينة..."></textarea>
+                <button class="btn-supreme" style="width: 100%; border: none; cursor: pointer;" onclick="executeApply()">إرسال الطلب والموافقة على القوانين 🚀</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="status">
+        <div class="status-grid reveal">
+            <div class="status-box">
+                <h4 id="player_count">0</h4>
+                <p>اللاعبين الآن</p>
+            </div>
+            <div class="status-box">
+                <h4>+500</h4>
+                <p>عضو ديسكورد</p>
+            </div>
+            <div class="status-box">
+                <h4>99.9%</h4>
+                <p>وقت التشغيل</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 60px; border-top: 2px solid #111;">
+        <p style="color: #444; font-weight: 700;">&copy; 2026 RESPECT ROLEPLAY. THE MOST POWERFUL SERVER IN THE REGION.</p>
+        <p style="color: var(--p-purple); font-size: 14px; margin-top: 10px;">DESIGNED & DEVELOPED BY NOVAX KERNEL</p>
     </footer>
 
     <script>
-        // أنيميشن الظهور عند السكرول
-        gsap.registerPlugin(ScrollTrigger);
-        gsap.utils.toArray('.reveal').forEach(elem => {
-            gsap.from(elem, {
-                scrollTrigger: elem,
-                y: 50, opacity: 0, duration: 1, ease: "power3.out"
+        // [1] نظام الإقلاع والتحميل
+        function initNovax() {
+            console.log("NOVAX ENGINE STARTING...");
+            gsap.from(".reveal", {
+                y: 60, opacity: 0, duration: 1, stagger: 0.25, ease: "power4.out"
             });
-        });
+            animateCounter();
+        }
 
-        // نظام إرسال الويب هوك
-        function sendApply() {
-            const webhook = "ضع_رابط_الويب_هوك_هنا";
-            const fields = {
-                name: document.getElementById('name').value,
-                age: document.getElementById('age').value,
-                rp: document.getElementById('rpname').value,
-                story: document.getElementById('story').value
+        // [2] عداد اللاعبين التفاعلي
+        function animateCounter() {
+            let count = { val: 0 };
+            gsap.to(count, {
+                val: 142, duration: 3, onUpdate: () => {
+                    document.getElementById('player_count').innerText = Math.floor(count.val);
+                }
+            });
+        }
+
+        // [3] إرسال التكت لديسكورد (Webhook)
+        function executeApply() {
+            const hook = "رابط_الويب_هوك_هنا";
+            const data = {
+                n: document.getElementById('user_name').value,
+                a: document.getElementById('user_age').value,
+                rp: document.getElementById('rp_name').value,
+                b: document.getElementById('rp_bio').value
             };
 
-            if(!fields.name || !fields.rp) return Swal.fire('خطأ','كمل بياناتك يا وحش','error');
+            if(!data.n || !data.rp) return Swal.fire('خطأ','كمل بياناتك يا وحش','error');
 
-            fetch(webhook, {
+            Swal.fire({
+                title: 'جاري الإرسال...',
+                text: 'يتم تشفير بياناتك وإرسالها للإدارة.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            fetch(hook, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     embeds: [{
-                        title: "📝 طلب تفعيل جديد",
+                        title: "👑 طلب تفعيل ريسبكت جديد",
                         color: 12325374,
                         fields: [
-                            { name: "الاسم", value: fields.name, inline: true },
-                            { name: "العمر", value: fields.age, inline: true },
-                            { name: "اسم الشخصية", value: fields.rp },
-                            { name: "القصة", value: fields.story }
+                            { name: "👤 الاسم الحقيقي", value: data.n, inline: true },
+                            { name: "🎂 العمر", value: data.a, inline: true },
+                            { name: "🎭 الشخصية", value: data.rp },
+                            { name: "📖 القصة", value: data.b }
                         ],
+                        footer: { text: "RESPECT RP AUTO-SYSTEM" },
                         timestamp: new Date()
                     }]
                 })
             }).then(() => {
-                Swal.fire('تم الإرسال!','تذكرتك فتحت في الديسكورد بنجاح.','success');
+                Swal.fire('نجاح!','تم إرسال طلبك. توجه للديسكورد لفتح تذكرة.','success');
             });
         }
     </script>
