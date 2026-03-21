@@ -3,193 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVAX INFINITY | THE SUPREME OS</title>
+    <title>RESPECT OS | THE NEURAL NETWORK 2059</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* [SYSTEM CORE CSS] */
+        /* [CORE SYSTEMS] */
         :root {
-            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
-            --s-neon: #00f2ff; --s-glow: rgba(0, 242, 255, 0.4);
-            --bg-deep: #010103; --glass: rgba(5, 5, 10, 0.96);
-            --error: #ff003c; --success: #00ff88;
+            --neon-p: #bc13fe; --neon-g: #00ff88; --neon-b: #00f2ff;
+            --bg: #000000; --glass: rgba(10, 10, 15, 0.95);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; cursor: crosshair; }
-        body, html { width: 100%; height: 100%; background: var(--bg-deep); overflow: hidden; color: #fff; }
+        body, html { width: 100%; height: 100%; background: var(--bg); overflow: hidden; color: #fff; }
 
-        /* محرك الجرافيك 3D */
-        #os-canvas { position: fixed; inset: 0; z-index: -2; }
-        .crt-overlay { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 9999; pointer-events: none; background-size: 100% 3px, 3px 100%; }
+        /* محرك الخلفية 3D (Grid & Particles) */
+        #render-canvas { position: fixed; inset: 0; z-index: -2; }
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, #000 100%); pointer-events: none; z-index: -1; }
 
-        /* سطح المكتب والأيقونات */
-        .desktop { 
-            height: calc(100vh - 60px); padding: 50px; 
-            display: grid; grid-template-columns: repeat(auto-fill, 120px);
-            grid-template-rows: repeat(auto-fill, 130px); grid-auto-flow: column; gap: 30px;
+        /* الهيكل الخارجي (Main UI) */
+        .desktop { height: 100vh; width: 100vw; position: relative; padding: 40px; }
+
+        /* الأيقونات الذكية */
+        .icon-grid { display: grid; grid-template-rows: repeat(auto-fill, 120px); grid-auto-flow: column; gap: 30px; }
+        .app-icon {
+            width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(188, 19, 254, 0.05); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 15px;
+            transition: 0.3s; backdrop-filter: blur(5px);
         }
-        .icon { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100px; height: 110px; border-radius: 15px; transition: 0.3s; cursor: pointer;
-            border: 1px solid transparent; position: relative;
-        }
-        .icon:hover { background: rgba(188, 19, 254, 0.1); border-color: var(--p-neon); box-shadow: 0 0 30px var(--p-glow); transform: scale(1.05); }
-        .icon i { font-size: 50px; color: var(--p-neon); filter: drop-shadow(0 0 15px var(--p-neon)); margin-bottom: 10px; }
-        .icon span { font-size: 11px; font-weight: 900; font-family: 'Orbitron'; text-align: center; color: #fff; }
+        .app-icon:hover { background: var(--neon-p); border-color: #fff; transform: scale(1.1); box-shadow: 0 0 40px var(--neon-p); }
+        .app-icon i { font-size: 40px; color: var(--neon-p); margin-bottom: 10px; }
+        .app-icon:hover i { color: #000; }
+        .app-icon span { font-family: 'Orbitron'; font-size: 10px; font-weight: 900; }
 
-        /* نظام النوافذ الملحمي */
+        /* نظام النوافذ (Advanced Windows System) */
         .window {
-            position: absolute; width: 950px; height: 650px; background: var(--glass);
-            border: 2px solid var(--p-neon); border-radius: 20px; display: none; flex-direction: column;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 40px var(--p-glow); z-index: 100;
-            backdrop-filter: blur(30px); overflow: hidden;
+            position: absolute; width: 1000px; height: 700px; background: var(--glass);
+            border: 2px solid var(--neon-p); border-radius: 20px; display: none; flex-direction: column;
+            box-shadow: 0 0 100px rgba(188, 19, 254, 0.2); z-index: 100;
         }
-        .win-header { 
-            background: linear-gradient(90deg, var(--p-neon), #4b0082); height: 55px; 
-            display: flex; justify-content: space-between; align-items: center; padding: 0 25px; 
-            cursor: grab; font-family: 'Orbitron'; font-weight: 900; color: #fff;
+        .win-header {
+            height: 50px; background: linear-gradient(90deg, var(--neon-p), #4b0082);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            cursor: grab; font-family: 'Orbitron'; font-weight: 900;
         }
-        .win-body { flex: 1; padding: 45px; overflow-y: auto; scrollbar-width: none; }
-        .win-controls { display: flex; gap: 12px; }
-        .control { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+        .win-body { flex: 1; padding: 40px; overflow-y: auto; scrollbar-width: none; }
+        .win-btn { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
 
-        /* نظام القوانين (الكروت العملاقة) */
-        .huge-rule-card { 
-            background: rgba(255,255,255,0.01); border-right: 12px solid var(--s-neon); 
-            padding: 40px; border-radius: 15px; margin-bottom: 40px; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* [قوانين الرول بلاي - النسخة الضخمة] */
+        .law-card { 
+            background: #08080a; border-right: 10px solid var(--neon-p); padding: 35px;
+            border-radius: 15px; margin-bottom: 30px; border-top: 1px solid #222;
         }
-        .huge-rule-card h2 { font-size: 2.8rem; color: var(--s-neon); font-family: 'Orbitron'; margin-bottom: 25px; text-transform: uppercase; }
-        .huge-rule-card ul { font-size: 1.4rem; line-height: 2.2; color: #ddd; list-style: none; }
-        .huge-rule-card li::before { content: '⚡'; color: var(--p-neon); margin-left: 15px; }
+        .law-card h2 { color: var(--neon-p); font-family: 'Orbitron'; font-size: 2.5rem; margin-bottom: 20px; }
+        .law-card li { font-size: 1.3rem; margin-bottom: 15px; color: #ccc; }
+        .law-card li::before { content: "» "; color: var(--neon-p); font-weight: 900; }
 
-        /* نظام التقديم بالخطوات */
-        .step-panel { display: none; }
-        .step-panel.active { display: block; animation: slideIn 0.5s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        /* [لوحة تحكم FiveM & Discord] */
+        .control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .panel-box { background: #000; border: 1px solid #222; padding: 30px; border-radius: 20px; }
+        .btn-action {
+            width: 100%; padding: 20px; border: none; border-radius: 12px; margin-bottom: 15px;
+            font-weight: 900; cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between;
+        }
+        .btn-p { background: var(--neon-p); color: #000; box-shadow: 0 0 20px var(--neon-p); }
+        .btn-b { background: var(--neon-b); color: #000; }
+        .btn-danger { background: #ff003c; color: #fff; }
 
-        input, textarea { width: 100%; background: #000; border: 1px solid #333; padding: 22px; color: #fff; border-radius: 12px; margin-bottom: 30px; font-size: 1.2rem; transition: 0.3s; }
-        input:focus { border-color: var(--p-neon); box-shadow: 0 0 20px var(--p-glow); outline: none; }
+        /* [نظام التحديثات] */
+        .update-list { border-right: 2px solid #333; padding-right: 20px; }
+        .update-entry { margin-bottom: 30px; position: relative; }
+        .update-entry::after { content: ''; position: absolute; right: -26px; top: 10px; width: 10px; height: 10px; background: var(--neon-p); border-radius: 50%; }
+        .update-entry h4 { color: var(--neon-p); font-family: 'Orbitron'; font-size: 1.5rem; }
 
-        .btn-exec { background: var(--p-neon); color: #000; padding: 20px 50px; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; transition: 0.4s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
-        .btn-exec:hover { box-shadow: 0 0 40px var(--p-neon); transform: scale(1.05); letter-spacing: 2px; }
+        /* [نظام التفعيل - المتقدم] */
+        .input-mega { width: 100%; background: #050505; border: 1px solid #333; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 20px; font-size: 1.2rem; }
+        .input-mega:focus { border-color: var(--neon-p); box-shadow: 0 0 30px var(--neon-p); outline: none; }
 
-        /* شريط المهام السفلي */
-        .taskbar { position: fixed; bottom: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.9); border-top: 2px solid var(--p-neon); display: flex; align-items: center; padding: 0 40px; justify-content: space-between; z-index: 1000; }
-        .start-menu { background: var(--p-neon); color: #000; padding: 10px 35px; border-radius: 5px; font-family: 'Orbitron'; font-weight: 900; font-size: 20px; cursor: pointer; box-shadow: 0 0 25px var(--p-neon); }
-        .clock-os { font-family: 'Share Tech Mono'; color: var(--s-neon); font-size: 26px; text-shadow: 0 0 15px var(--s-neon); }
-
-        /* شاشة التحميل العملاقة */
-        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .terminal-text { font-family: 'Share Tech Mono'; color: var(--p-neon); font-size: 1.5rem; text-align: center; margin-top: 20px; }
+        /* [TASKBAR] */
+        .taskbar { position: fixed; bottom: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.95); border-top: 1px solid var(--neon-p); z-index: 1000; display: flex; align-items: center; padding: 0 30px; gap: 20px; }
+        .start-btn { background: var(--neon-p); color: #000; padding: 8px 30px; border-radius: 5px; font-family: 'Orbitron'; font-weight: 900; }
 
     </style>
 </head>
-<body onload="initNovaxKernel()">
+<body onload="initSystem()">
 
-    <canvas id="os-canvas"></canvas>
-    <div class="crt-overlay"></div>
-
-    <div id="loading-screen">
-        <div style="width: 400px; height: 4px; background: #111; border-radius: 10px; overflow: hidden; position: relative;">
-            <div id="bar" style="position: absolute; width: 0%; height: 100%; background: var(--p-neon); box-shadow: 0 0 30px var(--p-neon);"></div>
-        </div>
-        <div class="terminal-text" id="term-log">BOOTING NOVAX INFINITY KERNEL...</div>
-    </div>
+    <canvas id="render-canvas"></canvas>
+    <div class="vignette"></div>
 
     <div class="desktop">
-        <div class="icon" onclick="openWindow('rules')">
-            <i class="fas fa-scroll"></i>
-            <span>CONSTITUTION</span>
+        <div class="icon-grid">
+            <div class="app-icon" onclick="openApp('laws')"><i class="fas fa-gavel"></i><span>LAWS_2059</span></div>
+            <div class="app-icon" onclick="openApp('control')"><i class="fas fa-terminal"></i><span>REMOTE_CTRL</span></div>
+            <div class="app-icon" onclick="openApp('apply')"><i class="fas fa-id-card"></i><span>WHITELIST</span></div>
+            <div class="app-icon" onclick="openApp('updates')"><i class="fas fa-history"></i><span>CHANGELOG</span></div>
+            <div class="app-icon" onclick="openApp('store')"><i class="fas fa-shopping-cart"></i><span>ASSETS</span></div>
         </div>
-        <div class="icon" onclick="openWindow('apply')">
-            <i class="fas fa-user-plus"></i>
-            <span>WHITELIST</span>
-        </div>
-        <div class="icon" onclick="openWindow('market')">
-            <i class="fas fa-shopping-bag"></i>
-            <span>BLACK MARKET</span>
-        </div>
-        <div class="icon" onclick="openWindow('map')">
-            <i class="fas fa-globe-americas"></i>
-            <span>SATELLITE MAP</span>
-        </div>
-        <div class="icon" onclick="window.open('YOUR_DISCORD')">
-            <i class="fab fa-discord"></i>
-            <span>COMMUNITY</span>
-        </div>
-    </div>
 
-    <div id="win-rules" class="window">
-        <div class="win-header">
-            <span>DATABASE: SERVER_LAWS_V800.DB</span>
-            <div class="win-controls">
-                <div class="control" style="background: #ff4b4b;" onclick="closeWindow('rules')"></div>
-            </div>
-        </div>
-        <div class="win-body">
-            <div class="huge-rule-card">
-                <h2>قوانين الرول بلاي العامة</h2>
-                <ul>
-                    <li>يمنع منعاً باتاً استغلال الثغرات البرمجية؛ العقوبة: باند نهائي.</li>
-                    <li>احترام الكادر الإداري وجميع اللاعبين؛ العقوبة: نفي مؤقت.</li>
-                    <li>يجب الحفاظ على واقعية الشخصية (FailRP ممنوع).</li>
-                </ul>
-            </div>
-            <div class="huge-rule-card" style="border-color: var(--p-neon);">
-                <h2>قوانين الجرائم والاشتباك</h2>
-                <ul>
-                    <li>القتل العشوائي (RDM) يؤدي للسجن الفوري 1000 دقيقة.</li>
-                    <li>يمنع استخدام الأسلحة الثقيلة في المناطق الآمنة.</li>
-                    <li>يجب التفاعل صوتياً قبل البدء بأي عملية سرقة أو خطف.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div id="win-apply" class="window">
-        <div class="win-header">
-            <span>APPLICATION WIZARD [TICKET SYSTEM]</span>
-            <div class="win-controls">
-                <div class="control" style="background: #ff4b4b;" onclick="closeWindow('apply')"></div>
-            </div>
-        </div>
-        <div class="win-body">
-            <div id="step-1" class="step-panel active">
-                <h1 style="color: var(--p-neon); font-family: 'Orbitron'; margin-bottom: 30px;">[01] المعلومات الشخصية</h1>
-                <label>الاسم الحقيقي</label>
-                <input type="text" id="a-name" placeholder="أدخل اسمك الحقيقي...">
-                <label>العمر</label>
-                <input type="number" id="a-age" placeholder="18+">
-                <button class="btn-exec" onclick="nextStep(2)">التالي >></button>
-            </div>
-
-            <div id="step-2" class="step-panel">
-                <h1 style="color: var(--s-neon); font-family: 'Orbitron'; margin-bottom: 30px;">[02] هوية الشخصية</h1>
-                <label>اسم الشخصية داخل اللعبة</label>
-                <input type="text" id="a-rp" placeholder="FirstName_LastName">
-                <label>قصة الشخصية (Backstory)</label>
-                <textarea id="a-story" rows="4"></textarea>
-                <div style="display: flex; gap: 20px;">
-                    <button class="btn-exec" style="background: #333; color: #fff;" onclick="nextStep(1)">رجوع</button>
-                    <button class="btn-exec" onclick="nextStep(3)">المرحلة النهائية >></button>
+        <div id="win-laws" class="window">
+            <div class="win-header"><span>RESPECT_CONSTITUTION_V4.0</span><div class="win-btn" style="background:red" onclick="closeApp('laws')"></div></div>
+            <div class="win-body">
+                <div class="law-card">
+                    <h2>⚖️ ميثاق الشرف</h2>
+                    <ul>
+                        <li>يمنع منعاً باتاً استغلال الثغرات البرمجية في السيرفر؛ العقوبة باند نهائي.</li>
+                        <li>احترام الطاقم الإداري وجميع اللاعبين؛ التجاوز يؤدي للنفي الفوري.</li>
+                        <li>يمنع استخدام أي معلومات خارج اللعبة (Meta Gaming).</li>
+                    </ul>
+                </div>
+                <div class="law-card" style="border-color: var(--neon-b);">
+                    <h2>⚔️ قوانين الاشتباك</h2>
+                    <ul>
+                        <li>يمنع القتل العشوائي (RDM) وصدم الناس (VDM) تحت أي ظرف.</li>
+                        <li>يمنع السرقة أو القتل في المناطق الخضراء المحددة بالخريطة.</li>
+                        <li>يمنع الخروج من اللعبة أثناء "السين" (Combat Log).</li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div id="step-3" class="step-panel">
-                <div style="text-align: center; padding: 40px;">
-                    <i class="fas fa-ticket-alt" style="font-size: 7rem; color: var(--success); margin-bottom: 30px;"></i>
-                    <h1 style="color: var(--success);">تم التحقق من البيانات!</h1>
-                    <p style="margin: 25px 0; font-size: 1.3rem; color: #888;">سيتم الآن فتح "تكت" باسمك في الديسكورد يحتوي على جميع البيانات المكتوبة أعلاه.</p>
-                    <div style="display: flex; gap: 20px; justify-content: center;">
-                        <button class="btn-exec" style="background: #333; color: #fff;" onclick="nextStep(2)">تعديل</button>
-                        <button class="btn-exec" id="send-btn" onclick="sendTicket()">إرسال وفتح تكت الآن 🚀</button>
+        <div id="win-control" class="window">
+            <div class="win-header"><span>SERVER_ORCHESTRATOR_BETA</span><div class="win-btn" style="background:red" onclick="closeApp('control')"></div></div>
+            <div class="win-body">
+                <div class="control-panel">
+                    <div class="panel-box">
+                        <h3 style="margin-bottom:20px; color:var(--neon-p)">🎮 FiveM Server Control</h3>
+                        <button class="btn-action btn-p" onclick="execCmd('START_SERVER')">تشغيل السيرفر <i class="fas fa-play"></i></button>
+                        <button class="btn-action btn-b" onclick="execCmd('RESTART')">إعادة تشغيل <i class="fas fa-sync"></i></button>
+                        <button class="btn-action btn-danger" onclick="execCmd('STOP')">إيقاف فوري <i class="fas fa-power-off"></i></button>
+                        <input type="text" class="input-mega" placeholder="أرسل أمر لـ txAdmin...">
+                    </div>
+                    <div class="panel-box">
+                        <h3 style="margin-bottom:20px; color:var(--neon-b)">🤖 Discord Integration</h3>
+                        <button class="btn-action btn-b" onclick="execCmd('ANNOUNCE')">إرسال إعلان @everyone</button>
+                        <button class="btn-action btn-p" onclick="execCmd('LOCK')">قفل الرومات (Lockdown)</button>
+                        <div style="background:#111; height:120px; border-radius:10px; padding:15px; font-family:'Share Tech Mono'; color:var(--neon-g); font-size:12px;">
+                            > CONNECTION ESTABLISHED<br>
+                            > BOT STATUS: ACTIVE<br>
+                            > SYNCING PLAYERS... 142/256
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="win-apply" class="window">
+            <div class="win-header"><span>WHITELIST_REGISTRATION</span><div class="win-btn" style="background:red" onclick="closeApp('apply')"></div></div>
+            <div class="win-body">
+                <h1 style="color:var(--neon-p); margin-bottom:30px;">سجل بياناتك لدخول المدينة</h1>
+                <input type="text" id="p-name" class="input-mega" placeholder="الاسم الحقيقي">
+                <input type="text" id="p-rp" class="input-mega" placeholder="الاسم في اللعبة (FirstName_LastName)">
+                <textarea class="input-mega" id="p-story" rows="5" placeholder="قصة شخصيتك بالتفصيل..."></textarea>
+                <button class="btn-action btn-p" onclick="sendToDiscord()">إرسال وفتح تذكرة تفعيل 🚀</button>
+            </div>
+        </div>
+
+        <div id="win-updates" class="window">
+            <div class="win-header"><span>SYSTEM_CHANGELOG</span><div class="win-btn" style="background:red" onclick="closeApp('updates')"></div></div>
+            <div class="win-body">
+                <div class="update-list">
+                    <div class="update-entry">
+                        <h4>V5.2.0 - التحديث الأكبر</h4>
+                        <p style="color:#888">إضافة نظام "العصابات المتقدم" مع مناطق نفوذ حقيقية.</p>
+                    </div>
+                    <div class="update-entry">
+                        <h4>V5.1.5 - الأداء</h4>
+                        <p style="color:#888">تقليل استهلاك السيرفر للرام بنسبة 30% وإضافة حماية DDoS جديدة.</p>
                     </div>
                 </div>
             </div>
@@ -197,116 +181,109 @@
     </div>
 
     <div class="taskbar">
-        <div class="start-menu" onclick="Swal.fire('NOVAX OS','SYSTEM STATUS: STABLE','success')">START</div>
-        <div class="clock-os" id="os-clock">00:00:00</div>
+        <div class="start-btn">RESECT_OS</div>
+        <div style="color:var(--neon-b); font-family:'Share Tech Mono'; font-size:22px;" id="clock">00:00:00</div>
     </div>
 
     <script>
-        // [OS KERNEL LOGIC]
-        
-        // محرك شاشة التحميل
-        function initNovaxKernel() {
-            const bar = document.getElementById('bar');
-            const log = document.getElementById('term-log');
-            const messages = [
-                "LOADING CORE ASSETS...", "INITIALIZING THREE.JS ENGINE...",
-                "SYNCING WITH DISCORD GATEWAY...", "MOUNTING FILE SYSTEMS...",
-                "ACCESS GRANTED. WELCOME MASTER."
-            ];
-            let progress = 0;
-            let msgIdx = 0;
-
-            const interval = setInterval(() => {
-                progress += 2;
-                bar.style.width = progress + "%";
-                if(progress % 20 === 0) {
-                    log.innerText = messages[msgIdx];
-                    msgIdx++;
-                }
-                if(progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('loading-screen').style.display = 'none';
-                        startEnvironment();
-                    }, 800);
-                }
-            }, 50);
-        }
-
-        // محرك الخلفية والجرافيك
-        function startEnvironment() {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('os-canvas'), alpha: true });
+        // [1] محرك الجرافيك 3D (Three.js)
+        let scene, camera, renderer, particles;
+        function initSystem() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('render-canvas'), antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            const starGeo = new THREE.BufferGeometry();
-            const starPos = [];
-            for(let i=0; i<15000; i++) {
-                starPos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+            // إضافة جزيئات (Particles) للخلفية
+            const geo = new THREE.BufferGeometry();
+            const pos = [];
+            for(let i=0; i<8000; i++) {
+                pos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
             }
-            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
-            const starMat = new THREE.PointsMaterial({ color: 0xbc13fe, size: 0.6 });
-            const stars = new THREE.Points(starGeo, starMat);
-            scene.add(stars);
-            camera.position.z = 1;
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            particles = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xbc13fe, size: 0.7 }));
+            scene.add(particles);
 
-            function animate() {
-                requestAnimationFrame(animate);
-                stars.rotation.y += 0.0005;
-                stars.rotation.x += 0.0001;
-                renderer.render(scene, camera);
-            }
+            // إضافة خطوط 3D (Grid)
+            const grid = new THREE.GridHelper(2000, 100, 0xbc13fe, 0x111);
+            grid.position.y = -100;
+            scene.add(grid);
+
+            camera.position.z = 1;
             animate();
             startTime();
         }
 
-        // نظام النوافذ والسحب
-        function openWindow(id) {
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0001;
+            renderer.render(scene, camera);
+        }
+
+        // [2] نظام النوافذ والسحب
+        function openApp(id) {
             const win = document.getElementById('win-' + id);
             win.style.display = 'flex';
             gsap.from(win, { scale: 0.5, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
-            
-            // جعل النافذة قابلة للسحب
             Draggable.create(win, { trigger: win.querySelector('.win-header') });
         }
 
-        function closeWindow(id) {
+        function closeApp(id) {
             const win = document.getElementById('win-' + id);
             gsap.to(win, { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
         }
 
-        // نظام الوقت
+        // [3] الوظائف البرمجية
         function startTime() {
             setInterval(() => {
                 const now = new Date();
-                document.getElementById('os-clock').innerText = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+                document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
             }, 1000);
         }
 
-        // خطوات التقديم
-        function nextStep(step) {
-            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById('step-' + step).classList.add('active');
-        }
-
-        function submitApp() {
+        function execCmd(cmd) {
             Swal.fire({
-                title: 'SENDING DATA...',
-                text: 'Connecting to main server frame.',
-                timer: 2000,
-                background: '#010103',
-                color: '#fff',
-                didOpen: () => Swal.showLoading()
-            }).then(() => {
-                Swal.fire('UPLOAD COMPLETE','Your application is now under review.','success');
-                closeWindow('apply');
+                title: 'EXECUTING...',
+                text: 'إرسال الأمر للنواة: ' + cmd,
+                icon: 'info',
+                background: '#000',
+                color: '#bc13fe',
+                showConfirmButton: false,
+                timer: 1500
             });
         }
 
-        // حماية النظام
-        document.addEventListener('contextmenu', event => event.preventDefault());
+        function sendToDiscord() {
+            const hook = "رابط_الويب_هوك_هنا";
+            const data = {
+                name: document.getElementById('p-name').value,
+                rp: document.getElementById('p-rp').value,
+                story: document.getElementById('p-story').value
+            };
+            
+            if(!data.name || !data.rp) return Swal.fire('خطأ','أكمل البيانات يا وحش','error');
 
+            fetch(hook, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "🚀 طلب تفعيل جديد",
+                        color: 12325374,
+                        fields: [
+                            { name: "👤 الاسم", value: data.name, inline: true },
+                            { name: "🎭 الشخصية", value: data.rp, inline: true },
+                            { name: "📖 القصة", value: data.story }
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            }).then(() => {
+                Swal.fire('تم بنجاح!','تم إرسال طلبك للديسكورد.','success');
+                closeApp('apply');
+            });
+        }
     </script>
 </body>
 </html>
