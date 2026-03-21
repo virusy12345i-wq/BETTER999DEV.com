@@ -3,262 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT RP | THE ULTIMATE HUB</title>
+    <title>NOVAX INFINITY | THE SUPREME OS</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Changa:wght@400;800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* [SYSTEM CORE CSS] */
         :root {
-            --p-purple: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
-            --bg: #030305; --card: #0d0d10; --accent: #15151a;
+            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
+            --s-neon: #00f2ff; --s-glow: rgba(0, 242, 255, 0.4);
+            --bg-deep: #010103; --glass: rgba(5, 5, 10, 0.96);
+            --error: #ff003c; --success: #00ff88;
         }
 
-        /* [1] الأساسيات */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
-        body { background: var(--bg); color: #fff; overflow-x: hidden; cursor: crosshair; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: var(--p-purple); border-radius: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; cursor: crosshair; }
+        body, html { width: 100%; height: 100%; background: var(--bg-deep); overflow: hidden; color: #fff; }
 
-        /* [2] الهيدر الإمبراطوري */
-        nav { position: fixed; top: 0; width: 100%; height: 90px; display: flex; justify-content: space-between; align-items: center; padding: 0 8%; z-index: 1000; background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--p-purple); box-shadow: 0 0 30px var(--p-glow); }
-        .logo { font-family: 'Orbitron'; font-size: 32px; font-weight: 900; letter-spacing: 2px; }
-        .logo span { color: var(--p-purple); text-shadow: 0 0 15px var(--p-purple); }
-        .nav-links { display: flex; gap: 40px; list-style: none; }
-        .nav-links a { text-decoration: none; color: #fff; font-weight: 900; font-size: 18px; transition: 0.3s; position: relative; }
-        .nav-links a:hover { color: var(--p-purple); text-shadow: 0 0 10px var(--p-purple); }
+        /* محرك الجرافيك 3D */
+        #os-canvas { position: fixed; inset: 0; z-index: -2; }
+        .crt-overlay { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 9999; pointer-events: none; background-size: 100% 3px, 3px 100%; }
 
-        /* [3] واجهة البطل (Hero Section) */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; overflow: hidden; }
-        .hero-bg { position: absolute; inset: 0; background: radial-gradient(circle, rgba(188, 19, 254, 0.15) 0%, transparent 70%); z-index: -1; }
-        .hero h1 { font-family: 'Changa'; font-size: 110px; line-height: 1; margin-bottom: 20px; text-transform: uppercase; }
-        .hero h1 span { color: var(--p-purple); filter: drop-shadow(0 0 30px var(--p-purple)); }
-        .hero p { font-size: 24px; color: #888; max-width: 900px; margin-bottom: 50px; font-weight: 700; }
-        
-        .btn-supreme { 
-            background: var(--p-purple); color: #000; padding: 22px 70px; border-radius: 12px; font-weight: 900; 
-            text-decoration: none; font-size: 24px; box-shadow: 0 0 50px var(--p-glow); transition: 0.5s; 
-            border: 2px solid transparent; 
+        /* سطح المكتب والأيقونات */
+        .desktop { 
+            height: calc(100vh - 60px); padding: 50px; 
+            display: grid; grid-template-columns: repeat(auto-fill, 120px);
+            grid-template-rows: repeat(auto-fill, 130px); grid-auto-flow: column; gap: 30px;
         }
-        .btn-supreme:hover { background: #fff; box-shadow: 0 0 70px #fff; transform: scale(1.1) rotate(-1deg); }
+        .icon { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100px; height: 110px; border-radius: 15px; transition: 0.3s; cursor: pointer;
+            border: 1px solid transparent; position: relative;
+        }
+        .icon:hover { background: rgba(188, 19, 254, 0.1); border-color: var(--p-neon); box-shadow: 0 0 30px var(--p-glow); transform: scale(1.05); }
+        .icon i { font-size: 50px; color: var(--p-neon); filter: drop-shadow(0 0 15px var(--p-neon)); margin-bottom: 10px; }
+        .icon span { font-size: 11px; font-weight: 900; font-family: 'Orbitron'; text-align: center; color: #fff; }
 
-        /* [4] أقسام المحتوى (Sections) */
-        .content-section { padding: 120px 10%; border-bottom: 1px solid #111; }
-        .title-box { text-align: center; margin-bottom: 100px; }
-        .title-box h2 { font-family: 'Changa'; font-size: 60px; color: #fff; }
-        .title-box span { color: var(--p-purple); }
+        /* نظام النوافذ الملحمي */
+        .window {
+            position: absolute; width: 950px; height: 650px; background: var(--glass);
+            border: 2px solid var(--p-neon); border-radius: 20px; display: none; flex-direction: column;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 40px var(--p-glow); z-index: 100;
+            backdrop-filter: blur(30px); overflow: hidden;
+        }
+        .win-header { 
+            background: linear-gradient(90deg, var(--p-neon), #4b0082); height: 55px; 
+            display: flex; justify-content: space-between; align-items: center; padding: 0 25px; 
+            cursor: grab; font-family: 'Orbitron'; font-weight: 900; color: #fff;
+        }
+        .win-body { flex: 1; padding: 45px; overflow-y: auto; scrollbar-width: none; }
+        .win-controls { display: flex; gap: 12px; }
+        .control { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* [5] نظام القوانين (The Law System) */
-        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 40px; }
-        .rule-card { background: var(--card); padding: 50px; border-radius: 30px; border: 1px solid #1a1a1a; transition: 0.5s; position: relative; overflow: hidden; }
-        .rule-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--p-purple); }
-        .rule-card:hover { border-color: var(--p-purple); transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
-        .rule-card i { font-size: 50px; color: var(--p-purple); margin-bottom: 30px; display: block; }
-        .rule-card h3 { font-size: 30px; margin-bottom: 20px; font-family: 'Changa'; }
-        .rule-card ul { list-style: none; color: #aaa; font-size: 18px; line-height: 2; }
-        .rule-card li::before { content: '◈'; color: var(--p-purple); margin-left: 10px; font-weight: 900; }
+        /* نظام القوانين (الكروت العملاقة) */
+        .huge-rule-card { 
+            background: rgba(255,255,255,0.01); border-right: 12px solid var(--s-neon); 
+            padding: 40px; border-radius: 15px; margin-bottom: 40px; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .huge-rule-card h2 { font-size: 2.8rem; color: var(--s-neon); font-family: 'Orbitron'; margin-bottom: 25px; text-transform: uppercase; }
+        .huge-rule-card ul { font-size: 1.4rem; line-height: 2.2; color: #ddd; list-style: none; }
+        .huge-rule-card li::before { content: '⚡'; color: var(--p-neon); margin-left: 15px; }
 
-        /* [6] التحديثات (Server Updates) */
-        .update-item { background: var(--accent); padding: 30px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 30px; border: 1px solid #222; }
-        .update-date { font-family: 'Orbitron'; color: var(--p-purple); font-weight: 900; font-size: 20px; min-width: 150px; }
-        .update-text { font-size: 18px; font-weight: 700; color: #ddd; }
-        .update-tag { background: var(--p-purple); color: #000; padding: 5px 15px; border-radius: 5px; font-weight: 900; font-size: 12px; }
+        /* نظام التقديم بالخطوات */
+        .step-panel { display: none; }
+        .step-panel.active { display: block; animation: slideIn 0.5s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* [7] نظام التفعيل (Application) */
-        .apply-container { max-width: 1000px; margin: 0 auto; background: linear-gradient(145deg, #0d0d10, #150a1d); padding: 80px; border-radius: 40px; border: 3px solid var(--p-purple); }
-        .form-input { width: 100%; background: #000; border: 1px solid #333; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 30px; font-size: 18px; transition: 0.4s; }
-        .form-input:focus { border-color: var(--p-purple); box-shadow: 0 0 30px var(--p-glow); outline: none; }
+        input, textarea { width: 100%; background: #000; border: 1px solid #333; padding: 22px; color: #fff; border-radius: 12px; margin-bottom: 30px; font-size: 1.2rem; transition: 0.3s; }
+        input:focus { border-color: var(--p-neon); box-shadow: 0 0 20px var(--p-glow); outline: none; }
 
-        /* [8] لوحة التحكم (Admin Dashboard UI) */
-        .admin-panel { background: #000; border: 2px solid var(--p-purple); border-radius: 20px; padding: 40px; margin-top: 50px; }
-        .status-grid { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
-        .status-box { text-align: center; padding: 30px; background: var(--card); border-radius: 15px; min-width: 200px; }
-        .status-box h4 { font-family: 'Orbitron'; font-size: 40px; color: var(--p-purple); }
+        .btn-exec { background: var(--p-neon); color: #000; padding: 20px 50px; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; transition: 0.4s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+        .btn-exec:hover { box-shadow: 0 0 40px var(--p-neon); transform: scale(1.05); letter-spacing: 2px; }
+
+        /* شريط المهام السفلي */
+        .taskbar { position: fixed; bottom: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.9); border-top: 2px solid var(--p-neon); display: flex; align-items: center; padding: 0 40px; justify-content: space-between; z-index: 1000; }
+        .start-menu { background: var(--p-neon); color: #000; padding: 10px 35px; border-radius: 5px; font-family: 'Orbitron'; font-weight: 900; font-size: 20px; cursor: pointer; box-shadow: 0 0 25px var(--p-neon); }
+        .clock-os { font-family: 'Share Tech Mono'; color: var(--s-neon); font-size: 26px; text-shadow: 0 0 15px var(--s-neon); }
+
+        /* شاشة التحميل العملاقة */
+        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .terminal-text { font-family: 'Share Tech Mono'; color: var(--p-neon); font-size: 1.5rem; text-align: center; margin-top: 20px; }
 
     </style>
 </head>
-<body onload="initNovax()">
+<body onload="initNovaxKernel()">
 
-    <nav>
-        <div class="logo">RESPECT<span>.</span>SA</div>
-        <ul class="nav-links">
-            <li><a href="#home">الرئيسية</a></li>
-            <li><a href="#rules">القوانين</a></li>
-            <li><a href="#updates">التحديثات</a></li>
-            <li><a href="#apply">التفعيل</a></li>
-            <li><a href="#store">المتجر</a></li>
-        </ul>
-        <a href="#" class="btn-supreme" style="padding: 12px 30px; font-size: 18px;">الديسكورد</a>
-    </nav>
+    <canvas id="os-canvas"></canvas>
+    <div class="crt-overlay"></div>
 
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <h1 class="reveal">سيادة <span>ريسبكت</span></h1>
-        <p class="reveal">نحن لا نقدم سيرفر لعب فحسب، نحن نبني واقعاً بديلاً. انضم لأقوى مجتمع رول بلاي عربي بمميزات حصرية وتحديثات لا تتوقف.</p>
-        <div style="display: flex; gap: 30px;" class="reveal">
-            <a href="#apply" class="btn-supreme">سجل مواطنتك</a>
-            <a href="#rules" class="btn-supreme" style="background: transparent; border: 2px solid var(--p-purple); color: #fff;">القوانين</a>
+    <div id="loading-screen">
+        <div style="width: 400px; height: 4px; background: #111; border-radius: 10px; overflow: hidden; position: relative;">
+            <div id="bar" style="position: absolute; width: 0%; height: 100%; background: var(--p-neon); box-shadow: 0 0 30px var(--p-neon);"></div>
         </div>
-    </section>
+        <div class="terminal-text" id="term-log">BOOTING NOVAX INFINITY KERNEL...</div>
+    </div>
 
-    <section class="content-section" id="rules">
-        <div class="title-box">
-            <h2>دليل <span>المواطن</span></h2>
-            <p style="color: #666; margin-top: 15px;">يجب قراءة القوانين بعناية لتجنب النفي المؤبد من المدينة.</p>
+    <div class="desktop">
+        <div class="icon" onclick="openWindow('rules')">
+            <i class="fas fa-scroll"></i>
+            <span>CONSTITUTION</span>
         </div>
-        <div class="rules-grid">
-            <div class="rule-card reveal">
-                <i class="fas fa-gavel"></i>
-                <h3>⚖️ قوانين الرول بلاي</h3>
+        <div class="icon" onclick="openWindow('apply')">
+            <i class="fas fa-user-plus"></i>
+            <span>WHITELIST</span>
+        </div>
+        <div class="icon" onclick="openWindow('market')">
+            <i class="fas fa-shopping-bag"></i>
+            <span>BLACK MARKET</span>
+        </div>
+        <div class="icon" onclick="openWindow('map')">
+            <i class="fas fa-globe-americas"></i>
+            <span>SATELLITE MAP</span>
+        </div>
+        <div class="icon" onclick="window.open('YOUR_DISCORD')">
+            <i class="fab fa-discord"></i>
+            <span>COMMUNITY</span>
+        </div>
+    </div>
+
+    <div id="win-rules" class="window">
+        <div class="win-header">
+            <span>DATABASE: SERVER_LAWS_V800.DB</span>
+            <div class="win-controls">
+                <div class="control" style="background: #ff4b4b;" onclick="closeWindow('rules')"></div>
+            </div>
+        </div>
+        <div class="win-body">
+            <div class="huge-rule-card">
+                <h2>قوانين الرول بلاي العامة</h2>
                 <ul>
-                    <li>الالتزام بالتقمص التام في جميع الأوقات (IC).</li>
-                    <li>يمنع استخدام أي معلومات خارج اللعبة (Meta Gaming).</li>
-                    <li>يجب إعطاء قيمة لحياتك في مواقف التهديد (Value Life).</li>
+                    <li>يمنع منعاً باتاً استغلال الثغرات البرمجية؛ العقوبة: باند نهائي.</li>
+                    <li>احترام الكادر الإداري وجميع اللاعبين؛ العقوبة: نفي مؤقت.</li>
+                    <li>يجب الحفاظ على واقعية الشخصية (FailRP ممنوع).</li>
                 </ul>
             </div>
-            <div class="rule-card reveal">
-                <i class="fas fa-skull"></i>
-                <h3>💀 الجرائم والقتال</h3>
+            <div class="huge-rule-card" style="border-color: var(--p-neon);">
+                <h2>قوانين الجرائم والاشتباك</h2>
                 <ul>
-                    <li>يمنع القتل العشوائي (RDM) وصدم الناس (VDM).</li>
-                    <li>يجب وجود قصة درامية موثقة لأي عملية خطف أو قتل.</li>
-                    <li>يمنع السرقة أو القتل في المناطق الخضراء (Safe Zones).</li>
-                </ul>
-            </div>
-            <div class="rule-card reveal">
-                <i class="fas fa-user-shield"></i>
-                <h3>🛡️ التعامل مع الإدارة</h3>
-                <ul>
-                    <li>احترام الطاقم الإداري وعدم مقاطعة "السين".</li>
-                    <li>عند وجود مشكلة، يتم فتح تذكرة (Ticket) حصراً.</li>
-                    <li>الكذب على الإدارة يؤدي لحظر نهائي فوري.</li>
+                    <li>القتل العشوائي (RDM) يؤدي للسجن الفوري 1000 دقيقة.</li>
+                    <li>يمنع استخدام الأسلحة الثقيلة في المناطق الآمنة.</li>
+                    <li>يجب التفاعل صوتياً قبل البدء بأي عملية سرقة أو خطف.</li>
                 </ul>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="content-section" id="updates" style="background: #050508;">
-        <div class="title-box">
-            <h2>سجل <span>التطوير</span></h2>
-        </div>
-        <div class="reveal" style="max-width: 900px; margin: 0 auto;">
-            <div class="update-item">
-                <div class="update-date">21/03/2026</div>
-                <div class="update-tag">NEW SCRIPT</div>
-                <div class="update-text">إضافة نظام "متجر الملابس المتطور" مع دعم البراندات العالمية.</div>
-            </div>
-            <div class="update-item">
-                <div class="update-date">15/03/2026</div>
-                <div class="update-tag">OPTIMIZATION</div>
-                <div class="update-text">تحسين أداء السيرفر وتقليل استهلاك الرام بنسبة 40%.</div>
-            </div>
-            <div class="update-item">
-                <div class="update-date">10/03/2026</div>
-                <div class="update-tag">MAP UPDATE</div>
-                <div class="update-text">افتتاح مركز الشرطة الجديد (LSPD) بتصميم حصري.</div>
+    <div id="win-apply" class="window">
+        <div class="win-header">
+            <span>APPLICATION WIZARD [TICKET SYSTEM]</span>
+            <div class="win-controls">
+                <div class="control" style="background: #ff4b4b;" onclick="closeWindow('apply')"></div>
             </div>
         </div>
-    </section>
+        <div class="win-body">
+            <div id="step-1" class="step-panel active">
+                <h1 style="color: var(--p-neon); font-family: 'Orbitron'; margin-bottom: 30px;">[01] المعلومات الشخصية</h1>
+                <label>الاسم الحقيقي</label>
+                <input type="text" id="a-name" placeholder="أدخل اسمك الحقيقي...">
+                <label>العمر</label>
+                <input type="number" id="a-age" placeholder="18+">
+                <button class="btn-exec" onclick="nextStep(2)">التالي >></button>
+            </div>
 
-    <section class="content-section" id="apply">
-        <div class="title-box">
-            <h2>طلب <span>التفعيل</span></h2>
-        </div>
-        <div class="apply-container reveal">
-            <div id="form-body">
-                <input type="text" id="user_name" class="form-input" placeholder="اسمك الحقيقي">
-                <input type="number" id="user_age" class="form-input" placeholder="عمرك الحقيقي">
-                <input type="text" id="rp_name" class="form-input" placeholder="اسم الشخصية (الاسم_اللقب)">
-                <textarea id="rp_bio" class="form-input" rows="5" placeholder="قصة شخصيتك وأهدافك في المدينة..."></textarea>
-                <button class="btn-supreme" style="width: 100%; border: none; cursor: pointer;" onclick="executeApply()">إرسال الطلب والموافقة على القوانين 🚀</button>
+            <div id="step-2" class="step-panel">
+                <h1 style="color: var(--s-neon); font-family: 'Orbitron'; margin-bottom: 30px;">[02] هوية الشخصية</h1>
+                <label>اسم الشخصية داخل اللعبة</label>
+                <input type="text" id="a-rp" placeholder="FirstName_LastName">
+                <label>قصة الشخصية (Backstory)</label>
+                <textarea id="a-story" rows="4"></textarea>
+                <div style="display: flex; gap: 20px;">
+                    <button class="btn-exec" style="background: #333; color: #fff;" onclick="nextStep(1)">رجوع</button>
+                    <button class="btn-exec" onclick="nextStep(3)">المرحلة النهائية >></button>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <section class="content-section" id="status">
-        <div class="status-grid reveal">
-            <div class="status-box">
-                <h4 id="player_count">0</h4>
-                <p>اللاعبين الآن</p>
-            </div>
-            <div class="status-box">
-                <h4>+500</h4>
-                <p>عضو ديسكورد</p>
-            </div>
-            <div class="status-box">
-                <h4>99.9%</h4>
-                <p>وقت التشغيل</p>
+            <div id="step-3" class="step-panel">
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-ticket-alt" style="font-size: 7rem; color: var(--success); margin-bottom: 30px;"></i>
+                    <h1 style="color: var(--success);">تم التحقق من البيانات!</h1>
+                    <p style="margin: 25px 0; font-size: 1.3rem; color: #888;">سيتم الآن فتح "تكت" باسمك في الديسكورد يحتوي على جميع البيانات المكتوبة أعلاه.</p>
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <button class="btn-exec" style="background: #333; color: #fff;" onclick="nextStep(2)">تعديل</button>
+                        <button class="btn-exec" id="send-btn" onclick="sendTicket()">إرسال وفتح تكت الآن 🚀</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <footer style="text-align: center; padding: 60px; border-top: 2px solid #111;">
-        <p style="color: #444; font-weight: 700;">&copy; 2026 RESPECT ROLEPLAY. THE MOST POWERFUL SERVER IN THE REGION.</p>
-        <p style="color: var(--p-purple); font-size: 14px; margin-top: 10px;">DESIGNED & DEVELOPED BY NOVAX KERNEL</p>
-    </footer>
+    <div class="taskbar">
+        <div class="start-menu" onclick="Swal.fire('NOVAX OS','SYSTEM STATUS: STABLE','success')">START</div>
+        <div class="clock-os" id="os-clock">00:00:00</div>
+    </div>
 
     <script>
-        // [1] نظام الإقلاع والتحميل
-        function initNovax() {
-            console.log("NOVAX ENGINE STARTING...");
-            gsap.from(".reveal", {
-                y: 60, opacity: 0, duration: 1, stagger: 0.25, ease: "power4.out"
-            });
-            animateCounter();
-        }
+        // [OS KERNEL LOGIC]
+        
+        // محرك شاشة التحميل
+        function initNovaxKernel() {
+            const bar = document.getElementById('bar');
+            const log = document.getElementById('term-log');
+            const messages = [
+                "LOADING CORE ASSETS...", "INITIALIZING THREE.JS ENGINE...",
+                "SYNCING WITH DISCORD GATEWAY...", "MOUNTING FILE SYSTEMS...",
+                "ACCESS GRANTED. WELCOME MASTER."
+            ];
+            let progress = 0;
+            let msgIdx = 0;
 
-        // [2] عداد اللاعبين التفاعلي
-        function animateCounter() {
-            let count = { val: 0 };
-            gsap.to(count, {
-                val: 142, duration: 3, onUpdate: () => {
-                    document.getElementById('player_count').innerText = Math.floor(count.val);
+            const interval = setInterval(() => {
+                progress += 2;
+                bar.style.width = progress + "%";
+                if(progress % 20 === 0) {
+                    log.innerText = messages[msgIdx];
+                    msgIdx++;
                 }
-            });
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        startEnvironment();
+                    }, 800);
+                }
+            }, 50);
         }
 
-        // [3] إرسال التكت لديسكورد (Webhook)
-        function executeApply() {
-            const hook = "رابط_الويب_هوك_هنا";
-            const data = {
-                n: document.getElementById('user_name').value,
-                a: document.getElementById('user_age').value,
-                rp: document.getElementById('rp_name').value,
-                b: document.getElementById('rp_bio').value
-            };
+        // محرك الخلفية والجرافيك
+        function startEnvironment() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('os-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-            if(!data.n || !data.rp) return Swal.fire('خطأ','كمل بياناتك يا وحش','error');
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = [];
+            for(let i=0; i<15000; i++) {
+                starPos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+            }
+            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({ color: 0xbc13fe, size: 0.6 });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+            camera.position.z = 1;
 
+            function animate() {
+                requestAnimationFrame(animate);
+                stars.rotation.y += 0.0005;
+                stars.rotation.x += 0.0001;
+                renderer.render(scene, camera);
+            }
+            animate();
+            startTime();
+        }
+
+        // نظام النوافذ والسحب
+        function openWindow(id) {
+            const win = document.getElementById('win-' + id);
+            win.style.display = 'flex';
+            gsap.from(win, { scale: 0.5, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
+            
+            // جعل النافذة قابلة للسحب
+            Draggable.create(win, { trigger: win.querySelector('.win-header') });
+        }
+
+        function closeWindow(id) {
+            const win = document.getElementById('win-' + id);
+            gsap.to(win, { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
+        }
+
+        // نظام الوقت
+        function startTime() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('os-clock').innerText = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+            }, 1000);
+        }
+
+        // خطوات التقديم
+        function nextStep(step) {
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
+        }
+
+        function submitApp() {
             Swal.fire({
-                title: 'جاري الإرسال...',
-                text: 'يتم تشفير بياناتك وإرسالها للإدارة.',
-                allowOutsideClick: false,
+                title: 'SENDING DATA...',
+                text: 'Connecting to main server frame.',
+                timer: 2000,
+                background: '#010103',
+                color: '#fff',
                 didOpen: () => Swal.showLoading()
-            });
-
-            fetch(hook, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    embeds: [{
-                        title: "👑 طلب تفعيل ريسبكت جديد",
-                        color: 12325374,
-                        fields: [
-                            { name: "👤 الاسم الحقيقي", value: data.n, inline: true },
-                            { name: "🎂 العمر", value: data.a, inline: true },
-                            { name: "🎭 الشخصية", value: data.rp },
-                            { name: "📖 القصة", value: data.b }
-                        ],
-                        footer: { text: "RESPECT RP AUTO-SYSTEM" },
-                        timestamp: new Date()
-                    }]
-                })
             }).then(() => {
-                Swal.fire('نجاح!','تم إرسال طلبك. توجه للديسكورد لفتح تذكرة.','success');
+                Swal.fire('UPLOAD COMPLETE','Your application is now under review.','success');
+                closeWindow('apply');
             });
         }
+
+        // حماية النظام
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
     </script>
 </body>
 </html>
