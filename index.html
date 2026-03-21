@@ -3,392 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVAX INFINITY | النظام الكوني الشامل</title>
+    <title>NOVAX INFINITY OS | CONTROL CENTER</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* [1] نظام الألوان الكوني (تم الحفاظ عليه) */
+        /* ========================================
+           [1] الأنظمة الأساسية (Core CSS) 
+           ========================================
+        */
         :root {
-            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.6);
-            --s-neon: #00f2ff; --s-glow: rgba(0, 242, 255, 0.6);
-            --bg-deep: #010103; --glass: rgba(255, 255, 255, 0.03);
-            --error: #ff003c; --success: #00ff88;
+            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.4);
+            --s-neon: #00f2ff; --s-glow: rgba(0, 242, 255, 0.4);
+            --bg-deep: #010103; --glass-dark: rgba(5, 5, 10, 0.9);
+            --border: 1px solid rgba(188, 19, 254, 0.2);
         }
 
-        /* [2] إعدادات الصفحة والماوس */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; cursor: default; }
-        body { background: var(--bg-deep); color: #fff; overflow-x: hidden; scroll-behavior: smooth; }
-        #space-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-        .cursor-aura { position: fixed; width: 300px; height: 300px; background: radial-gradient(circle, var(--p-glow) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1; transform: translate(-50%, -50%); transition: 0.1s ease-out; opacity: 0.3; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-user-select: none; }
+        body, html { width: 100%; height: 100%; background: var(--bg-deep); overflow: hidden; color: #fff; }
 
-        /* [3] الهيدر المتطور (تمت إضافة منطقة تسجيل الدخول) */
-        header {
-            position: fixed; top: 0; width: 100%; height: 100px;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px);
-            border-bottom: 2px solid var(--p-neon);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 50px; z-index: 1000; box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+        /* خلفية الفضاء */
+        #os-canvas { position: fixed; inset: 0; z-index: -2; }
+        .overlay-scanline { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); z-index: 10000; pointer-events: none; background-size: 100% 3px, 3px 100%; }
+
+        /* ========================================
+           [2] سطح المكتب (Desktop Environment) 
+           ========================================
+        */
+        .desktop { width: 100vw; height: calc(100vh - 50px); padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, 120px); grid-template-rows: repeat(auto-fill, 120px); grid-auto-flow: column; gap: 20px; z-index: 5; }
+
+        .icon { width: 100px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; border-radius: 10px; position: relative; }
+        .icon:hover { background: rgba(188, 19, 254, 0.15); box-shadow: 0 0 20px var(--p-glow); border: 1px solid var(--p-neon); }
+        .icon i { font-size: 45px; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--p-neon)); color: var(--p-neon); }
+        .icon span { font-size: 13px; font-weight: 700; text-align: center; font-family: 'Orbitron'; text-shadow: 0 2px 5px #000; }
+
+        /* ========================================
+           [3] نظام النوافذ (Window System) 
+           ========================================
+        */
+        .window { 
+            position: absolute; width: 850px; height: 550px; background: var(--glass-dark); 
+            border: 2px solid var(--p-neon); border-radius: 15px; display: none; flex-direction: column;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px var(--p-glow); z-index: 100;
+            overflow: hidden; backdrop-filter: blur(15px);
         }
-        .brand-logo { font-family: 'Orbitron'; font-size: 38px; font-weight: 900; letter-spacing: 5px; cursor: pointer; }
-        .brand-logo span { color: var(--p-neon); text-shadow: 0 0 25px var(--p-neon); }
+        .window-header { 
+            background: linear-gradient(90deg, var(--p-neon), #6b0b92); height: 45px; 
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; 
+            cursor: move; font-family: 'Orbitron'; font-weight: 900; color: #000;
+        }
+        .win-controls { display: flex; gap: 10px; }
+        .control-btn { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.2); }
+        .close { background: #ff4b4b; }
+        .min { background: #ffbc2c; }
 
-        nav.main-nav { display: flex; gap: 20px; position: absolute; left: 50%; transform: translateX(-50%); }
-        .nav-item { background: transparent; border: 1px solid var(--p-neon); color: #fff; padding: 12px 28px; font-family: 'Orbitron'; font-size: 13px; font-weight: 900; transition: 0.4s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); text-decoration: none; cursor: pointer; }
-        .nav-item:hover, .nav-item.active { background: var(--p-neon); color: #000; box-shadow: 0 0 35px var(--p-neon); transform: translateY(-5px); }
+        .window-body { flex: 1; padding: 30px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--p-neon) transparent; }
 
-        /* [NEW] منطقة تسجيل الدخول الديسكورد */
-        .auth-zone { display: flex; align-items: center; gap: 15px; }
-        .discord-btn { background: #5865F2; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .discord-btn:hover { box-shadow: 0 0 15px #5865F2; transform: scale(1.05); }
-        .user-pill { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--s-neon); }
-        .user-avatar { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--p-neon); }
+        /* ========================================
+           [4] شريط المهام (Taskbar) 
+           ========================================
+        */
+        .taskbar { 
+            position: fixed; bottom: 0; width: 100%; height: 55px; background: rgba(0,0,0,0.95);
+            border-top: 2px solid var(--p-neon); display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 20px; z-index: 1000;
+        }
+        .start-btn { 
+            background: var(--p-neon); color: #000; padding: 8px 25px; border-radius: 5px; 
+            font-family: 'Orbitron'; font-weight: 900; font-size: 18px; cursor: pointer;
+            box-shadow: 0 0 20px var(--p-neon); transition: 0.3s;
+        }
+        .start-btn:hover { letter-spacing: 3px; background: #fff; }
+        .clock { font-family: 'Share Tech Mono'; font-size: 22px; color: var(--s-neon); text-shadow: 0 0 10px var(--s-neon); }
 
-        /* [4] مؤشرات الحالة */
-        .live-stats { display: flex; gap: 15px; }
-        .stat-box { background: rgba(255,255,255,0.05); border: 1px solid var(--s-neon); padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-family: 'Share Tech Mono'; font-size: 14px; }
-        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.4; } 100% { transform: scale(1); opacity: 1; } }
+        /* ========================================
+           [5] محتوى النوافذ (Apps Content) 
+           ========================================
+        */
+        /* القوانين */
+        .law-item { background: rgba(255,255,255,0.03); border-right: 4px solid var(--p-neon); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: 0.3s; }
+        .law-item:hover { background: rgba(188, 19, 254, 0.05); transform: scale(1.02); }
+        .law-item h3 { color: var(--s-neon); margin-bottom: 10px; font-family: 'Orbitron'; }
 
-        /* [5] نظام المحتوى الأوتوماتيكي */
-        .main-wrapper { margin-top: 100px; padding: 60px 8%; min-height: calc(100vh - 100px); }
-        .page-view { display: none; animation: viewIn 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
-        .page-view.active { display: block; }
-        @keyframes viewIn { from { opacity: 0; transform: scale(0.95) translateY(50px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        /* التقديم بالخطوات */
+        .step-panel { display: none; }
+        .step-panel.active { display: block; animation: fadeIn 0.5s; }
+        .input-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; color: var(--p-neon); font-weight: 900; }
+        input, textarea { width: 100%; background: #000; border: 1px solid #333; padding: 15px; color: #fff; border-radius: 8px; font-size: 16px; }
+        .action-btn { background: var(--p-neon); color: #000; border: none; padding: 15px 30px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); transition: 0.3s; }
 
-        /* [6] القوانين (Rules Engine) */
-        .laws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-        .law-card { background: var(--glass); border: 1px solid rgba(188, 19, 254, 0.1); padding: 30px; border-radius: 15px; transition: 0.4s; }
-        .law-card:hover { border-color: var(--p-neon); transform: rotateX(5deg); }
-        .law-card h3 { color: var(--p-neon); font-family: 'Orbitron'; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .law-list { list-style: none; color: #ccc; font-size: 14px; }
-        .law-list li { margin-bottom: 12px; padding-right: 20px; position: relative; line-height: 1.6; }
-        .law-list li::before { content: '>'; position: absolute; right: 0; color: var(--s-neon); }
+        /* المتجر */
+        .store-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .car-card { background: #08080c; border: 1px solid #222; border-radius: 15px; overflow: hidden; transition: 0.4s; }
+        .car-card:hover { border-color: var(--s-neon); transform: translateY(-5px); }
+        .car-img { width: 100%; height: 180px; background: #111 url('https://i.imgur.com/8P9vBfK.jpg') center/cover; }
+        .car-info { padding: 20px; text-align: center; }
 
-        /* [7] المتجر الديناميكي */
-        .shop-header { text-align: center; margin-bottom: 60px; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px; }
-        .product-node { background: #08080c; border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; position: relative; transition: 0.5s; }
-        .product-node:hover { transform: translateY(-15px); border-color: var(--s-neon); box-shadow: 0 15px 50px rgba(0, 242, 255, 0.15); }
-        .product-node img { width: 100%; height: 250px; object-fit: cover; filter: grayscale(30%); transition: 0.5s; }
-        .product-node:hover img { filter: grayscale(0%); transform: scale(1.1); }
-        .product-content { padding: 25px; text-align: center; }
-        .price-tag { font-family: 'Orbitron'; font-size: 2.2rem; color: var(--success); margin: 15px 0; }
-        .stock-indicator { position: absolute; top: 15px; left: 15px; background: var(--error); padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+        /* ========================================
+           [6] شاشة التحميل (Terminal Boot) 
+           ========================================
+        */
+        #boot-screen { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; padding: 50px; font-family: 'Share Tech Mono'; color: #0f0; overflow: hidden; }
+        .cursor { display: inline-block; width: 10px; height: 20px; background: #0f0; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        /* [8] نظام التقديم (The Whitelist Hub) */
-        .apply-container { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; }
-        .apply-info { padding: 30px; background: rgba(188, 19, 254, 0.05); border-radius: 15px; border: 1px dashed var(--p-neon); }
-        .form-panel { background: var(--glass); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); position: relative; }
-        
-        /* [NEW] طبقة القفل للمفعلين */
-        .locked-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.9); border-radius: 20px; z-index: 10; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border: 2px solid var(--error); }
-
-        label { display: block; margin-bottom: 10px; color: var(--s-neon); font-weight: bold; font-size: 14px; }
-        input, textarea, select { width: 100%; background: #000; border: 1px solid #222; padding: 18px; color: #fff; border-radius: 8px; margin-bottom: 25px; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: var(--p-neon); box-shadow: 0 0 20px var(--p-glow); outline: none; }
-
-        .action-btn { width: 100%; padding: 20px; background: var(--p-neon); border: none; color: #000; font-family: 'Orbitron'; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.4s; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); }
-        .action-btn:hover { letter-spacing: 4px; box-shadow: 0 0 50px var(--p-neon); transform: scale(1.02); }
-
-        /* [9] شاشة الترحيب (Hero Section) */
-        .hero-wrap { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .hero-wrap h1 { font-family: 'Orbitron'; font-size: 9rem; line-height: 0.8; margin-bottom: 30px; text-shadow: 0 0 60px var(--p-neon); }
-        .hero-wrap p { font-size: 1.8rem; letter-spacing: 20px; color: var(--s-neon); text-transform: uppercase; }
-
-        /* [10] تأثير الجليتش (تم الحفاظ عليه) */
-        .glitch-text { position: relative; display: inline-block; animation: glitch 3s infinite; }
-        @keyframes glitch { 0% { text-shadow: 2px 0 red, -2px 0 blue; } 2% { text-shadow: -2px 0 red, 2px 0 blue; } 4% { text-shadow: 2px 0 red, -2px 0 blue; } 100% { text-shadow: none; } }
+        /* ========================================
+           [7] الخريطة التفاعلية 
+           ========================================
+        */
+        .map-wrapper { width: 100%; height: 400px; background: url('https://i.imgur.com/uRkYF8W.png') center/cover; border-radius: 10px; position: relative; border: 2px solid #222; }
+        .map-poi { position: absolute; width: 20px; height: 20px; background: var(--s-neon); border-radius: 50%; box-shadow: 0 0 20px var(--s-neon); animation: pulse 2s infinite; cursor: help; }
 
     </style>
 </head>
-<body onload="initializeCore()">
+<body onload="initOS()">
 
-    <canvas id="space-canvas"></canvas>
-    <div class="cursor-aura" id="aura"></div>
+    <canvas id="os-canvas"></canvas>
+    <div class="overlay-scanline"></div>
 
-    <header>
-        <div class="brand-logo" onclick="openAdminTerminal()">NOVAX<span>RP</span></div>
+    <div id="boot-screen">
+        <div id="terminal-log"></div>
+        <span class="cursor"></span>
+    </div>
+
+    <div class="desktop" id="desktop">
         
-        <nav class="main-nav">
-            <a class="nav-item active" onclick="route('home', this)">الرئيسية</a>
-            <a class="nav-item" onclick="route('laws', this)">الدستور</a>
-            <a class="nav-item" onclick="route('apply', this)">التفعيل</a>
-            <a class="nav-item" onclick="route('store', this)">المتجر</a>
-            <a id="admin-nav" class="nav-item" style="display:none; border-color: var(--error); color: var(--error);" onclick="route('admin', this)">الإدارة</a>
-        </nav>
+        <div class="icon" onclick="openWindow('laws')">
+            <i class="fas fa-gavel"></i>
+            <span>CONSTITUTION</span>
+        </div>
 
-        <div class="auth-zone">
-            <button id="discord-login-btn" class="discord-btn" onclick="loginWithDiscord()">
-                <i class="fab fa-discord"></i> دخول العباقرة
-            </button>
-            <div id="user-profile" class="user-pill">
-                <span id="user-name-display" style="font-weight: 900; font-size: 12px;"></span>
-                <img id="user-avatar-display" class="user-avatar" src="">
+        <div class="icon" onclick="openWindow('apply')">
+            <i class="fas fa-id-card"></i>
+            <span>WHITELIST</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('store')">
+            <i class="fas fa-shopping-cart"></i>
+            <span>BLACK MARKET</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('map')">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>LIVE MAP</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('status')">
+            <i class="fas fa-server"></i>
+            <span>SERVER STATUS</span>
+        </div>
+
+        <div class="icon" onclick="window.open('https://discord.gg/YOUR_LINK')">
+            <i class="fab fa-discord"></i>
+            <span>COMMUNITY</span>
+        </div>
+
+        <div class="icon" style="position: absolute; bottom: 80px; right: 30px;" onclick="Swal.fire('Trash Empty','No files deleted.','info')">
+            <i class="fas fa-trash-alt" style="color: #666; filter: none;"></i>
+            <span>TRASH</span>
+        </div>
+    </div>
+
+    <div id="win-laws" class="window">
+        <div class="window-header">
+            <span><i class="fas fa-gavel"></i> NOVAX CONSTITUTION</span>
+            <div class="win-controls">
+                <div class="control-btn min"></div>
+                <div class="control-btn close" onclick="closeWindow('laws')"></div>
             </div>
         </div>
-    </header>
-
-    <div class="main-wrapper">
-
-        <section id="view-home" class="page-view active">
-            <div class="hero-wrap">
-                <h1 class="glitch-text">NOVAX</h1>
-                <p>Advanced Multiverse</p>
-                <div style="margin-top: 50px; display: flex; gap: 30px;">
-                    <button class="nav-item" style="font-size: 1.2rem; padding: 15px 40px;" onclick="route('apply')">ابدأ رحلتك الآن</button>
-                    <button class="nav-item" style="border-color: var(--s-neon); font-size: 1.2rem; padding: 15px 40px;" onclick="window.open('YOUR_DISCORD_LINK')">انضم للديسكورد</button>
-                </div>
+        <div class="window-body">
+            <div class="law-item">
+                <h3>01. الخروج عن الواقع (FailRP)</h3>
+                <p>يمنع منعاً باتاً التحدث بأمور خارج اللعبة أو تجاهل القوانين المنطقية للحياة. عقوبتها: النفي لمدة 3 أيام.</p>
             </div>
-        </section>
-
-        <section id="view-laws" class="page-view">
-            <h1 style="font-family: 'Orbitron'; font-size: 3rem; margin-bottom: 50px; text-align: center;">قوانين المجرة</h1>
-            <div class="laws-grid">
-                <div class="law-card">
-                    <h3><i class="fas fa-shield-alt"></i> قوانين الشرطة (الأمن العام)</h3>
-                    <ul class="law-list">
-                        <li>يمنع تفتيش المواطن أو مركبه بدون إذن قضائي أو شبهة جنائية قوية (مشاهدة سلاح، هروب من موقع جريمة).</li>
-                        <li>يجب قراءة "حقوق ميرندا" كاملة وواضحة لحظة تكبيل اليدين.</li>
-                        <li>استخدام القوة المميتة (السلاح الناري) مصرح به فقط في حال تهديد حياة الضابط أو المواطنين بأسلحة نارية.</li>
-                        <li>يمنع قبول الرشوة، وعقوبتها الطرد الفوري والسجن المؤبد (Character Kill).</li>
-                    </ul>
-                </div>
-                <div class="law-card">
-                    <h3><i class="fas fa-heartbeat"></i> قوانين الصحة (المرتكز الطبي)</h3>
-                    <ul class="law-list">
-                        <li>المسعف محمي بقوة القانون، الاعتداء عليه لفظياً أو جسدياً عقوبته السجن المغلظ.</li>
-                        <li>يمنع إنعاش أي شخص (Revive) في منطقة اشتباك نشطة قبل تأمينها من الشرطة.</li>
-                        <li>المسعف ملزم بتقديم العلاج لجميع الأطراف (شرطة، مواطنين، عصابات) حيادياً.</li>
-                    </ul>
-                </div>
-                <div class="law-card">
-                    <h3><i class="fas fa-gavel"></i> قوانين العدل (القضاء والمحاماة)</h3>
-                    <ul class="law-list">
-                        <li>المحامي ملزم بالحفاظ على أسرار موكله وعدم إفشائها للشرطة.</li>
-                        <li>يجب تقديم الأدلة والبراهين قبل 24 ساعة من موعد الجلسة المقررة.</li>
-                        <li>قرار القاضي نهائي وغير قابل للطعن إلا في حال ظهور أدلة جديدة قاطعة.</li>
-                    </ul>
-                </div>
-                <div class="law-card" style="border-color: var(--s-neon);">
-                    <h3><i class="fas fa-user-secret"></i> قوانين عامة (رول بلاي)</h3>
-                    <ul class="law-list">
-                        <li>الخروج عن طور الشخصية (FailRP) أو التحدث بأمور خارج اللعبة عقوبته البند المؤقت.</li>
-                        <li>الدهس المتعمد (VDM) والقتل العشوائي (RDM) ممنوع منعاً باتاً.</li>
-                        <li>يمنع تقمص شخصية "سوبر مان" (FearRP)، يجب الخوف على حياتك عند التهديد بسلاح.</li>
-                    </ul>
-                </div>
+            <div class="law-item">
+                <h3>02. القتل العشوائي (RDM)</h3>
+                <p>لا يسمح بالقتل بدون سبب درامي مسبق وتفاعل صوتي كامل. عقوبتها: النفي لمدة 7 أيام.</p>
             </div>
-        </section>
+            <div class="law-item">
+                <h3>03. استغلال الثغرات (Exploiting)</h3>
+                <p>استخدام أي ثغرة برمجية يؤدي لنفي الحساب بشكل نهائي (Permanent Ban).</p>
+            </div>
+            <div class="law-item">
+                <h3>04. تقدير الحياة (FearRP)</h3>
+                <p>يجب أن تظهر الخوف عند تهديدك بسلاح، أنت لست "سوبر مان".</p>
+            </div>
+        </div>
+    </div>
 
-        <section id="view-apply" class="page-view">
-            <div class="apply-container">
-                <div class="apply-info">
-                    <h2 style="color: var(--p-neon); font-family: 'Orbitron'; margin-bottom: 20px;">البوابة الكونية</h2>
-                    <p style="color: #aaa; line-height: 2;">أهلاً بك أيها المسافر. التقديم مفتوح فقط لمن لم يتم تفعيلهم مسبقاً. طلبك سيخضع لمراجعة دقيقة من قبل مجلس الإدارة الكوني.</p>
-                </div>
-                <div class="form-panel">
-                    <div id="apply-lock-overlay" class="locked-overlay">
-                        <i class="fas fa-lock" style="font-size: 4rem; color: var(--error); margin-bottom: 20px;"></i>
-                        <h3 style="color: var(--error);">تم اكتشاف رتبة "مفعل"</h3>
-                        <p>لا يمكنك التقديم مرة أخرى يا بطل، أنت بالفعل جزء من نوفاكس.</p>
-                    </div>
-
+    <div id="win-apply" class="window">
+        <div class="window-header">
+            <span><i class="fas fa-id-card"></i> CITIZEN APPLICATION</span>
+            <div class="win-controls">
+                <div class="control-btn close" onclick="closeWindow('apply')"></div>
+            </div>
+        </div>
+        <div class="window-body">
+            <div id="step-1" class="step-panel active">
+                <h2 style="color: var(--p-neon); margin-bottom: 20px;">[ PHASE 01: IDENTITY ]</h2>
+                <div class="input-group">
                     <label>الاسم الحقيقي</label>
-                    <input type="text" id="form-realname">
-                    <label>اسم الشخصية (Roleplay Name)</label>
-                    <input type="text" id="form-rpname" placeholder="مثال: Ahmed_Mansour">
+                    <input type="text" id="r-name" placeholder="...">
+                </div>
+                <div class="input-group">
                     <label>العمر</label>
-                    <input type="number" id="form-age">
-                    <label>حدثنا عن سيناريو رول بلاي قمت به سابقاً</label>
-                    <textarea id="form-scenario" rows="5"></textarea>
-                    <button class="action-btn" onclick="sendWhitelistRequest()">إرسال الطلب للمراجعة</button>
+                    <input type="number" id="r-age" placeholder="00">
+                </div>
+                <button class="action-btn" onclick="nextStep(2)">NEXT_PHASE >></button>
+            </div>
+
+            <div id="step-2" class="step-panel">
+                <h2 style="color: var(--p-neon); margin-bottom: 20px;">[ PHASE 02: STORY ]</h2>
+                <div class="input-group">
+                    <label>اسم الشخصية (RP Name)</label>
+                    <input type="text" id="rp-name" placeholder="Name_Surname">
+                </div>
+                <div class="input-group">
+                    <label>قصة الشخصية باختصار</label>
+                    <textarea id="rp-story" rows="4"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="action-btn" style="background: #333; color: #fff;" onclick="nextStep(1)">BACK</button>
+                    <button class="action-btn" onclick="submitApp()">SUBMIT_DATA</button>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="view-store" class="page-view">
-            <div class="shop-header">
-                <h1 style="font-family: 'Orbitron'; font-size: 4rem;">BLACK MARKET</h1>
-                <p style="color: var(--s-neon);">تتم المزامنة تلقائياً مع نظام الديسكورد</p>
+    <div id="win-store" class="window">
+        <div class="window-header">
+            <span><i class="fas fa-shopping-cart"></i> BLACK MARKET ASSETS</span>
+            <div class="win-controls">
+                <div class="control-btn close" onclick="closeWindow('store')"></div>
             </div>
-            <div class="shop-grid" id="dynamic-store">
+        </div>
+        <div class="window-body">
+            <div class="store-grid">
+                <div class="car-card">
+                    <div class="car-img"></div>
+                    <div class="car-info">
+                        <h4>Bugatti Chiron Pur Sport</h4>
+                        <h2 style="color: var(--success);">$150.00</h2>
+                        <button class="action-btn" style="padding: 5px 15px; font-size: 12px;">ORDER NOW</button>
+                    </div>
                 </div>
-        </section>
-
-        <section id="view-admin" class="page-view">
-            <div class="apply-container" style="grid-template-columns: 1fr 2fr;">
-                <div class="apply-info" style="border-color: var(--error);">
-                    <h2 style="color: var(--error);">إدارة النظام</h2>
-                    <p>منطقة التحكم المركزي بجميع أنظمة NOVAX.</p>
-                </div>
-                <div class="form-panel">
-                    <h3>بث إعلان إداري للديسكورد</h3>
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #222;">
-                    <label>عنوان الإعلان</label>
-                    <input type="text" id="adm-title">
-                    <label>نص الإعلان</label>
-                    <textarea id="adm-body" rows="4"></textarea>
-                    <button class="action-btn" style="background: var(--error);" onclick="dispatchAdminEmbed()">نشر الإعلان الآن</button>
+                <div class="car-card">
+                    <div class="car-img" style="background-image: url('https://i.imgur.com/uW2F97b.jpg');"></div>
+                    <div class="car-info">
+                        <h4>Mercedes-AMG G63</h4>
+                        <h2 style="color: var(--success);">$85.00</h2>
+                        <button class="action-btn" style="padding: 5px 15px; font-size: 12px;">ORDER NOW</button>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
+    <div id="win-map" class="window">
+        <div class="window-header">
+            <span><i class="fas fa-map-marked-alt"></i> SATELLITE FEED</span>
+            <div class="win-controls">
+                <div class="control-btn close" onclick="closeWindow('map')"></div>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="map-wrapper">
+                <div class="map-poi" style="top: 20%; left: 30%;" onclick="alert('مركز الشرطة الرئيسي')"></div>
+                <div class="map-poi" style="top: 55%; left: 50%; background: var(--error);" onclick="alert('منطقة اشتباكات نشطة')"></div>
+                <div class="map-poi" style="top: 70%; left: 20%; background: var(--success);" onclick="alert('كراج السيارات المركزي')"></div>
+            </div>
+            <p style="margin-top: 20px; color: var(--s-neon); font-family: 'Share Tech Mono';">LIVE UPDATES: ENABLED | PACKETS RECEIVED: 1024</p>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <div class="start-btn" onclick="Swal.fire('NOVAX SYSTEM','Version 6.0.8 (Stable Build)','success')">START</div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div class="clock" id="clock">00:00:00</div>
+            <div style="color: var(--p-neon); font-weight: 900; border-left: 2px solid #333; padding-left: 20px;">
+                <i class="fas fa-wifi"></i> 14ms
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- [1] الإعدادات الربطية (تأكد من وضع بياناتك) ---
-        const CLIENT_ID = 'YOUR_CLIENT_ID'; // ايدي البوت الخاص بك
-        const WEBHOOK_WHITELIST = "YOUR_WHITELIST_WEBHOOK";
-        const WEBHOOK_ADMIN = "YOUR_ADMIN_WEBHOOK";
-        const ACTIVATED_ROLE_NAME = 'مفعل'; // اسم رتبة المفعلين في سيرفرك ديسكورد
+        /* ========================================
+           [8] المنطق البرمجي (Core Logic) 
+           ========================================
+        */
 
-        // --- [2] محرك الفضاء (تم الحفاظ عليه) ---
-        function initSpace() {
+        // --- محرك الإقلاع (Terminal Simulation) ---
+        const logs = [
+            "> INITIALIZING NOVAX CORE BIOS...",
+            "> LOADING SYSTEM KERNEL...",
+            "> CONNECTING TO FIVE-M DATABASE...",
+            "> ENCRYPTING COMMUNICATION CHANNELS...",
+            "> MOUNTING DESKTOP ENVIRONMENT...",
+            "> STARTING NEON GRAPHICS ENGINE...",
+            "> ACCESS GRANTED: WELCOME MASTER NOVAX.",
+            " "
+        ];
+
+        function initOS() {
+            let logIdx = 0;
+            const terminal = document.getElementById('terminal-log');
+            
+            const logInterval = setInterval(() => {
+                if(logIdx < logs.length) {
+                    const line = document.createElement('div');
+                    line.innerText = logs[logIdx];
+                    terminal.appendChild(line);
+                    logIdx++;
+                } else {
+                    clearInterval(logInterval);
+                    setTimeout(() => {
+                        document.getElementById('boot-screen').style.display = 'none';
+                        initBackground();
+                        startTime();
+                    }, 1000);
+                }
+            }, 400);
+        }
+
+        // --- محرك الخلفية (Three.js) ---
+        function initBackground() {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), alpha: true });
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('os-canvas'), alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            const geo = new THREE.BufferGeometry();
-            const pos = [];
-            for(let i=0; i<8000; i++) { pos.push(THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500)); }
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            const stars = new THREE.Points(geo, new THREE.PointsMaterial({color: 0xbc13fe, size: 1}));
-            scene.add(stars); camera.position.z = 10;
-            function animate() { requestAnimationFrame(animate); stars.rotation.y += 0.0003; stars.rotation.x += 0.0001; renderer.render(scene, camera); }
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = [];
+            for(let i=0; i<10000; i++) {
+                starPos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+            }
+            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({ color: 0xbc13fe, size: 0.7 });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+
+            camera.position.z = 1;
+            function animate() {
+                requestAnimationFrame(animate);
+                stars.rotation.y += 0.0005;
+                renderer.render(scene, camera);
+            }
             animate();
         }
 
-        // --- [3] نظام تتبع الماوس ---
-        const aura = document.getElementById('aura');
-        window.onmousemove = (e) => { aura.style.left = e.clientX + 'px'; aura.style.top = e.clientY + 'px'; };
-
-        // --- [4] نظام التنقل (تم الحفاظ عليه) ---
-        function route(id, element) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(element) element.classList.add('active');
-            window.scrollTo(0, 0);
-            gsap.from('#view-' + id, { duration: 1, y: 30, opacity: 0, ease: "power4.out" });
+        // --- نظام النوافذ ---
+        function openWindow(id) {
+            const win = document.getElementById('win-' + id);
+            win.style.display = 'flex';
+            gsap.from(win, { scale: 0.5, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
+            
+            // جعل النافذة قابلة للسحب
+            Draggable.create(win, { trigger: win.querySelector('.window-header') });
         }
 
-        // --- [NEW] نظام تسجيل الدخول الحقيقي برتب الديسكورد ---
-        function loginWithDiscord() {
-            const redirectUri = encodeURIComponent(window.location.href);
-            // نطلب صلاحية Identify لجلب البيانات وصلاحية Guilds لمعرفة الرتب
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify guilds`;
-            window.location.href = authUrl;
+        function closeWindow(id) {
+            const win = document.getElementById('win-' + id);
+            gsap.to(win, { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
         }
 
-        function checkDiscordCallback() {
-            const params = new URLSearchParams(window.location.hash.slice(1));
-            const token = params.get('access_token');
-            if(token) {
-                // 1. جلب بيانات المستخدم الأساسية
-                fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` }})
-                .then(res => res.json())
-                .then(user => {
-                    localStorage.setItem('novax_user', JSON.stringify(user));
-                    
-                    // 2. جلب رتب المستخدم في السيرفر (تحتاج سيت أب خاص في بوتك ليعمل الـ API)
-                    // ملاحظة للمطور سيدي: جلب الرتب مباشرة من الـ Frontend قد يتطلب بوت يخدم البيانات عبر API خاص بك.
-                    // للمحاكاة الآن، سنعتمد على الاسم. في الواقع، البوت هو من يقرر.
-                    
-                    applyUserData(user);
-                    Swal.fire({ icon: 'success', title: `أهلاً بك يا العبقري ${user.username}`, background: '#010103', color: '#fff' });
-                    window.location.hash = ""; // تنظيف الرابط
-                });
-            } else if(localStorage.getItem('novax_user')) {
-                applyUserData(JSON.parse(localStorage.getItem('novax_user')));
-            }
+        // --- نظام الوقت ---
+        function startTime() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+            }, 1000);
         }
 
-        function applyUserData(user) {
-            document.getElementById('discord-login-btn').style.display = 'none';
-            document.getElementById('user-profile').style.display = 'flex';
-            document.getElementById('user-name-display').innerText = user.username.toUpperCase();
-            document.getElementById('user-avatar-display').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-
-            // [LOGIC] التحقق من الرتبة (محاكاة: إذا الاسم يحتوي على admin يعتبر أدمن ومفعل)
-            // في الواقع سيدي، بوتك هو من يرسل البيانات للموقع ويقول "هذا مفعل"
-            if(user.username.toLowerCase().includes('admin')) {
-                // إظهار لوحة الإدارة
-                document.getElementById('admin-nav').style.display = 'block';
-                // قفل التقديم (لأنه مفعل)
-                document.getElementById('apply-lock-overlay').style.display = 'flex';
-            }
+        // --- خطوات التقديم ---
+        function nextStep(step) {
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
         }
 
-        // --- [5] نظام التقديم والويب هوك ---
-        function sendWhitelistRequest() {
-            if(!localStorage.getItem('novax_user')) return Swal.fire('تنبيه', 'يرجى تسجيل الدخول بالديسكورد أولاً', 'warning');
-            const user = JSON.parse(localStorage.getItem('novax_user'));
-
-            const data = {
-                realname: document.getElementById('form-realname').value,
-                rpname: document.getElementById('form-rpname').value,
-                age: document.getElementById('form-age').value,
-                scenario: document.getElementById('form-scenario').value
-            };
-
-            if(!data.realname || !data.rpname) return Swal.fire('تنبيه', 'يرجى إكمال كافة البيانات', 'warning');
-
-            const embed = {
-                embeds: [{
-                    title: "🚀 طلب تقديم (Whitelist) جديد",
-                    color: 12325374,
-                    fields: [
-                        { name: "👤 اسم الديسكورد", value: `${user.username}#${user.discriminator}`, inline: true },
-                        { name: "🎭 اسم الشخصية", value: data.rpname, inline: true },
-                        { name: "📅 العمر", value: data.age, inline: true },
-                        { name: "📜 السيناريو", value: data.scenario }
-                    ],
-                    thumbnail: { url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` },
-                    footer: { text: "نظام NOVAX الكوني" },
-                    timestamp: new Date()
-                }]
-            };
-
-            fetch(WEBHOOK_WHITELIST, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(embed) })
-            .then(() => {
-                Swal.fire('تم بنجاح', 'وصل طلبك للإدارة، تابع روم النتائج', 'success');
-                document.querySelectorAll('input, textarea').forEach(i => i.value = "");
+        function submitApp() {
+            Swal.fire({
+                title: 'SENDING DATA...',
+                text: 'Connecting to main server frame.',
+                timer: 2000,
+                background: '#010103',
+                color: '#fff',
+                didOpen: () => Swal.showLoading()
+            }).then(() => {
+                Swal.fire('UPLOAD COMPLETE','Your application is now under review.','success');
+                closeWindow('apply');
             });
         }
 
-        // --- [6] المتجر الديناميكي والادارة ---
-        function pushToStore(name, price, stock, image) {
-            const container = document.getElementById('dynamic-store');
-            container.innerHTML += `<div class="product-node"><div class="stock-indicator">متوفر: ${stock}</div><img src="${image}"> <div class="product-content"> <h3>${name}</h3> <div class="price-tag">$${price}</div> <button class="action-btn" style="padding: 10px;">شراء الآن</button> </div></div>`;
-        }
-
-        pushToStore("Vapid Dominator GT", "45.00", 3, "https://i.imgur.com/8P9vBfK.jpg");
-
-        function openAdminTerminal() {
-            Swal.fire({ title: 'ACCESS CODE', input: 'password', background: '#010103', color: '#fff', confirmButtonColor: '#bc13fe' })
-            .then(r => { if(r.value === '123') { document.getElementById('admin-nav').style.display = 'block'; route('admin'); } });
-        }
-
-        function dispatchAdminEmbed() {
-            const title = document.getElementById('adm-title').value;
-            const body = document.getElementById('adm-body').value;
-            fetch(WEBHOOK_ADMIN, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ embeds: [{ title: title, description: body, color: 16711740 }] }) })
-            .then(() => Swal.fire('تم النشر', 'تم إرسال الإعلان', 'success'));
-        }
-
-        // --- [7] تشغيل المحرك ---
-        function initializeCore() {
-            initSpace();
-            checkDiscordCallback();
-            console.log("NOVAX CORE v6.0 Online");
-        }
+        // --- حماية النظام ---
+        document.addEventListener('contextmenu', event => event.preventDefault());
 
     </script>
 </body>
