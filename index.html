@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT OS | THE NEURAL NETWORK 2059</title>
+    <title>RESPECT NEURAL OS v9.0 | 2059</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -13,277 +13,243 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* [CORE SYSTEMS] */
         :root {
-            --neon-p: #bc13fe; --neon-g: #00ff88; --neon-b: #00f2ff;
-            --bg: #000000; --glass: rgba(10, 10, 15, 0.95);
+            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.7);
+            --s-neon: #00f2ff; --bg: #000000; --glass: rgba(5, 5, 10, 0.98);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; cursor: crosshair; }
         body, html { width: 100%; height: 100%; background: var(--bg); overflow: hidden; color: #fff; }
 
-        /* محرك الخلفية 3D (Grid & Particles) */
-        #render-canvas { position: fixed; inset: 0; z-index: -2; }
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, #000 100%); pointer-events: none; z-index: -1; }
+        /* [1] 3D GRID ENGINE (THE 2059 VIBE) */
+        #os-canvas { position: fixed; inset: 0; z-index: -2; }
+        .scanline { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; z-index: 999; pointer-events: none; }
 
-        /* الهيكل الخارجي (Main UI) */
-        .desktop { height: 100vh; width: 100vw; position: relative; padding: 40px; }
-
-        /* الأيقونات الذكية */
-        .icon-grid { display: grid; grid-template-rows: repeat(auto-fill, 120px); grid-auto-flow: column; gap: 30px; }
+        /* [2] THE DESKTOP ECOSYSTEM */
+        .desktop { height: 100vh; width: 100vw; padding: 60px; display: grid; grid-template-rows: repeat(auto-fill, 120px); grid-auto-flow: column; gap: 40px; }
         .app-icon {
-            width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(188, 19, 254, 0.05); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 15px;
-            transition: 0.3s; backdrop-filter: blur(5px);
+            width: 110px; height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(188, 19, 254, 0.05); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 20px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px);
         }
-        .app-icon:hover { background: var(--neon-p); border-color: #fff; transform: scale(1.1); box-shadow: 0 0 40px var(--neon-p); }
-        .app-icon i { font-size: 40px; color: var(--neon-p); margin-bottom: 10px; }
-        .app-icon:hover i { color: #000; }
-        .app-icon span { font-family: 'Orbitron'; font-size: 10px; font-weight: 900; }
+        .app-icon:hover { background: var(--p-neon); box-shadow: 0 0 50px var(--p-glow); transform: scale(1.15) rotate(3deg); border-color: #fff; }
+        .app-icon i { font-size: 45px; color: var(--p-neon); margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--p-neon)); }
+        .app-icon:hover i { color: #000; filter: none; }
+        .app-icon span { font-family: 'Orbitron'; font-size: 11px; font-weight: 900; letter-spacing: 1px; }
 
-        /* نظام النوافذ (Advanced Windows System) */
+        /* [3] ULTRA WINDOW SYSTEM */
         .window {
-            position: absolute; width: 1000px; height: 700px; background: var(--glass);
-            border: 2px solid var(--neon-p); border-radius: 20px; display: none; flex-direction: column;
-            box-shadow: 0 0 100px rgba(188, 19, 254, 0.2); z-index: 100;
+            position: absolute; width: 1100px; height: 750px; background: var(--glass);
+            border: 2px solid var(--p-neon); border-radius: 25px; display: none; flex-direction: column;
+            box-shadow: 0 0 150px rgba(0,0,0,1), 0 0 50px var(--p-glow); z-index: 100;
         }
         .win-header {
-            height: 50px; background: linear-gradient(90deg, var(--neon-p), #4b0082);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
-            cursor: grab; font-family: 'Orbitron'; font-weight: 900;
+            height: 60px; background: linear-gradient(90deg, #1a0033, var(--p-neon));
+            display: flex; justify-content: space-between; align-items: center; padding: 0 30px;
+            cursor: grab; font-family: 'Orbitron'; font-weight: 900; border-radius: 23px 23px 0 0;
         }
-        .win-body { flex: 1; padding: 40px; overflow-y: auto; scrollbar-width: none; }
-        .win-btn { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+        .win-body { flex: 1; padding: 50px; overflow-y: auto; scrollbar-width: none; }
+        .win-close { width: 20px; height: 20px; background: #ff4b4b; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px #ff4b4b; }
 
-        /* [قوانين الرول بلاي - النسخة الضخمة] */
-        .law-card { 
-            background: #08080a; border-right: 10px solid var(--neon-p); padding: 35px;
-            border-radius: 15px; margin-bottom: 30px; border-top: 1px solid #222;
+        /* [4] CONTENT: LAWS, CONTROL, UPDATES */
+        .mega-card { background: #08080a; border-left: 15px solid var(--p-neon); padding: 40px; border-radius: 20px; margin-bottom: 40px; border-top: 1px solid #222; transition: 0.3s; }
+        .mega-card:hover { transform: scale(1.02); background: #0c0c0f; }
+        .mega-card h2 { color: var(--p-neon); font-family: 'Orbitron'; font-size: 3rem; margin-bottom: 25px; }
+        .mega-card li { font-size: 1.5rem; margin-bottom: 20px; color: #eee; list-style: none; }
+        .mega-card li::before { content: "☢ "; color: var(--p-neon); font-weight: 900; }
+
+        /* CONTROL PANEL */
+        .grid-ctrl { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .panel { background: #000; border: 1px solid #333; padding: 40px; border-radius: 30px; position: relative; }
+        .btn-strike {
+            width: 100%; padding: 25px; border: none; border-radius: 15px; margin-bottom: 20px;
+            font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between;
         }
-        .law-card h2 { color: var(--neon-p); font-family: 'Orbitron'; font-size: 2.5rem; margin-bottom: 20px; }
-        .law-card li { font-size: 1.3rem; margin-bottom: 15px; color: #ccc; }
-        .law-card li::before { content: "» "; color: var(--neon-p); font-weight: 900; }
+        .btn-purple { background: var(--p-neon); color: #000; box-shadow: 0 0 30px var(--p-glow); }
+        .btn-blue { background: var(--s-neon); color: #000; }
+        .btn-red { background: #ff003c; color: #fff; }
 
-        /* [لوحة تحكم FiveM & Discord] */
-        .control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .panel-box { background: #000; border: 1px solid #222; padding: 30px; border-radius: 20px; }
-        .btn-action {
-            width: 100%; padding: 20px; border: none; border-radius: 12px; margin-bottom: 15px;
-            font-weight: 900; cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between;
-        }
-        .btn-p { background: var(--neon-p); color: #000; box-shadow: 0 0 20px var(--neon-p); }
-        .btn-b { background: var(--neon-b); color: #000; }
-        .btn-danger { background: #ff003c; color: #fff; }
+        /* APPLICATION FORM */
+        .mega-input { width: 100%; background: #050505; border: 2px solid #222; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 25px; font-size: 1.3rem; transition: 0.4s; }
+        .mega-input:focus { border-color: var(--p-neon); box-shadow: 0 0 40px var(--p-glow); outline: none; }
 
-        /* [نظام التحديثات] */
-        .update-list { border-right: 2px solid #333; padding-right: 20px; }
-        .update-entry { margin-bottom: 30px; position: relative; }
-        .update-entry::after { content: ''; position: absolute; right: -26px; top: 10px; width: 10px; height: 10px; background: var(--neon-p); border-radius: 50%; }
-        .update-entry h4 { color: var(--neon-p); font-family: 'Orbitron'; font-size: 1.5rem; }
-
-        /* [نظام التفعيل - المتقدم] */
-        .input-mega { width: 100%; background: #050505; border: 1px solid #333; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 20px; font-size: 1.2rem; }
-        .input-mega:focus { border-color: var(--neon-p); box-shadow: 0 0 30px var(--neon-p); outline: none; }
-
-        /* [TASKBAR] */
-        .taskbar { position: fixed; bottom: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.95); border-top: 1px solid var(--neon-p); z-index: 1000; display: flex; align-items: center; padding: 0 30px; gap: 20px; }
-        .start-btn { background: var(--neon-p); color: #000; padding: 8px 30px; border-radius: 5px; font-family: 'Orbitron'; font-weight: 900; }
+        /* [5] TASKBAR & SYSTEM CLOCK */
+        .taskbar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.98); border-top: 2px solid var(--p-neon); z-index: 1000; display: flex; align-items: center; padding: 0 40px; gap: 30px; }
+        .os-start { background: var(--p-neon); color: #000; padding: 12px 40px; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; box-shadow: 0 0 20px var(--p-neon); }
+        .os-clock { margin-right: auto; font-family: 'Share Tech Mono'; color: var(--s-neon); font-size: 30px; text-shadow: 0 0 20px var(--s-neon); }
 
     </style>
 </head>
-<body onload="initSystem()">
+<body onload="bootKernel()">
 
-    <canvas id="render-canvas"></canvas>
-    <div class="vignette"></div>
+    <canvas id="os-canvas"></canvas>
+    <div class="scanline"></div>
 
     <div class="desktop">
-        <div class="icon-grid">
-            <div class="app-icon" onclick="openApp('laws')"><i class="fas fa-gavel"></i><span>LAWS_2059</span></div>
-            <div class="app-icon" onclick="openApp('control')"><i class="fas fa-terminal"></i><span>REMOTE_CTRL</span></div>
-            <div class="app-icon" onclick="openApp('apply')"><i class="fas fa-id-card"></i><span>WHITELIST</span></div>
-            <div class="app-icon" onclick="openApp('updates')"><i class="fas fa-history"></i><span>CHANGELOG</span></div>
-            <div class="app-icon" onclick="openApp('store')"><i class="fas fa-shopping-cart"></i><span>ASSETS</span></div>
-        </div>
+        <div class="app-icon" onclick="launchApp('laws')"><i class="fas fa-gavel"></i><span>LAWS_CORE</span></div>
+        <div class="app-icon" onclick="launchApp('control')"><i class="fas fa-microchip"></i><span>REMOTE_CTRL</span></div>
+        <div class="app-icon" onclick="launchApp('apply')"><i class="fas fa-fingerprint"></i><span>WHITELIST</span></div>
+        <div class="app-icon" onclick="launchApp('updates')"><i class="fas fa-terminal"></i><span>CHANGELOG</span></div>
+        <div class="app-icon" onclick="window.open('YOUR_DISCORD')"><i class="fab fa-discord"></i><span>DISCORD</span></div>
+    </div>
 
-        <div id="win-laws" class="window">
-            <div class="win-header"><span>RESPECT_CONSTITUTION_V4.0</span><div class="win-btn" style="background:red" onclick="closeApp('laws')"></div></div>
-            <div class="win-body">
-                <div class="law-card">
-                    <h2>⚖️ ميثاق الشرف</h2>
-                    <ul>
-                        <li>يمنع منعاً باتاً استغلال الثغرات البرمجية في السيرفر؛ العقوبة باند نهائي.</li>
-                        <li>احترام الطاقم الإداري وجميع اللاعبين؛ التجاوز يؤدي للنفي الفوري.</li>
-                        <li>يمنع استخدام أي معلومات خارج اللعبة (Meta Gaming).</li>
-                    </ul>
-                </div>
-                <div class="law-card" style="border-color: var(--neon-b);">
-                    <h2>⚔️ قوانين الاشتباك</h2>
-                    <ul>
-                        <li>يمنع القتل العشوائي (RDM) وصدم الناس (VDM) تحت أي ظرف.</li>
-                        <li>يمنع السرقة أو القتل في المناطق الخضراء المحددة بالخريطة.</li>
-                        <li>يمنع الخروج من اللعبة أثناء "السين" (Combat Log).</li>
-                    </ul>
-                </div>
+    <div id="win-laws" class="window">
+        <div class="win-header"><span>SYSTEM_PROTOCOL::LAWS_V9.0</span><div class="win-close" onclick="killApp('laws')"></div></div>
+        <div class="win-body">
+            <div class="mega-card">
+                <h2>📜 دستور المدينة</h2>
+                <ul>
+                    <li>يمنع منعاً باتاً استغلال الثغرات البرمجية؛ العقوبة نفي مؤبد.</li>
+                    <li>احترام الطاقم الإداري واللاعبين خط أحمر لا يمكن تجاوزه.</li>
+                    <li>يجب الحفاظ على واقعية الشخصية (FailRP) في جميع الظروف.</li>
+                </ul>
+            </div>
+            <div class="mega-card" style="border-color: var(--s-neon);">
+                <h2>⚔ قواعد الاشتباك</h2>
+                <ul>
+                    <li>القتل العشوائي (RDM) وصدم الناس (VDM) يؤدي للسجن الفوري.</li>
+                    <li>يجب التفاعل صوتياً وبدراما قوية قبل أي عملية سرقة أو خطف.</li>
+                </ul>
             </div>
         </div>
+    </div>
 
-        <div id="win-control" class="window">
-            <div class="win-header"><span>SERVER_ORCHESTRATOR_BETA</span><div class="win-btn" style="background:red" onclick="closeApp('control')"></div></div>
-            <div class="win-body">
-                <div class="control-panel">
-                    <div class="panel-box">
-                        <h3 style="margin-bottom:20px; color:var(--neon-p)">🎮 FiveM Server Control</h3>
-                        <button class="btn-action btn-p" onclick="execCmd('START_SERVER')">تشغيل السيرفر <i class="fas fa-play"></i></button>
-                        <button class="btn-action btn-b" onclick="execCmd('RESTART')">إعادة تشغيل <i class="fas fa-sync"></i></button>
-                        <button class="btn-action btn-danger" onclick="execCmd('STOP')">إيقاف فوري <i class="fas fa-power-off"></i></button>
-                        <input type="text" class="input-mega" placeholder="أرسل أمر لـ txAdmin...">
-                    </div>
-                    <div class="panel-box">
-                        <h3 style="margin-bottom:20px; color:var(--neon-b)">🤖 Discord Integration</h3>
-                        <button class="btn-action btn-b" onclick="execCmd('ANNOUNCE')">إرسال إعلان @everyone</button>
-                        <button class="btn-action btn-p" onclick="execCmd('LOCK')">قفل الرومات (Lockdown)</button>
-                        <div style="background:#111; height:120px; border-radius:10px; padding:15px; font-family:'Share Tech Mono'; color:var(--neon-g); font-size:12px;">
-                            > CONNECTION ESTABLISHED<br>
-                            > BOT STATUS: ACTIVE<br>
-                            > SYNCING PLAYERS... 142/256
-                        </div>
+    <div id="win-control" class="window">
+        <div class="win-header"><span>FIVEM_REMOTE_KERNEL_v2059</span><div class="win-close" onclick="killApp('control')"></div></div>
+        <div class="win-body">
+            <div class="grid-ctrl">
+                <div class="panel">
+                    <h3 style="margin-bottom:30px; color:var(--p-neon); font-family:'Orbitron'">🎮 Server Orchestrator</h3>
+                    <button class="btn-strike btn-purple" onclick="fireAction('START')">إقلاع السيرفر <i class="fas fa-play"></i></button>
+                    <button class="btn-strike btn-blue" onclick="fireAction('RESTART')">إعادة التشغيل <i class="fas fa-sync"></i></button>
+                    <button class="btn-strike btn-red" onclick="fireAction('SHUTDOWN')">إيقاف فوري <i class="fas fa-power-off"></i></button>
+                    <input type="text" class="mega-input" style="padding:15px; font-size:1rem" placeholder="Execute Root Command...">
+                </div>
+                <div class="panel">
+                    <h3 style="margin-bottom:30px; color:var(--s-neon); font-family:'Orbitron'">🤖 Discord Bridge</h3>
+                    <button class="btn-strike btn-blue" onclick="fireAction('ANNOUNCE')">إرسال إعلان عام @everyone</button>
+                    <button class="btn-strike btn-purple" onclick="fireAction('LOCKDOWN')">تفعيل وضع الحظر (Lockdown)</button>
+                    <div style="background:#050505; height:150px; border-radius:15px; padding:20px; font-family:'Share Tech Mono'; color:var(--p-neon); font-size:14px; border:1px solid #222;">
+                        [SYSTEM] CONNECTION SECURE...<br>
+                        [AUTH] MASTER KEY ACCEPTED...<br>
+                        [SYNC] PLAYERS ONLINE: 184/256<br>
+                        [DB] SQL LATENCY: 12ms
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="win-apply" class="window">
-            <div class="win-header"><span>WHITELIST_REGISTRATION</span><div class="win-btn" style="background:red" onclick="closeApp('apply')"></div></div>
-            <div class="win-body">
-                <h1 style="color:var(--neon-p); margin-bottom:30px;">سجل بياناتك لدخول المدينة</h1>
-                <input type="text" id="p-name" class="input-mega" placeholder="الاسم الحقيقي">
-                <input type="text" id="p-rp" class="input-mega" placeholder="الاسم في اللعبة (FirstName_LastName)">
-                <textarea class="input-mega" id="p-story" rows="5" placeholder="قصة شخصيتك بالتفصيل..."></textarea>
-                <button class="btn-action btn-p" onclick="sendToDiscord()">إرسال وفتح تذكرة تفعيل 🚀</button>
-            </div>
-        </div>
-
-        <div id="win-updates" class="window">
-            <div class="win-header"><span>SYSTEM_CHANGELOG</span><div class="win-btn" style="background:red" onclick="closeApp('updates')"></div></div>
-            <div class="win-body">
-                <div class="update-list">
-                    <div class="update-entry">
-                        <h4>V5.2.0 - التحديث الأكبر</h4>
-                        <p style="color:#888">إضافة نظام "العصابات المتقدم" مع مناطق نفوذ حقيقية.</p>
-                    </div>
-                    <div class="update-entry">
-                        <h4>V5.1.5 - الأداء</h4>
-                        <p style="color:#888">تقليل استهلاك السيرفر للرام بنسبة 30% وإضافة حماية DDoS جديدة.</p>
-                    </div>
-                </div>
-            </div>
+    <div id="win-apply" class="window">
+        <div class="win-header"><span>BIOMETRIC_REGISTRATION</span><div class="win-close" onclick="killApp('apply')"></div></div>
+        <div class="win-body">
+            <h1 style="color:var(--p-neon); font-family:'Orbitron'; margin-bottom:40px;">سجل بيانات مواطنتك الرقمية</h1>
+            <input type="text" id="usr-name" class="mega-input" placeholder="الاسم الحقيقي الكامل">
+            <input type="text" id="usr-rp" class="mega-input" placeholder="الاسم داخل اللعبة (FirstName_LastName)">
+            <textarea id="usr-bio" class="mega-input" rows="6" placeholder="قصة حياتك، ماضيك، وأهدافك في المدينة..."></textarea>
+            <button class="btn-strike btn-purple" onclick="submitToDiscord()">إرسال البيانات وفتح تذكرة تفعيل 🚀</button>
         </div>
     </div>
 
     <div class="taskbar">
-        <div class="start-btn">RESECT_OS</div>
-        <div style="color:var(--neon-b); font-family:'Share Tech Mono'; font-size:22px;" id="clock">00:00:00</div>
+        <div class="os-start">RESPECT_OS</div>
+        <div class="os-clock" id="clock-display">00:00:00</div>
     </div>
 
     <script>
-        // [1] محرك الجرافيك 3D (Three.js)
-        let scene, camera, renderer, particles;
-        function initSystem() {
+        // [CORE LOGIC - THE ENGINE]
+        let scene, camera, renderer, grid;
+
+        function bootKernel() {
+            // 3D Scene Initialization
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('render-canvas'), antialias: true });
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('os-canvas'), antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // إضافة جزيئات (Particles) للخلفية
-            const geo = new THREE.BufferGeometry();
-            const pos = [];
-            for(let i=0; i<8000; i++) {
-                pos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
-            }
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            particles = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xbc13fe, size: 0.7 }));
-            scene.add(particles);
-
-            // إضافة خطوط 3D (Grid)
-            const grid = new THREE.GridHelper(2000, 100, 0xbc13fe, 0x111);
-            grid.position.y = -100;
+            // 3D Matrix Grid
+            grid = new THREE.GridHelper(2000, 100, 0xbc13fe, 0x050505);
+            grid.position.y = -150;
             scene.add(grid);
+
+            // Particles (The Soul)
+            const pGeo = new THREE.BufferGeometry();
+            const pPos = [];
+            for(let i=0; i<10000; i++) {
+                pPos.push(THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500));
+            }
+            pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
+            const pMat = new THREE.PointsMaterial({ color: 0xbc13fe, size: 1, transparent: true, opacity: 0.6 });
+            const particles = new THREE.Points(pGeo, pMat);
+            scene.add(particles);
 
             camera.position.z = 1;
             animate();
-            startTime();
+            startClock();
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            particles.rotation.y += 0.0005;
-            particles.rotation.x += 0.0001;
+            grid.rotation.y += 0.001;
             renderer.render(scene, camera);
         }
 
-        // [2] نظام النوافذ والسحب
-        function openApp(id) {
+        // Window Management (GSAP Driven)
+        function launchApp(id) {
             const win = document.getElementById('win-' + id);
             win.style.display = 'flex';
-            gsap.from(win, { scale: 0.5, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
+            gsap.from(win, { scale: 0.4, opacity: 0, duration: 0.5, ease: "back.out(1.5)" });
             Draggable.create(win, { trigger: win.querySelector('.win-header') });
         }
 
-        function closeApp(id) {
+        function killApp(id) {
             const win = document.getElementById('win-' + id);
-            gsap.to(win, { scale: 0.8, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
+            gsap.to(win, { scale: 0.7, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
         }
 
-        // [3] الوظائف البرمجية
-        function startTime() {
+        function startClock() {
             setInterval(() => {
-                const now = new Date();
-                document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+                const d = new Date();
+                document.getElementById('clock-display').innerText = d.toLocaleTimeString();
             }, 1000);
         }
 
-        function execCmd(cmd) {
+        function fireAction(act) {
             Swal.fire({
-                title: 'EXECUTING...',
-                text: 'إرسال الأمر للنواة: ' + cmd,
-                icon: 'info',
-                background: '#000',
-                color: '#bc13fe',
-                showConfirmButton: false,
-                timer: 1500
+                title: 'EXECUTING ROOT...',
+                text: 'إرسال الأمر للنواة: ' + act,
+                icon: 'info', background: '#000', color: '#bc13fe', showConfirmButton: false, timer: 2000
             });
         }
 
-        function sendToDiscord() {
+        function submitToDiscord() {
             const hook = "رابط_الويب_هوك_هنا";
-            const data = {
-                name: document.getElementById('p-name').value,
-                rp: document.getElementById('p-rp').value,
-                story: document.getElementById('p-story').value
-            };
-            
-            if(!data.name || !data.rp) return Swal.fire('خطأ','أكمل البيانات يا وحش','error');
+            const d = { n: document.getElementById('usr-name').value, rp: document.getElementById('usr-rp').value, b: document.getElementById('usr-bio').value };
+            if(!d.n || !d.rp) return Swal.fire('خطأ','أكمل البيانات يا وحش','error');
 
             fetch(hook, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     embeds: [{
-                        title: "🚀 طلب تفعيل جديد",
+                        title: "👑 سجل مواطنة جديد - 2059",
                         color: 12325374,
                         fields: [
-                            { name: "👤 الاسم", value: data.name, inline: true },
-                            { name: "🎭 الشخصية", value: data.rp, inline: true },
-                            { name: "📖 القصة", value: data.story }
+                            { name: "👤 الاسم", value: d.n, inline: true },
+                            { name: "🎭 الشخصية", value: d.rp, inline: true },
+                            { name: "📖 القصة", value: d.b }
                         ],
+                        footer: { text: "RESPECT NEURAL NETWORK" },
                         timestamp: new Date()
                     }]
                 })
             }).then(() => {
-                Swal.fire('تم بنجاح!','تم إرسال طلبك للديسكورد.','success');
-                closeApp('apply');
+                Swal.fire('تم الاختراق بنجاح!','بياناتك وصلت للإدارة، انتظر التفعيل.','success');
+                killApp('apply');
             });
         }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>
