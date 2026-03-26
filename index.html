@@ -3,83 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT CLONE | 2099</title>
+    <title>NoVaX RP | نـوفـاكـس</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f111a; font-family: 'Tajawal', sans-serif; color: #fff; }
-        /* القائمة الجانبية بستايل ريسبكت */
-        .sidebar { background: #161925; width: 260px; height: 100vh; position: fixed; right: 0; top: 0; border-left: 1px solid #1f2335; }
-        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #8e94a5; transition: 0.3s; margin: 5px 15px; border-radius: 12px; }
-        .nav-item:hover, .nav-item.active { background: #232738; color: #3b82f6; }
-        .nav-item.active { border-right: 3px solid #3b82f6; }
+        :root { --main-purple: #8a2be2; --bg-black: #030305; --card-bg: #0d0d12; }
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-black); color: white; margin: 0; overflow-x: hidden; }
         
-        /* المحتوى الرئيسي */
-        .main-content { margin-right: 260px; padding: 40px; }
-        .card { background: #161925; border-radius: 20px; border: 1px solid #1f2335; padding: 25px; transition: 0.3s; }
-        .card:hover { border-color: #3b82f6; }
+        /* 1. SECTION: HERO (Exact Respect Style) */
+        .hero { 
+            background-image: linear-gradient(0deg, var(--bg-black) 10%, rgba(0,0,0,0.4) 100%), url('https://i.imgur.com/uR2N8m8.jpeg');
+            background-size: cover; background-position: center; height: 100vh;
+            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+        }
+        .hero-content { z-index: 10; max-width: 800px; padding: 0 20px; }
+
+        /* 2. UI ELEMENTS */
+        .btn-purple { background: var(--main-purple); padding: 14px 40px; border-radius: 8px; font-weight: 900; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-purple:hover { filter: brightness(1.2); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3); }
+        .logo-nav { width: 60px; filter: drop-shadow(0 0 8px var(--main-purple)); }
         
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 3. STREAMS GRID (Copy-Paste Respect) */
+        .stream-card { background: var(--card-bg); border: 1px solid #1a1a20; border-radius: 15px; padding: 25px; transition: 0.4s; text-align: center; }
+        .stream-card:hover { border-color: var(--main-purple); transform: scale(1.02); }
+        .avatar-ring { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--main-purple); padding: 3px; margin: 0 auto 15px; }
+
+        /* 4. RULES ACCORDION (The Wide Style) */
+        .rule-item { background: var(--card-bg); border-radius: 15px; border: 1px solid #1a1a20; overflow: hidden; margin-bottom: 15px; }
+        .rule-header { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: bold; }
+        .rule-content { padding: 0 30px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: #888; font-size: 0.9rem; }
+        .rule-item.active .rule-content { max-height: 500px; padding-bottom: 25px; }
+        .rule-item.active .rule-header { color: var(--main-purple); border-bottom: 1px solid #1a1a20; }
+
+        /* 5. NAVIGATION LOGIC */
+        .page-wrapper { display: none; }
+        .page-wrapper.active { display: block; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar shadow-2xl">
-        <div class="p-8 text-center border-b border-white/5 mb-6">
-            <h1 class="text-2xl font-black italic tracking-widest text-blue-500">2099<span class="text-white">RP</span></h1>
+    <nav class="fixed top-0 w-full z-50 p-6 px-10 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5">
+        <div class="flex items-center gap-4">
+            <img src="https://i.ibb.co/mFmP8vW/1000359655.png" class="logo-nav" alt="NoVaX Logo">
+            <span class="text-2xl font-black tracking-tighter italic uppercase">NoVaX</span>
         </div>
-        
-        <nav>
-            <div onclick="showTab('home')" id="tab-home" class="nav-item active"><span>🏠</span> الرئيسية</div>
-            <div onclick="showTab('store')" id="tab-store" class="nav-item"><span>🛒</span> المتجر</div>
-            <div onclick="showTab('rules')" id="tab-rules" class="nav-item"><span>📋</span> القوانين</div>
-            <div onclick="showTab('apply')" id="tab-apply" class="nav-item"><span>✍️</span> التقديمات</div>
-            <div onclick="showTab('admin')" id="tab-admin" class="nav-item text-red-500/60"><span>⚙️</span> الإدارة</div>
-        </nav>
-    </aside>
+        <div class="hidden md:flex gap-10 font-bold text-xs uppercase tracking-widest">
+            <a href="javascript:void(0)" onclick="switchTab('home')" class="hover:text-purple-500 transition">الرئيسية</a>
+            <a href="javascript:void(0)" onclick="switchTab('rules')" class="hover:text-purple-500 transition">القوانين</a>
+            <a href="javascript:void(0)" onclick="switchTab('store')" class="hover:text-purple-500 transition">المتجر</a>
+            <a href="javascript:void(0)" onclick="switchTab('apply')" class="hover:text-purple-500 transition">التقديم</a>
+        </div>
+        <button class="bg-white/5 px-4 py-2 rounded-lg text-xs font-bold border border-white/10">تسجيل الدخول</button>
+    </nav>
 
-    <main class="main-content">
-        <div class="flex justify-between items-center mb-10">
-            <h2 id="current-title" class="text-3xl font-bold">لوحة التحكم</h2>
-            <div class="flex items-center gap-4 bg-[#161925] p-2 pr-6 rounded-2xl border border-white/5">
-                <span class="text-sm text-gray-400">سيرفر 2099 أونلاين</span>
-                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+    <div id="page-home" class="page-wrapper active">
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="text-4xl md:text-7xl font-black mb-6 uppercase leading-tight">NoVaX | نـوفـاكـس<br><span class="text-purple-500 text-3xl md:text-5xl">مستقبل الرول بلاي</span></h1>
+                <p class="text-gray-400 mb-10 text-sm md:text-lg leading-relaxed max-w-2xl mx-auto">حياكم الله في سيرفر نوفاكس، حيث تلتقي الواقعية بالإبداع. انضم إلينا الآن وعش تجربتك الفريدة في عالمنا الرقمي.</p>
+                <button class="btn-purple" onclick="switchTab('apply')">انضم إلينا الآن</button>
+            </div>
+        </header>
+
+        <section class="py-24 max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl font-black mb-2 text-center">شاهد أفضل البثوث</h2>
+            <p class="text-center text-gray-500 mb-16 italic">تابع مغامرات اللاعبين في شوارع NoVaX</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <div class="stream-card">
+                    <img src="https://i.pravatar.cc/150?u=1" class="avatar-ring">
+                    <h4 class="font-bold text-sm">Player_Alpha</h4>
+                    <p class="text-[10px] text-purple-400 mt-2 uppercase tracking-tighter">Live RP</p>
+                </div>
+                </div>
+        </section>
+    </div>
+
+    <div id="page-rules" class="page-wrapper pt-32 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-black mb-4">دستور مدينة NoVaX</h2>
+            <p class="text-gray-500 mb-12">يرجى قراءة القوانين بعناية لتجنب العقوبات الإدارية</p>
+
+            <div class="space-y-4">
+                <div class="rule-item" onclick="toggleRule(this)">
+                    <div class="rule-header"><span>⚖️ القوانين العامة</span> <span>+</span></div>
+                    <div class="rule-content">
+                        <ul class="space-y-3">
+                            <li>• يمنع الخروج عن تمثيل الشخصية (FailRP).</li>
+                            <li>• يمنع القتل بدون سبب مقنع (RDM).</li>
+                            <li>• يمنع استخدام المركبات لدهس اللاعبين (VDM).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="rule-item" onclick="toggleRule(this)">
+                    <div class="rule-header"><span>👮 قوانين السلك العسكري</span> <span>+</span></div>
+                    <div class="rule-content">
+                        تطبق هذه القوانين على جميع موظفي الدولة؛ الاحترام والالتزام بالرتب هو الأساس.
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div id="home" class="page active">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card bg-gradient-to-l from-blue-900/10 to-transparent">
-                    <h3 class="text-xl font-bold mb-3">مرحباً بك في مدينة 2099</h3>
-                    <p class="text-gray-400 text-sm mb-6">هذا الموقع مصمم لخدمتك وتوفير أفضل تجربة رول بلاي. يمكنك التقديم على الوايت لست أو شراء الإضافات من المتجر.</p>
-                    <button class="bg-blue-600 px-6 py-3 rounded-xl font-bold text-sm">ابدأ الرحلة</button>
+    <div id="page-apply" class="page-wrapper pt-32 px-6">
+        <div class="max-w-3xl mx-auto bg-[#0d0d12] p-10 rounded-3xl border border-white/5">
+            <h2 class="text-3xl font-black mb-8">بوابة الانضمام - الوايت لست</h2>
+            <form class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="text-xs text-gray-500 block mb-2 uppercase">اسم الديسكورد</label>
+                    <input type="text" class="w-full bg-black/40 p-4 rounded-xl border border-white/5 focus:border-purple-500 outline-none" placeholder="User#0000"></div>
+                    <div><label class="text-xs text-gray-500 block mb-2 uppercase">العمر</label>
+                    <input type="number" class="w-full bg-black/40 p-4 rounded-xl border border-white/5 focus:border-purple-500 outline-none" placeholder="18+"></div>
                 </div>
-                <div class="card flex flex-col justify-center items-center">
-                    <p class="text-gray-500 uppercase text-xs tracking-widest mb-2">عدد اللاعبين</p>
-                    <p class="text-5xl font-black text-blue-500">150</p>
-                </div>
+                <button type="button" class="btn-purple w-full">إرسال الطلب للنواة</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="mt-20 py-10 border-t border-white/5 bg-black/50">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center items-center">
+            <div class="flex flex-col items-center">
+                <img src="https://i.ibb.co/mFmP8vW/1000359655.png" class="w-20 mb-4 opacity-50" alt="Footer Logo">
+                <p class="text-[10px] text-gray-600 uppercase tracking-[0.5em]">NoVaX Community</p>
             </div>
+            <div class="flex justify-around">
+                <div><p class="text-3xl font-black">150+</p><p class="text-[9px] text-gray-600 uppercase">Players</p></div>
+                <div><p class="text-3xl font-black">60K+</p><p class="text-[9px] text-gray-600 uppercase">Members</p></div>
+            </div>
+            <div class="text-sm font-bold text-purple-400 cursor-pointer">Follow us on Twitter & Discord</div>
         </div>
-
-        <div id="store" class="page">
-            <div id="shop-items" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                </div>
-        </div>
-        
-        </main>
+    </footer>
 
     <script>
-        function showTab(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById(id).classList.add('active');
-            document.getElementById('tab-'+id).classList.add('active');
-            
-            const titles = { home: 'الرئيسية', store: 'المتجر الرقمي', rules: 'القوانين', apply: 'التقديمات', admin: 'الإدارة' };
-            document.getElementById('current-title').innerText = titles[id];
+        // 1. Tab Switching Logic
+        function switchTab(id) {
+            document.querySelectorAll('.page-wrapper').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 2. Rules Accordion Logic
+        function toggleRule(element) {
+            const isActive = element.classList.contains('active');
+            document.querySelectorAll('.rule-item').forEach(r => r.classList.remove('active'));
+            if(!isActive) element.classList.add('active');
         }
     </script>
 </body>
