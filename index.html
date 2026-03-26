@@ -3,151 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoVaX RP | نـوفـاكـس</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>NoVaX RP | دستور المدينة</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root { --main-purple: #8a2be2; --bg-black: #030305; --card-bg: #0d0d12; }
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-black); color: white; margin: 0; overflow-x: hidden; }
-        
-        /* 1. SECTION: HERO (Exact Respect Style) */
-        .hero { 
-            background-image: linear-gradient(0deg, var(--bg-black) 10%, rgba(0,0,0,0.4) 100%), url('https://i.imgur.com/uR2N8m8.jpeg');
-            background-size: cover; background-position: center; height: 100vh;
-            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+        :root {
+            --primary: #8a2be2;
+            --accent: #bc13fe;
+            --bg-dark: #050505;
+            --bg-card: #0f0f0f;
+            --text-main: #ffffff;
+            --text-dim: #999;
+            --glow: 0 0 15px rgba(138, 43, 226, 0.4);
         }
-        .hero-content { z-index: 10; max-width: 800px; padding: 0 20px; }
 
-        /* 2. UI ELEMENTS */
-        .btn-purple { background: var(--main-purple); padding: 14px 40px; border-radius: 8px; font-weight: 900; transition: 0.3s; cursor: pointer; border: none; }
-        .btn-purple:hover { filter: brightness(1.2); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3); }
-        .logo-nav { width: 60px; filter: drop-shadow(0 0 8px var(--main-purple)); }
-        
-        /* 3. STREAMS GRID (Copy-Paste Respect) */
-        .stream-card { background: var(--card-bg); border: 1px solid #1a1a20; border-radius: 15px; padding: 25px; transition: 0.4s; text-align: center; }
-        .stream-card:hover { border-color: var(--main-purple); transform: scale(1.02); }
-        .avatar-ring { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--main-purple); padding: 3px; margin: 0 auto 15px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-dark); color: var(--text-main); font-family: 'Tajawal', sans-serif; overflow-x: hidden; }
 
-        /* 4. RULES ACCORDION (The Wide Style) */
-        .rule-item { background: var(--card-bg); border-radius: 15px; border: 1px solid #1a1a20; overflow: hidden; margin-bottom: 15px; }
-        .rule-header { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: bold; }
-        .rule-content { padding: 0 30px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: #888; font-size: 0.9rem; }
-        .rule-item.active .rule-content { max-height: 500px; padding-bottom: 25px; }
-        .rule-item.active .rule-header { color: var(--main-purple); border-bottom: 1px solid #1a1a20; }
+        /* Sidebar - ريسبكت ستايل */
+        .sidebar {
+            position: fixed; right: 0; top: 0; width: 280px; height: 100vh;
+            background: #080808; border-left: 1px solid #1a1a1a; padding: 40px 20px; z-index: 100;
+        }
+        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area img { width: 90px; filter: drop-shadow(var(--glow)); }
+        .logo-area h2 { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--primary); margin-top: 10px; }
 
-        /* 5. NAVIGATION LOGIC */
-        .page-wrapper { display: none; }
-        .page-wrapper.active { display: block; animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+            color: var(--text-dim); text-decoration: none; border-radius: 10px;
+            margin-bottom: 8px; transition: 0.3s; font-weight: 700; cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(138, 43, 226, 0.1); color: #fff; border: 1px solid rgba(138, 43, 226, 0.2); }
+
+        /* Content Area */
+        main { margin-right: 280px; padding: 60px; max-width: 1100px; }
+        .header { margin-bottom: 60px; text-align: center; }
+        .header h1 { font-family: 'Orbitron'; font-size: 3rem; font-weight: 900; letter-spacing: 3px; }
+        .header p { color: var(--primary); font-weight: 900; text-transform: uppercase; margin-top: 10px; }
+
+        /* Accordion Rules */
+        .rules-container { display: flex; flex-direction: column; gap: 15px; }
+        .rule-card { background: var(--bg-card); border-radius: 12px; border: 1px solid #1a1a1a; transition: 0.3s; overflow: hidden; }
+        .rule-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
+
+        .rule-header {
+            width: 100%; padding: 22px 30px; background: none; border: none;
+            color: #fff; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; font-size: 1.15rem; font-weight: 800; text-align: right;
+        }
+        .rule-header i { font-size: 0.9rem; color: var(--primary); transition: 0.3s; }
+
+        .rule-body { max-height: 0; transition: 0.4s ease-out; background: rgba(255,255,255,0.01); }
+        .rule-card.active .rule-body { max-height: 1000px; padding: 10px 30px 30px; }
+        .rule-card.active .rule-header i { transform: rotate(180deg); }
+
+        .content-list { list-style: none; }
+        .content-list li { margin-bottom: 12px; padding-right: 20px; position: relative; color: var(--text-dim); font-size: 1.05rem; }
+        .content-list li::before { content: "◈"; color: var(--primary); position: absolute; right: 0; font-size: 0.8rem; }
+
+        .warning { color: #ff4757; background: rgba(255,71,87,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,71,87,0.1); margin-top: 15px; font-weight: 700; }
+
+        footer { margin-top: 80px; text-align: center; color: #444; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-50 p-6 px-10 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5">
-        <div class="flex items-center gap-4">
-            <img src="https://i.ibb.co/mFmP8vW/1000359655.png" class="logo-nav" alt="NoVaX Logo">
-            <span class="text-2xl font-black tracking-tighter italic uppercase">NoVaX</span>
+    <aside class="sidebar">
+        <div class="logo-area">
+            <img src="https://i.ibb.co/mFmP8vW/1000359655.png" alt="Logo">
+            <h2>NoVaX</h2>
         </div>
-        <div class="hidden md:flex gap-10 font-bold text-xs uppercase tracking-widest">
-            <a href="javascript:void(0)" onclick="switchTab('home')" class="hover:text-purple-500 transition">الرئيسية</a>
-            <a href="javascript:void(0)" onclick="switchTab('rules')" class="hover:text-purple-500 transition">القوانين</a>
-            <a href="javascript:void(0)" onclick="switchTab('store')" class="hover:text-purple-500 transition">المتجر</a>
-            <a href="javascript:void(0)" onclick="switchTab('apply')" class="hover:text-purple-500 transition">التقديم</a>
-        </div>
-        <button class="bg-white/5 px-4 py-2 rounded-lg text-xs font-bold border border-white/10">تسجيل الدخول</button>
-    </nav>
+        <div class="nav-item active"><i class="fa-solid fa-scale-balanced"></i> قوانين المواطنين</div>
+        <div class="nav-item"><i class="fa-solid fa-shield-halved"></i> قوانين العساكر</div>
+        <div class="nav-item"><i class="fa-solid fa-skull"></i> قوانين الإجرام</div>
+        <div class="nav-item"><i class="fa-solid fa-wrench"></i> قوانين الوظائف</div>
+    </aside>
 
-    <div id="page-home" class="page-wrapper active">
-        <header class="hero">
-            <div class="hero-content">
-                <h1 class="text-4xl md:text-7xl font-black mb-6 uppercase leading-tight">NoVaX | نـوفـاكـس<br><span class="text-purple-500 text-3xl md:text-5xl">مستقبل الرول بلاي</span></h1>
-                <p class="text-gray-400 mb-10 text-sm md:text-lg leading-relaxed max-w-2xl mx-auto">حياكم الله في سيرفر نوفاكس، حيث تلتقي الواقعية بالإبداع. انضم إلينا الآن وعش تجربتك الفريدة في عالمنا الرقمي.</p>
-                <button class="btn-purple" onclick="switchTab('apply')">انضم إلينا الآن</button>
+    <main>
+        <div class="header">
+            <h1>CONSTITUTION</h1>
+            <p>Najaf Roleplay • دستور مدينة نوفاكس</p>
+        </div>
+
+        <div class="rules-container">
+            <div class="rule-card" onclick="toggle(this)">
+                <button class="rule-header"><span>قوانين الحياة الجديدة (NLR)</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="rule-body">
+                    <ul class="content-list">
+                        <li>يمنع تذكر أي شيء حدث في السيناريو السابق بعد الإغماء الكامل.</li>
+                        <li>يمنع العودة لنفس مكان الوفاة قبل مرور 15 دقيقة واقعية.</li>
+                        <li>لا يمكنك العودة لتكملة نفس المعركة أو الهجوم الذي مت فيه.</li>
+                    </ul>
+                </div>
             </div>
-        </header>
 
-        <section class="py-24 max-w-7xl mx-auto px-6">
-            <h2 class="text-3xl font-black mb-2 text-center">شاهد أفضل البثوث</h2>
-            <p class="text-center text-gray-500 mb-16 italic">تابع مغامرات اللاعبين في شوارع NoVaX</p>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-                <div class="stream-card">
-                    <img src="https://i.pravatar.cc/150?u=1" class="avatar-ring">
-                    <h4 class="font-bold text-sm">Player_Alpha</h4>
-                    <p class="text-[10px] text-purple-400 mt-2 uppercase tracking-tighter">Live RP</p>
+            <div class="rule-card" onclick="toggle(this)">
+                <button class="rule-header"><span>قوانين السطو والرهائن</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="rule-body">
+                    <ul class="content-list">
+                        <li>سرقة السوبر ماركت: تتطلب وجود 2 شرطة.</li>
+                        <li>سطو البنك الصغير: يتطلب وجود 3 شرطة.</li>
+                        <li>سطو البنك المركزي: يتطلب وجود 4 شرطة.</li>
+                        <li>الحد الأقصى للفدية للمواطن العادي: 20,000$.</li>
+                    </ul>
                 </div>
-                </div>
-        </section>
-    </div>
+            </div>
 
-    <div id="page-rules" class="page-wrapper pt-32 px-6">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-4xl font-black mb-4">دستور مدينة NoVaX</h2>
-            <p class="text-gray-500 mb-12">يرجى قراءة القوانين بعناية لتجنب العقوبات الإدارية</p>
-
-            <div class="space-y-4">
-                <div class="rule-item" onclick="toggleRule(this)">
-                    <div class="rule-header"><span>⚖️ القوانين العامة</span> <span>+</span></div>
-                    <div class="rule-content">
-                        <ul class="space-y-3">
-                            <li>• يمنع الخروج عن تمثيل الشخصية (FailRP).</li>
-                            <li>• يمنع القتل بدون سبب مقنع (RDM).</li>
-                            <li>• يمنع استخدام المركبات لدهس اللاعبين (VDM).</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="rule-item" onclick="toggleRule(this)">
-                    <div class="rule-header"><span>👮 قوانين السلك العسكري</span> <span>+</span></div>
-                    <div class="rule-content">
-                        تطبق هذه القوانين على جميع موظفي الدولة؛ الاحترام والالتزام بالرتب هو الأساس.
-                    </div>
+            <div class="rule-card" onclick="toggle(this)">
+                <button class="rule-header"><span>الأفعال الممنوعة (Blacklist)</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="rule-body">
+                    <div class="warning">مخالفة هذه القوانين تؤدي للباند النهائي:</div>
+                    <ul class="content-list" style="margin-top:15px;">
+                        <li><strong>Combat Log:</strong> الخروج وقت السيناريو.</li>
+                        <li><strong>Respect:</strong> السب أو القذف أو التطرق للأهل (OOC).</li>
+                        <li><strong>Meta Gaming:</strong> استخدام معلومات الديسكورد داخل اللعبة.</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="page-apply" class="page-wrapper pt-32 px-6">
-        <div class="max-w-3xl mx-auto bg-[#0d0d12] p-10 rounded-3xl border border-white/5">
-            <h2 class="text-3xl font-black mb-8">بوابة الانضمام - الوايت لست</h2>
-            <form class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="text-xs text-gray-500 block mb-2 uppercase">اسم الديسكورد</label>
-                    <input type="text" class="w-full bg-black/40 p-4 rounded-xl border border-white/5 focus:border-purple-500 outline-none" placeholder="User#0000"></div>
-                    <div><label class="text-xs text-gray-500 block mb-2 uppercase">العمر</label>
-                    <input type="number" class="w-full bg-black/40 p-4 rounded-xl border border-white/5 focus:border-purple-500 outline-none" placeholder="18+"></div>
-                </div>
-                <button type="button" class="btn-purple w-full">إرسال الطلب للنواة</button>
-            </form>
-        </div>
-    </div>
-
-    <footer class="mt-20 py-10 border-t border-white/5 bg-black/50">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center items-center">
-            <div class="flex flex-col items-center">
-                <img src="https://i.ibb.co/mFmP8vW/1000359655.png" class="w-20 mb-4 opacity-50" alt="Footer Logo">
-                <p class="text-[10px] text-gray-600 uppercase tracking-[0.5em]">NoVaX Community</p>
-            </div>
-            <div class="flex justify-around">
-                <div><p class="text-3xl font-black">150+</p><p class="text-[9px] text-gray-600 uppercase">Players</p></div>
-                <div><p class="text-3xl font-black">60K+</p><p class="text-[9px] text-gray-600 uppercase">Members</p></div>
-            </div>
-            <div class="text-sm font-bold text-purple-400 cursor-pointer">Follow us on Twitter & Discord</div>
-        </div>
-    </footer>
+        <footer>© 2026 NoVaX ROLEPLAY - ALL RIGHTS RESERVED</footer>
+    </main>
 
     <script>
-        // 1. Tab Switching Logic
-        function switchTab(id) {
-            document.querySelectorAll('.page-wrapper').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // 2. Rules Accordion Logic
-        function toggleRule(element) {
-            const isActive = element.classList.contains('active');
-            document.querySelectorAll('.rule-item').forEach(r => r.classList.remove('active'));
-            if(!isActive) element.classList.add('active');
+        function toggle(el) {
+            const active = document.querySelector('.rule-card.active');
+            if (active && active !== el) active.classList.remove('active');
+            el.classList.toggle('active');
         }
     </script>
 </body>
