@@ -40,19 +40,7 @@
             </div>
         </section>
 
-        <section id="page-rules" class="page-section">
-            <h2 class="orbitron text-2xl font-black mb-8 border-r-4 border-cyan-500 pr-4 uppercase">Server Protocols</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="font-bold text-cyan-400 mb-2">القاعدة الذهبية</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">يجب تمثيل الشخصية بالكامل (In-Character) وتجنب الكلام خارج الرول بلاي نهائياً.</p>
-                </div>
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="font-bold text-red-400 mb-2">نظام الموت</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">عند الموت، تنسى أحداث الموقف بالكامل ولا يحق لك العودة لنفس المكان (NLR).</p>
-                </div>
-            </div>
-        </section>
+        
 
         <section id="page-store" class="page-section">
             <div id="shop-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -62,6 +50,64 @@
         <section id="page-apply" class="page-section">
             <div class="glass p-8 rounded-[2.5rem]">
                 <h2 class="text-3xl font-black mb-2 text-center">تقديم الوايت لست</h2>
+            <section id="page-rules" class="page-section">
+    <div class="text-center mb-12">
+        <h2 class="orbitron text-3xl font-black text-cyan-400">SERVER PROTOCOLS</h2>
+        <p class="text-gray-500 text-xs tracking-widest mt-2 uppercase">اضغط على القسم لعرض التفاصيل</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto space-y-4">
+        
+        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-cyan-500/30">
+            <button onclick="toggleAccordion('general-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
+                <span class="font-bold text-lg flex items-center gap-3">
+                    <span class="orbitron text-cyan-500 text-sm">01</span> قوانين عامة
+                </span>
+                <span id="icon-general-rules" class="transition-transform duration-300">▼</span>
+            </button>
+            <div id="general-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
+                <ul class="list-disc list-inside space-y-2">
+                    <li>يمنع الـ RDM (القتل بدون سبب درامي).</li>
+                    <li>يمنع الـ VDM (استخدام المركبة كسلاح لدهس اللاعبين).</li>
+                    <li>يجب الالتزام بالهوية والاسم الواقعي في الديسكورد.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-blue-500/30">
+            <button onclick="toggleAccordion('police-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
+                <span class="font-bold text-lg flex items-center gap-3">
+                    <span class="orbitron text-blue-500 text-sm">02</span> قوانين السلك العسكري
+                </span>
+                <span id="icon-police-rules" class="transition-transform duration-300">▼</span>
+            </button>
+            <div id="police-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
+                <ul class="list-disc list-inside space-y-2">
+                    <li>يمنع استخدام القوة المفرطة بدون تحذير مسبق.</li>
+                    <li>يجب الالتزام بالرتب العسكرية والأوامر الصادرة من القيادة.</li>
+                    <li>تمنع الرشوة أو الفساد الإداري (يؤدي للطرد والمنع).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-red-500/30">
+            <button onclick="toggleAccordion('robbery-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
+                <span class="font-bold text-lg flex items-center gap-3">
+                    <span class="orbitron text-red-500 text-sm">03</span> قوانين السطو والجرائم
+                </span>
+                <span id="icon-robbery-rules" class="transition-transform duration-300">▼</span>
+            </button>
+            <div id="robbery-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
+                <ul class="list-disc list-inside space-y-2">
+                    <li>يجب وجود عدد كافٍ من الشرطة قبل البدء بأي عملية سطو.</li>
+                    <li>يمنع الغدر بالرهائن في حال الالتزام بالشروط.</li>
+                    <li>الحد الأقصى للمشاركين في العملية هو ٤ أشخاص.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+            </section>
                 <p class="text-center text-gray-500 text-sm mb-10">املأ البيانات بدقة ليتم مراجعتها من قبل الإدارة</p>
                 
                 <form id="applyForm" onsubmit="handleApply(event)" class="space-y-6">
