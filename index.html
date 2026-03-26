@@ -1,60 +1,117 @@
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECT 2099 | NEURAL INTERFACE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon-cyan: #00ffff; --neon-purple: #bc13fe; }
+        body { 
+            background: radial-gradient(circle at center, #0a0a20 0%, #020205 100%);
+            font-family: 'Cairo', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-border:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+        .nav-link { transition: 0.3s; cursor: pointer; }
+        .nav-link:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+    </style>
+</head>
+<body>
 
-export default function Home() {
-  const [items, setItems] = useState([]);
+    <nav class="fixed top-0 w-full z-50 glass py-4 px-8 flex justify-between items-center border-b border-white/10">
+        <div class="orbitron text-2xl font-black tracking-tighter text-cyan-400">2099 CORE</div>
+        <div class="flex gap-8 font-bold text-sm uppercase tracking-widest">
+            <a href="#rules" class="nav-link">القوانين</a>
+            <a href="#store" class="nav-link">المتجر</a>
+            <a href="#apply" class="nav-link text-purple-400">التقديمات</a>
+        </div>
+    </nav>
 
-  // جلب البيانات من الملف الثاني (API)
-  useEffect(() => {
-    fetch('/api/store')
-      .then(res => res.json())
-      .then(data => setItems(data));
-  }, []);
+    <section class="h-screen flex flex-col justify-center items-center text-center px-4">
+        <h1 class="orbitron text-7xl md:text-9xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-cyan-500 to-purple-600 uppercase">
+            Future RP
+        </h1>
+        <p class="text-gray-400 tracking-[0.4em] uppercase text-xs md:text-sm">سيرفر المستقبل | حماية فضائية | أداء 2099</p>
+        <div class="mt-10 flex gap-4">
+            <button class="px-8 py-3 bg-cyan-500 text-black font-black rounded-full hover:scale-105 transition">دخول السيرفر</button>
+            <button class="px-8 py-3 glass rounded-full border border-white/20 hover:bg-white/5 transition">ديسكورد</button>
+        </div>
+    </section>
 
-  return (
-    <div className="min-h-screen bg-[#02020a] text-white font-sans overflow-x-hidden">
-      {/* الخلفية النيونية المتفاعلة */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1),rgba(2,2,10,1))] -z-10" />
+    <section id="store" class="py-20 max-w-7xl mx-auto px-6">
+        <h2 class="orbitron text-4xl font-black mb-12 border-r-4 border-cyan-500 pr-4">ASSET MARKETPLACE</h2>
+        <div id="shop-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass p-6 rounded-3xl animate-pulse text-center text-gray-500">جاري الاتصال بالنواة...</div>
+        </div>
+    </section>
 
-      {/* الرأس (Header) */}
-      <header className="py-16 text-center">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-          className="text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-500 to-blue-600"
-        >
-          PROJECT 2099
-        </motion.h1>
-        <p className="text-gray-500 mt-4 tracking-[0.3em] uppercase text-sm">The Future of Roleplay Integration</p>
-      </header>
-
-      {/* شبكة المتجر (The Grid) */}
-      <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
-        {items.map((item, index) => (
-          <motion.div 
-            key={index}
-            whileHover={{ scale: 1.05, rotateX: 5, rotateY: 5 }}
-            className="group relative p-[1px] bg-gradient-to-b from-cyan-500/50 to-purple-600/50 rounded-3xl overflow-hidden"
-          >
-            <div className="bg-[#0b0b1a] p-6 rounded-[23px] h-full transition-all group-hover:bg-[#0d0d25]">
-              <img src={item.itemImage} className="w-full h-48 object-cover rounded-xl border border-white/5 mb-4 shadow-2xl" />
-              <h2 className="text-2xl font-bold uppercase italic text-white/90">{item.itemName}</h2>
-              <div className="flex justify-between items-center mt-6">
-                <span className="text-2xl font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">{item.itemPrice}</span>
-                <span className="text-xs text-gray-500 border border-white/10 px-2 py-1 rounded">STOCK: {item.itemStock}</span>
-              </div>
-              <button className="w-full mt-6 py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:bg-cyan-400 transition-colors">
-                Acquire Asset
-              </button>
+    <section id="apply" class="py-20 bg-black/40 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-black mb-4">بوابة التوظيف الحكومي</h2>
+            <p class="text-gray-400 mb-12 text-lg">اختر الوزارة التي ترغب بالانضمام إليها وسجل بياناتك الرقمية</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
+                    <div class="text-blue-500 text-4xl mb-4 group-hover:scale-110 transition">👮</div>
+                    <h3 class="text-xl font-bold">وزارة الداخلية</h3>
+                    <p class="text-xs text-gray-500 mt-2">Police Department</p>
+                </div>
+                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
+                    <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition">🚑</div>
+                    <h3 class="text-xl font-bold">وزارة الصحة</h3>
+                    <p class="text-xs text-gray-500 mt-2">Medical Services</p>
+                </div>
+                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
+                    <div class="text-yellow-500 text-4xl mb-4 group-hover:scale-110 transition">⚖️</div>
+                    <h3 class="text-xl font-bold">وزارة العدل</h3>
+                    <p class="text-xs text-gray-500 mt-2">Department of Justice</p>
+                </div>
             </div>
-          </motion.div>
-        ))}
-      </main>
+        </div>
+    </section>
 
-      {/* قسم التقديمات (قريباً) */}
-      <footer className="py-20 text-center text-gray-600 text-xs">
-        &copy; 2026 ARCHITECT SYSTEMS | NEURAL INTERFACE ENABLED
-      </footer>
-    </div>
-  );
-}
-        
+    <footer class="py-10 text-center border-t border-white/5 text-gray-600 text-[10px] tracking-widest uppercase">
+        Developed by The Architect for 2099 Systems &copy; 2026
+    </footer>
+
+    <script>
+        // سكريبت جلب البيانات من الداتابيز (رابط ملف store.js)
+        async function fetchStore() {
+            try {
+                const response = await fetch('/api/store'); 
+                const data = await response.json();
+                const container = document.getElementById('shop-container');
+                
+                if(data.length === 0) {
+                    container.innerHTML = "<p class='col-span-3 text-center text-gray-500'>المتجر فارغ حالياً سيدي.</p>";
+                    return;
+                }
+
+                container.innerHTML = data.map(item => `
+                    <div class="glass p-6 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+                        <img src="${item.itemImage}" class="w-full h-44 object-cover rounded-2xl mb-4 border border-white/10">
+                        <h3 class="orbitron text-xl font-bold tracking-tighter">${item.itemName}</h3>
+                        <div class="flex justify-between items-center mt-6">
+                            <span class="text-2xl font-black text-cyan-400">${item.itemPrice}</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-[10px] text-gray-400 uppercase">Qty: ${item.itemStock}</span>
+                        </div>
+                        <button class="w-full mt-6 py-4 glass border border-cyan-500/30 rounded-xl font-black text-xs hover:bg-cyan-500 hover:text-black transition uppercase tracking-widest">
+                            Acquire Asset
+                        </button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error("Core Sync Error", e);
+            }
+        }
+        fetchStore();
+    </script>
+</body>
+</html>
