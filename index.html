@@ -1,255 +1,60 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT NEURAL OS v9.0 | 2059</title>
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+export default function Home() {
+  const [items, setItems] = useState([]);
 
-    <style>
-        :root {
-            --p-neon: #bc13fe; --p-glow: rgba(188, 19, 254, 0.7);
-            --s-neon: #00f2ff; --bg: #000000; --glass: rgba(5, 5, 10, 0.98);
-        }
+  // جلب البيانات من الملف الثاني (API)
+  useEffect(() => {
+    fetch('/api/store')
+      .then(res => res.json())
+      .then(data => setItems(data));
+  }, []);
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; cursor: crosshair; }
-        body, html { width: 100%; height: 100%; background: var(--bg); overflow: hidden; color: #fff; }
+  return (
+    <div className="min-h-screen bg-[#02020a] text-white font-sans overflow-x-hidden">
+      {/* الخلفية النيونية المتفاعلة */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1),rgba(2,2,10,1))] -z-10" />
 
-        /* [1] 3D GRID ENGINE (THE 2059 VIBE) */
-        #os-canvas { position: fixed; inset: 0; z-index: -2; }
-        .scanline { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; z-index: 999; pointer-events: none; }
+      {/* الرأس (Header) */}
+      <header className="py-16 text-center">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+          className="text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-500 to-blue-600"
+        >
+          PROJECT 2099
+        </motion.h1>
+        <p className="text-gray-500 mt-4 tracking-[0.3em] uppercase text-sm">The Future of Roleplay Integration</p>
+      </header>
 
-        /* [2] THE DESKTOP ECOSYSTEM */
-        .desktop { height: 100vh; width: 100vw; padding: 60px; display: grid; grid-template-rows: repeat(auto-fill, 120px); grid-auto-flow: column; gap: 40px; }
-        .app-icon {
-            width: 110px; height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(188, 19, 254, 0.05); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 20px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px);
-        }
-        .app-icon:hover { background: var(--p-neon); box-shadow: 0 0 50px var(--p-glow); transform: scale(1.15) rotate(3deg); border-color: #fff; }
-        .app-icon i { font-size: 45px; color: var(--p-neon); margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--p-neon)); }
-        .app-icon:hover i { color: #000; filter: none; }
-        .app-icon span { font-family: 'Orbitron'; font-size: 11px; font-weight: 900; letter-spacing: 1px; }
-
-        /* [3] ULTRA WINDOW SYSTEM */
-        .window {
-            position: absolute; width: 1100px; height: 750px; background: var(--glass);
-            border: 2px solid var(--p-neon); border-radius: 25px; display: none; flex-direction: column;
-            box-shadow: 0 0 150px rgba(0,0,0,1), 0 0 50px var(--p-glow); z-index: 100;
-        }
-        .win-header {
-            height: 60px; background: linear-gradient(90deg, #1a0033, var(--p-neon));
-            display: flex; justify-content: space-between; align-items: center; padding: 0 30px;
-            cursor: grab; font-family: 'Orbitron'; font-weight: 900; border-radius: 23px 23px 0 0;
-        }
-        .win-body { flex: 1; padding: 50px; overflow-y: auto; scrollbar-width: none; }
-        .win-close { width: 20px; height: 20px; background: #ff4b4b; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px #ff4b4b; }
-
-        /* [4] CONTENT: LAWS, CONTROL, UPDATES */
-        .mega-card { background: #08080a; border-left: 15px solid var(--p-neon); padding: 40px; border-radius: 20px; margin-bottom: 40px; border-top: 1px solid #222; transition: 0.3s; }
-        .mega-card:hover { transform: scale(1.02); background: #0c0c0f; }
-        .mega-card h2 { color: var(--p-neon); font-family: 'Orbitron'; font-size: 3rem; margin-bottom: 25px; }
-        .mega-card li { font-size: 1.5rem; margin-bottom: 20px; color: #eee; list-style: none; }
-        .mega-card li::before { content: "☢ "; color: var(--p-neon); font-weight: 900; }
-
-        /* CONTROL PANEL */
-        .grid-ctrl { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .panel { background: #000; border: 1px solid #333; padding: 40px; border-radius: 30px; position: relative; }
-        .btn-strike {
-            width: 100%; padding: 25px; border: none; border-radius: 15px; margin-bottom: 20px;
-            font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between;
-        }
-        .btn-purple { background: var(--p-neon); color: #000; box-shadow: 0 0 30px var(--p-glow); }
-        .btn-blue { background: var(--s-neon); color: #000; }
-        .btn-red { background: #ff003c; color: #fff; }
-
-        /* APPLICATION FORM */
-        .mega-input { width: 100%; background: #050505; border: 2px solid #222; padding: 25px; color: #fff; border-radius: 15px; margin-bottom: 25px; font-size: 1.3rem; transition: 0.4s; }
-        .mega-input:focus { border-color: var(--p-neon); box-shadow: 0 0 40px var(--p-glow); outline: none; }
-
-        /* [5] TASKBAR & SYSTEM CLOCK */
-        .taskbar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.98); border-top: 2px solid var(--p-neon); z-index: 1000; display: flex; align-items: center; padding: 0 40px; gap: 30px; }
-        .os-start { background: var(--p-neon); color: #000; padding: 12px 40px; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; box-shadow: 0 0 20px var(--p-neon); }
-        .os-clock { margin-right: auto; font-family: 'Share Tech Mono'; color: var(--s-neon); font-size: 30px; text-shadow: 0 0 20px var(--s-neon); }
-
-    </style>
-</head>
-<body onload="bootKernel()">
-
-    <canvas id="os-canvas"></canvas>
-    <div class="scanline"></div>
-
-    <div class="desktop">
-        <div class="app-icon" onclick="launchApp('laws')"><i class="fas fa-gavel"></i><span>LAWS_CORE</span></div>
-        <div class="app-icon" onclick="launchApp('control')"><i class="fas fa-microchip"></i><span>REMOTE_CTRL</span></div>
-        <div class="app-icon" onclick="launchApp('apply')"><i class="fas fa-fingerprint"></i><span>WHITELIST</span></div>
-        <div class="app-icon" onclick="launchApp('updates')"><i class="fas fa-terminal"></i><span>CHANGELOG</span></div>
-        <div class="app-icon" onclick="window.open('YOUR_DISCORD')"><i class="fab fa-discord"></i><span>DISCORD</span></div>
-    </div>
-
-    <div id="win-laws" class="window">
-        <div class="win-header"><span>SYSTEM_PROTOCOL::LAWS_V9.0</span><div class="win-close" onclick="killApp('laws')"></div></div>
-        <div class="win-body">
-            <div class="mega-card">
-                <h2>📜 دستور المدينة</h2>
-                <ul>
-                    <li>يمنع منعاً باتاً استغلال الثغرات البرمجية؛ العقوبة نفي مؤبد.</li>
-                    <li>احترام الطاقم الإداري واللاعبين خط أحمر لا يمكن تجاوزه.</li>
-                    <li>يجب الحفاظ على واقعية الشخصية (FailRP) في جميع الظروف.</li>
-                </ul>
+      {/* شبكة المتجر (The Grid) */}
+      <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
+        {items.map((item, index) => (
+          <motion.div 
+            key={index}
+            whileHover={{ scale: 1.05, rotateX: 5, rotateY: 5 }}
+            className="group relative p-[1px] bg-gradient-to-b from-cyan-500/50 to-purple-600/50 rounded-3xl overflow-hidden"
+          >
+            <div className="bg-[#0b0b1a] p-6 rounded-[23px] h-full transition-all group-hover:bg-[#0d0d25]">
+              <img src={item.itemImage} className="w-full h-48 object-cover rounded-xl border border-white/5 mb-4 shadow-2xl" />
+              <h2 className="text-2xl font-bold uppercase italic text-white/90">{item.itemName}</h2>
+              <div className="flex justify-between items-center mt-6">
+                <span className="text-2xl font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">{item.itemPrice}</span>
+                <span className="text-xs text-gray-500 border border-white/10 px-2 py-1 rounded">STOCK: {item.itemStock}</span>
+              </div>
+              <button className="w-full mt-6 py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:bg-cyan-400 transition-colors">
+                Acquire Asset
+              </button>
             </div>
-            <div class="mega-card" style="border-color: var(--s-neon);">
-                <h2>⚔ قواعد الاشتباك</h2>
-                <ul>
-                    <li>القتل العشوائي (RDM) وصدم الناس (VDM) يؤدي للسجن الفوري.</li>
-                    <li>يجب التفاعل صوتياً وبدراما قوية قبل أي عملية سرقة أو خطف.</li>
-                </ul>
-            </div>
-        </div>
+          </motion.div>
+        ))}
+      </main>
+
+      {/* قسم التقديمات (قريباً) */}
+      <footer className="py-20 text-center text-gray-600 text-xs">
+        &copy; 2026 ARCHITECT SYSTEMS | NEURAL INTERFACE ENABLED
+      </footer>
     </div>
-
-    <div id="win-control" class="window">
-        <div class="win-header"><span>FIVEM_REMOTE_KERNEL_v2059</span><div class="win-close" onclick="killApp('control')"></div></div>
-        <div class="win-body">
-            <div class="grid-ctrl">
-                <div class="panel">
-                    <h3 style="margin-bottom:30px; color:var(--p-neon); font-family:'Orbitron'">🎮 Server Orchestrator</h3>
-                    <button class="btn-strike btn-purple" onclick="fireAction('START')">إقلاع السيرفر <i class="fas fa-play"></i></button>
-                    <button class="btn-strike btn-blue" onclick="fireAction('RESTART')">إعادة التشغيل <i class="fas fa-sync"></i></button>
-                    <button class="btn-strike btn-red" onclick="fireAction('SHUTDOWN')">إيقاف فوري <i class="fas fa-power-off"></i></button>
-                    <input type="text" class="mega-input" style="padding:15px; font-size:1rem" placeholder="Execute Root Command...">
-                </div>
-                <div class="panel">
-                    <h3 style="margin-bottom:30px; color:var(--s-neon); font-family:'Orbitron'">🤖 Discord Bridge</h3>
-                    <button class="btn-strike btn-blue" onclick="fireAction('ANNOUNCE')">إرسال إعلان عام @everyone</button>
-                    <button class="btn-strike btn-purple" onclick="fireAction('LOCKDOWN')">تفعيل وضع الحظر (Lockdown)</button>
-                    <div style="background:#050505; height:150px; border-radius:15px; padding:20px; font-family:'Share Tech Mono'; color:var(--p-neon); font-size:14px; border:1px solid #222;">
-                        [SYSTEM] CONNECTION SECURE...<br>
-                        [AUTH] MASTER KEY ACCEPTED...<br>
-                        [SYNC] PLAYERS ONLINE: 184/256<br>
-                        [DB] SQL LATENCY: 12ms
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="win-apply" class="window">
-        <div class="win-header"><span>BIOMETRIC_REGISTRATION</span><div class="win-close" onclick="killApp('apply')"></div></div>
-        <div class="win-body">
-            <h1 style="color:var(--p-neon); font-family:'Orbitron'; margin-bottom:40px;">سجل بيانات مواطنتك الرقمية</h1>
-            <input type="text" id="usr-name" class="mega-input" placeholder="الاسم الحقيقي الكامل">
-            <input type="text" id="usr-rp" class="mega-input" placeholder="الاسم داخل اللعبة (FirstName_LastName)">
-            <textarea id="usr-bio" class="mega-input" rows="6" placeholder="قصة حياتك، ماضيك، وأهدافك في المدينة..."></textarea>
-            <button class="btn-strike btn-purple" onclick="submitToDiscord()">إرسال البيانات وفتح تذكرة تفعيل 🚀</button>
-        </div>
-    </div>
-
-    <div class="taskbar">
-        <div class="os-start">RESPECT_OS</div>
-        <div class="os-clock" id="clock-display">00:00:00</div>
-    </div>
-
-    <script>
-        // [CORE LOGIC - THE ENGINE]
-        let scene, camera, renderer, grid;
-
-        function bootKernel() {
-            // 3D Scene Initialization
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('os-canvas'), antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            // 3D Matrix Grid
-            grid = new THREE.GridHelper(2000, 100, 0xbc13fe, 0x050505);
-            grid.position.y = -150;
-            scene.add(grid);
-
-            // Particles (The Soul)
-            const pGeo = new THREE.BufferGeometry();
-            const pPos = [];
-            for(let i=0; i<10000; i++) {
-                pPos.push(THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500), THREE.MathUtils.randFloatSpread(2500));
-            }
-            pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
-            const pMat = new THREE.PointsMaterial({ color: 0xbc13fe, size: 1, transparent: true, opacity: 0.6 });
-            const particles = new THREE.Points(pGeo, pMat);
-            scene.add(particles);
-
-            camera.position.z = 1;
-            animate();
-            startClock();
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            grid.rotation.y += 0.001;
-            renderer.render(scene, camera);
-        }
-
-        // Window Management (GSAP Driven)
-        function launchApp(id) {
-            const win = document.getElementById('win-' + id);
-            win.style.display = 'flex';
-            gsap.from(win, { scale: 0.4, opacity: 0, duration: 0.5, ease: "back.out(1.5)" });
-            Draggable.create(win, { trigger: win.querySelector('.win-header') });
-        }
-
-        function killApp(id) {
-            const win = document.getElementById('win-' + id);
-            gsap.to(win, { scale: 0.7, opacity: 0, duration: 0.3, onComplete: () => win.style.display = 'none' });
-        }
-
-        function startClock() {
-            setInterval(() => {
-                const d = new Date();
-                document.getElementById('clock-display').innerText = d.toLocaleTimeString();
-            }, 1000);
-        }
-
-        function fireAction(act) {
-            Swal.fire({
-                title: 'EXECUTING ROOT...',
-                text: 'إرسال الأمر للنواة: ' + act,
-                icon: 'info', background: '#000', color: '#bc13fe', showConfirmButton: false, timer: 2000
-            });
-        }
-
-        function submitToDiscord() {
-            const hook = "رابط_الويب_هوك_هنا";
-            const d = { n: document.getElementById('usr-name').value, rp: document.getElementById('usr-rp').value, b: document.getElementById('usr-bio').value };
-            if(!d.n || !d.rp) return Swal.fire('خطأ','أكمل البيانات يا وحش','error');
-
-            fetch(hook, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    embeds: [{
-                        title: "👑 سجل مواطنة جديد - 2059",
-                        color: 12325374,
-                        fields: [
-                            { name: "👤 الاسم", value: d.n, inline: true },
-                            { name: "🎭 الشخصية", value: d.rp, inline: true },
-                            { name: "📖 القصة", value: d.b }
-                        ],
-                        footer: { text: "RESPECT NEURAL NETWORK" },
-                        timestamp: new Date()
-                    }]
-                })
-            }).then(() => {
-                Swal.fire('تم الاختراق بنجاح!','بياناتك وصلت للإدارة، انتظر التفعيل.','success');
-                killApp('apply');
-            });
-        }
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
-</body>
-</html>
+  );
+}
+        
