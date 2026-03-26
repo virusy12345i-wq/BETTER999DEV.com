@@ -3,221 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2099 RP | NEURAL INTERFACE</title>
+    <title>2099 | THE NEXT GENERATION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <style>
-        body { background: #020205; font-family: 'Cairo', sans-serif; color: white; overflow-x: hidden; }
-        .orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .nav-btn { transition: 0.3s; cursor: pointer; padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; color: #666; border: 1px solid transparent; }
-        .nav-btn.active { color: #00ffff; border-color: #00ffff; background: rgba(0, 255, 255, 0.05); shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        input, textarea, select { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none !important; }
-        input:focus { border-color: #00ffff !important; box-shadow: 0 0 10px rgba(0,255,255,0.1); }
+        :root { --main-color: #007bff; --bg-dark: #08080a; --card-bg: #111115; }
+        body { background-color: var(--bg-dark); font-family: 'Cairo', sans-serif; color: #e0e0e0; }
+        .sidebar { background: var(--card-bg); border-left: 1px solid rgba(255,255,255,0.05); }
+        .nav-link { transition: 0.3s; border-radius: 12px; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #888; }
+        .nav-link:hover, .nav-link.active { background: rgba(0, 123, 255, 0.1); color: white; }
+        .nav-link.active { border-right: 4px solid var(--main-color); }
+        .main-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; }
+        .page-content { display: none; animation: fadeIn 0.4s ease; }
+        .page-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="flex min-h-screen overflow-hidden">
 
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass rounded-2xl p-1.5 flex gap-1 border border-white/10 shadow-2xl">
-        <div onclick="showPage('home')" id="btn-home" class="nav-btn active orbitron">CORE</div>
-        <div onclick="showPage('rules')" id="btn-rules" class="nav-btn">القوانين</div>
-        <div onclick="showPage('store')" id="btn-store" class="nav-btn">المتجر</div>
-        <div onclick="showPage('apply')" id="btn-apply" class="nav-btn">التقديم</div>
-        <div onclick="showPage('admin')" id="btn-admin" class="nav-btn text-red-500/50">ADMIN</div>
-    </nav>
-
-    <div class="mt-20 max-w-5xl mx-auto">
+    <aside class="sidebar w-72 p-6 flex flex-col hidden md:flex">
+        <div class="mb-12 px-4">
+            <h1 class="font-black text-2xl tracking-tighter orbitron text-white">2099<span class="text-blue-500">.</span></h1>
+        </div>
         
-        <section id="page-home" class="page-section active text-center py-20">
-            <div class="inline-block px-4 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] mb-6 animate-pulse uppercase tracking-widest">System Online: v2.0.99</div>
-            <h1 class="orbitron text-6xl md:text-8xl font-black bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-600 uppercase">2099 RP</h1>
-            <div class="mt-12 flex justify-center gap-10">
-                <div class="text-center"><p class="text-3xl font-black orbitron text-cyan-400">128</p><p class="text-[10px] text-gray-500 uppercase mt-1">Players</p></div>
-                <div class="text-center"><p class="text-3xl font-black orbitron text-purple-500">24ms</p><p class="text-[10px] text-gray-500 uppercase mt-1">Latency</p></div>
+        <nav class="flex-1">
+            <div onclick="showPage('home')" id="nav-home" class="nav-link active"><span>🏠</span> الرئيسية</div>
+            <div onclick="showPage('rules')" id="nav-rules" class="nav-link"><span>⚖️</span> القوانين</div>
+            <div onclick="showPage('store')" id="nav-store" class="nav-link"><span>💎</span> المتجر</div>
+            <div onclick="showPage('apply')" id="nav-apply" class="nav-link"><span>📝</span> التقديمات</div>
+        </nav>
+
+        <div class="mt-auto p-4 glass rounded-2xl text-center border border-white/5">
+            <p class="text-[10px] uppercase tracking-widest text-gray-500">Status</p>
+            <p class="text-green-500 font-bold text-sm">Server Online</p>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-4 md:p-10 overflow-y-auto bg-[#050507]">
+        
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h2 id="page-title" class="text-2xl font-black">لوحة التحكم السحابية</h2>
+                <p class="text-gray-500 text-sm mt-1">أهلاً بك في الجيل القادم من الرول بلاي</p>
             </div>
-        </section>
+            <button onclick="showPage('admin')" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 hover:bg-white/10 transition">⚙️</button>
+        </div>
 
-        
-
-        <section id="page-store" class="page-section">
-            <div id="shop-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section id="page-home" class="page-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="main-card p-8 bg-gradient-to-br from-blue-600/20 to-transparent">
+                    <h3 class="text-3xl font-black mb-4">انضم لعالمنا</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">تجربة رول بلاي واقعية بأحدث سكربتات فايف إم. نظام اقتصادي متوازن، عدل، وحماية فائقة.</p>
+                    <button class="px-6 py-3 bg-blue-600 rounded-xl font-bold hover:bg-blue-700 transition">دخول السيرفر الآن</button>
                 </div>
-        </section>
-
-        <section id="page-apply" class="page-section">
-            <div class="glass p-8 rounded-[2.5rem]">
-                <h2 class="text-3xl font-black mb-2 text-center">تقديم الوايت لست</h2>
-            <section id="page-rules" class="page-section">
-    <div class="text-center mb-12">
-        <h2 class="orbitron text-3xl font-black text-cyan-400">SERVER PROTOCOLS</h2>
-        <p class="text-gray-500 text-xs tracking-widest mt-2 uppercase">اضغط على القسم لعرض التفاصيل</p>
-    </div>
-
-    <div class="max-w-3xl mx-auto space-y-4">
-        
-        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-cyan-500/30">
-            <button onclick="toggleAccordion('general-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
-                <span class="font-bold text-lg flex items-center gap-3">
-                    <span class="orbitron text-cyan-500 text-sm">01</span> قوانين عامة
-                </span>
-                <span id="icon-general-rules" class="transition-transform duration-300">▼</span>
-            </button>
-            <div id="general-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                <ul class="list-disc list-inside space-y-2">
-                    <li>يمنع الـ RDM (القتل بدون سبب درامي).</li>
-                    <li>يمنع الـ VDM (استخدام المركبة كسلاح لدهس اللاعبين).</li>
-                    <li>يجب الالتزام بالهوية والاسم الواقعي في الديسكورد.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-blue-500/30">
-            <button onclick="toggleAccordion('police-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
-                <span class="font-bold text-lg flex items-center gap-3">
-                    <span class="orbitron text-blue-500 text-sm">02</span> قوانين السلك العسكري
-                </span>
-                <span id="icon-police-rules" class="transition-transform duration-300">▼</span>
-            </button>
-            <div id="police-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                <ul class="list-disc list-inside space-y-2">
-                    <li>يمنع استخدام القوة المفرطة بدون تحذير مسبق.</li>
-                    <li>يجب الالتزام بالرتب العسكرية والأوامر الصادرة من القيادة.</li>
-                    <li>تمنع الرشوة أو الفساد الإداري (يؤدي للطرد والمنع).</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="glass rounded-2xl overflow-hidden border border-white/5 transition-all hover:border-red-500/30">
-            <button onclick="toggleAccordion('robbery-rules')" class="w-full p-6 flex justify-between items-center bg-white/5 hover:bg-white/10 transition">
-                <span class="font-bold text-lg flex items-center gap-3">
-                    <span class="orbitron text-red-500 text-sm">03</span> قوانين السطو والجرائم
-                </span>
-                <span id="icon-robbery-rules" class="transition-transform duration-300">▼</span>
-            </button>
-            <div id="robbery-rules" class="hidden p-6 bg-black/20 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                <ul class="list-disc list-inside space-y-2">
-                    <li>يجب وجود عدد كافٍ من الشرطة قبل البدء بأي عملية سطو.</li>
-                    <li>يمنع الغدر بالرهائن في حال الالتزام بالشروط.</li>
-                    <li>الحد الأقصى للمشاركين في العملية هو ٤ أشخاص.</li>
-                </ul>
-            </div>
-        </div>
-
-    </div>
-            </section>
-                <p class="text-center text-gray-500 text-sm mb-10">املأ البيانات بدقة ليتم مراجعتها من قبل الإدارة</p>
-                
-                <form id="applyForm" onsubmit="handleApply(event)" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><label class="text-xs text-gray-500 block mb-2">اسم الديسكورد</label><input type="text" id="discord_tag" required class="w-full p-4 rounded-xl" placeholder="User#0000"></div>
-                        <div><label class="text-xs text-gray-500 block mb-2">العمر الواقعي</label><input type="number" id="real_age" required class="w-full p-4 rounded-xl" placeholder="18+"></div>
-                    </div>
-                    <div><label class="text-xs text-gray-500 block mb-2">ما هو مفهوم الـ Power Gaming؟</label><textarea id="pg_def" required class="w-full p-4 rounded-xl h-24"></textarea></div>
-                    <div><label class="text-xs text-gray-500 block mb-2">قصة شخصيتك باختصار</label><textarea id="char_story" required class="w-full p-4 rounded-xl h-32"></textarea></div>
-                    <button type="submit" class="w-full py-5 bg-cyan-500 text-black font-black uppercase rounded-2xl hover:bg-white transition shadow-lg shadow-cyan-500/20">إرسال الطلب للنواة</button>
-                </form>
-            </div>
-        </section>
-
-        <section id="page-admin" class="page-section">
-            <div class="glass p-8 rounded-[2.5rem] border border-red-500/20">
-                <h2 class="orbitron text-xl font-black text-red-500 mb-8 tracking-widest text-center uppercase">Authority Console</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="p-6 bg-white/5 rounded-2xl text-center">
-                        <p class="text-xs text-gray-500 mb-4 uppercase">نظام التقديمات</p>
-                        <div class="flex gap-2 justify-center">
-                            <button onclick="adminAction('open_apply')" class="bg-green-500/20 text-green-400 px-4 py-2 rounded-lg text-xs border border-green-500/30">فتح</button>
-                            <button onclick="adminAction('close_apply')" class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-xs border border-red-500/30">إغلاق</button>
-                        </div>
-                    </div>
-                    <div class="p-6 bg-white/5 rounded-2xl text-center">
-                        <p class="text-xs text-gray-500 mb-4 uppercase">مراجعة سريعة</p>
-                        <input type="text" id="target_player" placeholder="اسم اللاعب" class="w-full p-2 mb-2 rounded-lg text-xs">
-                        <div class="flex gap-2 justify-center">
-                            <button onclick="processPlayer('accept')" class="bg-cyan-500/20 text-cyan-400 px-4 py-2 rounded-lg text-xs border border-cyan-500/30">قبول</button>
-                            <button onclick="processPlayer('reject')" class="bg-white/5 text-gray-400 px-4 py-2 rounded-lg text-xs border border-white/10">رفض</button>
-                        </div>
-                    </div>
+                <div class="main-card p-8 border-dashed border-white/10 flex flex-col justify-center items-center">
+                    <span class="text-5xl mb-2">🎮</span>
+                    <p class="font-bold">142 لاعب متصل</p>
+                    <p class="text-xs text-gray-500 mt-1 uppercase tracking-widest">Live Sync</p>
                 </div>
             </div>
         </section>
 
-    </div>
+        <section id="page-rules" class="page-content">
+            <div class="space-y-4 max-w-4xl">
+                <div class="main-card p-6 cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold">القوانين العامة</h4>
+                    <p class="text-sm text-gray-500 mt-2 italic">اضغط لعرض التفاصيل..</p>
+                </div>
+                </div>
+        </section>
+
+        <section id="page-store" class="page-content">
+            <div id="shop-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </section>
+
+    </main>
 
     <script>
-        function toggleAccordion(id) {
-    const content = document.getElementById(id);
-    const icon = document.getElementById('icon-' + id);
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        content.style.animation = "slideDown 0.3s ease-out";
-        icon.style.transform = "rotate(180deg)";
-    } else {
-        content.classList.add('hidden');
-        icon.style.transform = "rotate(0deg)";
-    }
-        }
-        
-        const WEBHOOK_URL = "رابط_الويب_هوك_هنا";
-
         function showPage(id) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('page-'+id).classList.add('active');
-            document.getElementById('btn-'+id).classList.add('active');
-        }
+            // إخفاء الصفحات وتغيير العنوان
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById('page-' + id).classList.add('active');
+            document.getElementById('nav-' + id).classList.add('active');
 
-        async function postToDiscord(embed) {
-            await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ embeds: [embed] })
-            });
-        }
-
-        async function handleApply(e) {
-            e.preventDefault();
-            const embed = {
-                title: "📝 تقديم وايت لست جديد",
-                color: 3447003,
-                fields: [
-                    { name: "اللاعب", value: document.getElementById('discord_tag').value, inline: true },
-                    { name: "العمر", value: document.getElementById('real_age').value, inline: true },
-                    { name: "تعريف الـ PG", value: document.getElementById('pg_def').value },
-                    { name: "القصة", value: document.getElementById('char_story').value }
-                ]
+            const titles = {
+                'home': 'لوحة التحكم السحابية',
+                'rules': 'دستور المدينة الأمني',
+                'store': 'سوق الأصول الرقمية',
+                'apply': 'بوابة التقديم المركزي',
+                'admin': 'غرفة التحكم (Admin)'
             };
-            await postToDiscord(embed);
-            alert("سيدي، تم إرسال طلبك بنجاح. انتظر الرد في الديسكورد!");
-            e.target.reset();
+            document.getElementById('page-title').innerText = titles[id];
         }
 
-        function adminAction(type) {
-            const isOpening = type === 'open_apply';
-            const embed = {
-                title: isOpening ? "🔓 نظام التقديم مفتوح" : "🔒 نظام التقديم مغلق",
-                description: isOpening ? "تم فتح باب الانضمام لمدينة 2099!" : "تم إغلاق التقديمات مؤقتاً للصيانة.",
-                color: isOpening ? 65280 : 16711680
-            };
-            postToDiscord(embed);
-            alert("تم تحديث الحالة وإرسال ويب هوك سيدي!");
-        }
-
-        function processPlayer(status) {
-            const name = document.getElementById('target_player').value;
-            if(!name) return alert("سيدي، يرجى إدخال اسم اللاعب أولاً.");
-            const isAccept = status === 'accept';
-            const embed = {
-                title: isAccept ? "✅ قبول لاعب" : "❌ رفض لاعب",
-                description: `اللاعب: **${name}**\nالحالة: **${isAccept ? 'مقبول' : 'مرفوض'}**`,
-                color: isAccept ? 3066993 : 15158332
-            };
-            postToDiscord(embed);
-            alert(`تم ${isAccept ? 'قبول' : 'رفض'} ${name} بنجاح.`);
-        }
+        // نفس منطق الويب هوك والداتابيز السابق يربط هنا
     </script>
 </body>
 </html>
