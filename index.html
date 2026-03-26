@@ -3,119 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoVaX RP | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;800;900&display=swap" rel="stylesheet">
+    <title>Respect RP | دستور مدينة ريسبكت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #8a2be2; --bg: #050505; --card: #0d0d0d; --border: #1a1a1a; --text: #fff; }
+        :root { --p: #8a2be2; --bg: #000; --c: #080808; --b: #151515; --t: #fff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background: var(--bg); color: var(--t); overflow-x: hidden; }
 
-        /* الهيدر العلوي */
-        .navbar { position: fixed; top: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--p); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 1000; }
-        .logo { font-size: 22px; font-weight: 900; color: var(--p); letter-spacing: 1px; }
-        .login-btn { background: #5865F2; color: #fff; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        /* Navigation */
+        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--b); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 1000; }
+        .logo { font-size: 28px; font-weight: 900; color: var(--p); letter-spacing: 2px; }
+        .d-btn { background: #5865F2; color: #fff; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-weight: 900; font-size: 14px; transition: 0.3s; }
+        .d-btn:hover { box-shadow: 0 0 15px var(--p); transform: scale(1.05); }
 
-        /* شريط التنقل (شغال 100% موبايل/كمبيوتر) */
-        .tabs-bar { display: flex; background: #0a0a0a; margin-top: 70px; border-bottom: 1px solid var(--border); overflow-x: auto; position: sticky; top: 70px; z-index: 999; }
-        .tab-item { flex: 1; min-width: 100px; padding: 15px; text-align: center; cursor: pointer; color: #666; font-weight: 800; transition: 0.3s; border-bottom: 3px solid transparent; }
-        .tab-item.active { color: var(--p); border-bottom-color: var(--p); background: rgba(138,43,226,0.05); }
+        /* Sidebar & Layout */
+        .wrapper { display: flex; margin-top: 80px; min-height: 100vh; }
+        .sidebar { width: 320px; background: #050505; border-left: 1px solid var(--b); position: fixed; right: 0; height: calc(100vh - 80px); padding: 25px 15px; overflow-y: auto; z-index: 999; }
+        .n-i { display: flex; align-items: center; gap: 14px; padding: 18px; color: #666; cursor: pointer; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-weight: 800; font-size: 15px; }
+        .n-i i { color: var(--p); width: 22px; text-align: center; font-size: 18px; }
+        .n-i:hover, .n-i.active { background: rgba(138, 43, 226, 0.15); color: #fff; border: 1px solid rgba(138, 43, 226, 0.3); }
 
-        /* المحتوى */
-        main { padding: 20px; max-width: 1000px; margin: 0 auto; min-height: 80vh; }
-        .page { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .page.active { display: block; }
+        /* Main Content */
+        main { margin-right: 320px; width: calc(100% - 320px); padding: 60px 40px; text-align: center; }
+        .hero h1 { font-size: 60px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(138,43,226,0.3); }
+        .hero p { color: #555; font-size: 22px; font-weight: 700; margin-bottom: 60px; text-transform: uppercase; }
 
-        /* نظام المربع للقوانين */
-        .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .select-engine { width: 100%; padding: 15px; background: #111; border: 1px solid var(--p); color: #fff; border-radius: 10px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
-        .display-area { background: #000; padding: 25px; border-radius: 10px; border: 1px dashed #333; line-height: 1.8; color: #bbb; min-height: 150px; }
-        .display-area b { color: var(--p); font-size: 18px; display: block; margin-bottom: 10px; }
+        /* Rules Accordion */
+        .rules-group { max-width: 850px; margin: 0 auto; display: none; text-align: right; }
+        .rules-group.active { display: block; animation: slideUp 0.4s ease; }
+        .card { background: var(--c); border: 1px solid var(--b); border-radius: 14px; margin-bottom: 15px; transition: 0.3s; }
+        .card:hover { border-color: var(--p); }
+        .head { width: 100%; padding: 25px; background: none; border: none; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 18px; font-weight: 900; }
+        .head i { font-size: 14px; transition: 0.4s; color: #444; }
+        .body { max-height: 0; overflow: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #040404; color: #999; line-height: 1.8; padding: 0 25px; }
+        .card.open .body { max-height: 1500px; padding: 25px; border-top: 1px solid var(--b); }
+        .card.open .head i { transform: rotate(180deg); color: var(--p); }
 
-        /* نظام التقديم */
-        .input-group { margin-bottom: 15px; text-align: right; }
-        label { display: block; margin-bottom: 8px; color: var(--p); font-weight: bold; }
-        input, textarea { width: 100%; padding: 12px; background: #151515; border: 1px solid #222; color: #fff; border-radius: 8px; }
-        .submit-btn { width: 100%; padding: 15px; background: var(--p); border: none; color: #fff; font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .submit-btn:hover { background: #ac15fe; box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Mobile Optimization */
+        @media (max-width: 992px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 1px solid var(--b); display: flex; overflow-x: auto; padding: 12px; }
+            .n-i { margin-bottom: 0; white-space: nowrap; padding: 12px 20px; font-size: 13px; }
+            main { margin-right: 0; width: 100%; padding: 30px 20px; }
+            .hero h1 { font-size: 38px; }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">NoVaX RP</div>
-        <a href="#" class="login-btn"><i class="fa-brands fa-discord"></i> دخول</a>
+    <nav>
+        <div class="logo">RESPECT</div>
+        <a href="#" class="d-btn"><i class="fa-brands fa-discord"></i> تسجيل الدخول</a>
     </nav>
 
-    <div class="tabs-bar">
-        <div class="tab-item active" onclick="switchPage('home', this)">الرئيسية</div>
-        <div class="tab-item" onclick="switchPage('rules', this)">الدستور</div>
-        <div class="tab-item" onclick="switchPage('apply', this)">التقديم</div>
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="n-i active" onclick="tab('cits', this)"><i class="fa-solid fa-users"></i> دستور المواطنين</div>
+            <div class="n-i" onclick="tab('999', this)"><i class="fa-solid fa-shield-halved"></i> دستور العساكر</div>
+            <div class="n-i" onclick="tab('gangs', this)"><i class="fa-solid fa-skull"></i> دستور العصابات</div>
+            <div class="n-i" onclick="tab('jobs', this)"><i class="fa-solid fa-briefcase"></i> دستور الوظائف</div>
+            <div class="n-i" onclick="tab('staff', this)"><i class="fa-solid fa-user-tie"></i> دستور الإدارة</div>
+            </aside>
+
+        <main>
+            <div class="hero">
+                <h1>CONSTITUTION</h1>
+                <p>الدستور الرسمي لمدينة ريسبكت</p>
+            </div>
+
+            <div id="cits" class="rules-group active">
+                <div class="card">
+                    <button class="head" onclick="tg(this)">القوانين العامة <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="body">1. يمنع الـ RDM (القتل العشوائي).<br>2. يمنع الـ VDM (الدهس العشوائي).<br>3. احترام جميع اللاعبين (OOC).</div>
+                </div>
+                <div class="card">
+                    <button class="head" onclick="tg(this)">قوانين الـ NLR <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="body">يمنع العودة لموقع الوفاة أو تذكر الأحداث لمدة 15 دقيقة كاملة.</div>
+                </div>
+            </div>
+
+            <div id="999" class="rules-group">
+                <div class="card">
+                    <button class="head" onclick="tg(this)">نظام المداهمات <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="body">المداهمة تتطلب إذن من رتبة عليا وسيناريو مسبق.</div>
+                </div>
+            </div>
+
+            </main>
     </div>
 
-    <main>
-        <div id="home" class="page active">
-            <div class="card" style="text-align:center; padding: 50px 20px;">
-                <h1 style="font-size: 35px; color: var(--p); margin-bottom: 15px;">WELCOME</h1>
-                <p style="color:#888;">أهلاً بك في بوابة مدينة NoVaX الرسمية. راجع القوانين وقدم على الوظائف من هنا.</p>
-            </div>
-        </div>
-
-        <div id="rules" class="page">
-            <div class="card">
-                <h2 style="margin-bottom: 20px; border-right: 4px solid var(--p); padding-right: 15px;">دستور المدينة</h2>
-                <select class="select-engine" onchange="loadData(this.value)">
-                    <option value="">-- اضغط هنا لاختيار القسم --</option>
-                    <option value="999">قوانين العساكر (999)</option>
-                    <option value="gang">قوانين الإجرام (Gangs)</option>
-                    <option value="basic">القوانين العامة (Basic)</option>
-                </select>
-                <div id="rule-box" class="display-area">
-                    يرجى اختيار قسم من المربع أعلاه لعرض القوانين بالتفصيل...
-                </div>
-            </div>
-        </div>
-
-        <div id="apply" class="page">
-            <div class="card">
-                <h2 style="margin-bottom: 20px; border-right: 4px solid var(--p); padding-right: 15px;">طلب انضمام</h2>
-                <div class="input-group">
-                    <label>الاسم الرباعي (IC):</label>
-                    <input type="text" placeholder="مثال: علي محمد">
-                </div>
-                <div class="input-group">
-                    <label>الرتبة/الوظيفة المطلوبة:</label>
-                    <input type="text" placeholder="مثال: شرطي أو طبيب">
-                </div>
-                <div class="input-group">
-                    <label>لماذا تريد الانضمام؟</label>
-                    <textarea rows="4" placeholder="اكتب طموحاتك هنا..."></textarea>
-                </div>
-                <button class="submit-btn">إرسال البيانات فوراً</button>
-            </div>
-        </div>
-    </main>
-
     <script>
-        function switchPage(pageId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
+        // دالة فتح وإغلاق البطاقات (Accordion)
+        function tg(b) {
+            const card = b.parentElement;
+            const isOpen = card.classList.contains('open');
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+            if (!isOpen) card.classList.add('open');
         }
 
-        function loadData(val) {
-            const box = document.getElementById('rule-box');
-            if(val === '999') {
-                box.innerHTML = "<b>🚔 قوانين العساكر 999</b> • الالتزام بالزي الرسمي.<br>• يمنع استخدام القوة المفرطة بدون تحذير.<br>• احترام المواطنين واجب مقدس.";
-            } else if(val === 'gang') {
-                box.innerHTML = "<b>💀 قوانين الإجرام</b> • السطو يتطلب 4 عساكر.<br>• يمنع الهروب للمنطقة الآمنة أثناء المطاردة.<br>• الفدية بحد أقصى 50 ألف.";
-            } else if(val === 'basic') {
-                box.innerHTML = "<b>📜 القوانين العامة</b> • يمنع الـ RDM والـ VDM نهائياً.<br>• الالتزام بتقمص الشخصية (RP).<br>• يمنع السب والقذف (OOC).";
-            } else {
-                box.innerHTML = "يرجى اختيار قسم من المربع أعلاه لعرض القوانين بالتفصيل...";
+        // دالة التنقل بين الأقسام الـ 13
+        function tab(id, el) {
+            document.querySelectorAll('.rules-group').forEach(g => g.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.n-i').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            if (window.innerWidth < 992) {
+                window.scrollTo({ top: 400, behavior: 'smooth' });
             }
         }
     </script>
