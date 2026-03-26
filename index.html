@@ -3,111 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoVaX RP | الدستور</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    <title>Respect RP | دستور مدينة ريسبكت</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #8a2be2; --bg: #050505; --card: #0d0d0d; --text: #fff; --dim: #a0a0a0; --discord: #5865F2; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Tajawal', sans-serif; }
+        :root { --p: #8a2be2; --a: #ac15fe; --bg: #030303; --c: #0b0b0b; --b: #1c1c1c; --t: #ffffff; --m: #999999; --s: cubic-bezier(0.4, 0, 0.2, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--t); line-height: 1.8; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        /* Navbar */
-        .navbar { position: fixed; top: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.9); border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 1000; }
-        .logo { font-family: 'Orbitron'; color: var(--p); font-size: 1.5rem; font-weight: 900; }
-        .login-btn { background: var(--discord); color: #fff; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 0.8rem; }
+        /* [1] NAVIGATION */
+        nav { position: fixed; top: 0; width: 100%; height: 75px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--b); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 9999; }
+        .l { font-weight: 900; font-size: 26px; color: var(--p); letter-spacing: 2px; }
+        .d-l { background-color: #5865F2; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 800; font-size: 14px; transition: 0.3s var(--s); display: flex; align-items: center; gap: 10px; border: none; cursor: pointer; }
+        .d-l:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5); }
 
-        /* الأزرار السريعة للموبايل (حل المشكلة) */
-        .mobile-nav { display: flex; justify-content: center; gap: 10px; padding: 15px; background: #080808; margin-top: 80px; border-bottom: 1px solid #1a1a1a; }
-        .m-btn { background: #151515; color: var(--dim); border: 1px solid #222; padding: 10px; border-radius: 8px; flex: 1; text-align: center; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
-        .m-btn.active { background: rgba(138, 43, 226, 0.2); color: #fff; border-color: var(--p); }
+        /* [2] SIDEBAR & MAIN WRAPPER */
+        .wrapper { display: flex; margin-top: 75px; min-height: calc(100vh - 75px); }
+        .sidebar { width: 280px; background: #050505; border-left: 1px solid var(--b); padding: 30px 15px; position: fixed; right: 0; height: 100%; overflow-y: auto; z-index: 999; scrollbar-width: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .n-l { display: flex; align-items: center; gap: 14px; padding: 16px 20px; color: var(--m); text-decoration: none; border-radius: 10px; margin-bottom: 10px; transition: 0.3s var(--s); font-weight: 800; font-size: 15px; cursor: pointer; }
+        .n-l i { font-size: 16px; color: var(--p); opacity: 0.6; }
+        .n-l:hover, .n-l.active { background: rgba(138, 43, 226, 0.12); color: var(--t); border: 1px solid rgba(138, 43, 226, 0.2); }
+        .n-l.active i { opacity: 1; color: var(--a); }
 
-        /* Sidebar (للكومبيوتر) */
-        .sidebar { position: fixed; right: 0; top: 70px; width: 250px; height: 100%; background: #080808; border-left: 1px solid #1a1a1a; padding: 20px; display: block; }
+        main { margin-right: 280px; width: calc(100% - 280px); padding: 50px 40px; }
+        .hero { text-align: center; margin-bottom: 60px; animation: fadeIn 0.8s ease; }
+        .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 10px; color: #fff; }
+        .hero p { color: var(--m); font-size: 18px; }
 
-        /* Main */
-        main { margin-right: 250px; padding: 20px; }
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s; }
+        /* [3] RULES CONTAINER */
+        .s-c { display: none; animation: slideUp 0.5s ease; }
+        .s-c.active { display: block; }
+        .rule-card { background: var(--c); border: 1px solid var(--b); border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: 0.3s var(--s); }
+        .rule-card:hover { border-color: var(--p); box-shadow: 0 5px 20px rgba(138, 43, 226, 0.1); }
+        
+        .rule-h { width: 100%; padding: 22px 28px; background: none; border: none; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 16px; font-weight: 800; text-align: right; }
+        .rule-h .fa-chevron-down { font-size: 13px; color: #444; transition: 0.4s var(--s); }
+        
+        .rule-b { max-height: 0; overflow: hidden; transition: 0.4s var(--s); background: rgba(0,0,0,0.1); }
+        .rule-card.open .rule-b { max-height: 1000px; padding: 25px; border-top: 1px solid var(--b); color: var(--m); font-size: 15px; }
+        .rule-card.open .fa-chevron-down { transform: rotate(180deg); color: var(--p); }
 
-        /* المربع الذكي للقوانين */
-        .card { background: var(--card); border: 1px solid #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 10px; }
-        .select-box { width: 100%; padding: 12px; background: #111; border: 1px solid var(--p); color: #fff; border-radius: 8px; font-family: 'Tajawal'; margin-bottom: 15px; }
-        .view-area { background: #000; border: 1px solid #1a1a1a; padding: 20px; border-radius: 8px; line-height: 1.8; color: var(--dim); }
+        /* FOOTER */
+        footer { margin-top: 60px; text-align: center; color: #333; font-size: 12px; font-weight: 700; }
 
+        /* ANIMATIONS */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تعديلات الموبايل */
+        /* [4] MOBILE RESPONSIVE */
         @media (max-width: 992px) {
-            .sidebar { display: none; } /* نخفي القائمة الجانبية بالموبايل */
-            main { margin-right: 0; padding: 15px; }
-            .mobile-nav { display: flex; } /* نظهر الأزرار العلوية بدالها */
+            nav { padding: 0 20px; }
+            .sidebar { width: 100%; height: auto; position: relative; top: 0; border-left: none; border-bottom: 1px solid var(--b); display: flex; overflow-x: auto; padding: 12px 10px; scroll-snap-type: x mandatory; }
+            .n-l { margin-bottom: 0; white-space: nowrap; padding: 10px 18px; font-size: 13px; flex-shrink: 0; scroll-snap-align: start; }
+            main { margin-right: 0; width: 100%; padding: 30px 20px; }
+            .hero h1 { font-size: 32px; }
+            .rule-h { font-size: 14px; padding: 18px 20px; }
         }
-        @media (min-width: 993px) { .mobile-nav { display: none; } }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">NoVaX</div>
-        <a href="#" class="login-btn"><i class="fa-brands fa-discord"></i> دخول</a>
+    <nav>
+        <div class="l">RESPECT</div>
+        <a href="#" class="d-l"><i class="fa-brands fa-discord"></i> دخول العساكر</a>
     </nav>
 
-    <div class="mobile-nav">
-        <div class="m-btn active" onclick="tab('home', this)">الرئيسية</div>
-        <div class="m-btn" onclick="tab('rules', this)">الدستور</div>
-        <div class="m-btn" onclick="tab('apply', this)">التقديم</div>
+    <div class="wrapper">
+        <aside class="sidebar">
+            <div class="n-l active" onclick="t('gen', this)"><i class="fa-solid fa-book-open"></i> الدستور العام</div>
+            <div class="n-l" onclick="t('pol', this)"><i class="fa-solid fa-shield-halved"></i> قوانين الجهات</div>
+            <div class="n-l" onclick="t('genrl', this)"><i class="fa-solid fa-gavel"></i> القوانين العامة</div>
+            <div class="n-l" onclick="t('crm', this)"><i class="fa-solid fa-skull"></i> قوانين الإجرام</div>
+        </aside>
+
+        <main>
+            <div class="hero">
+                <h1>CONSTITUTION</h1>
+                <p>الدستور الرسمي لمدينة ريسبكت رول بلاي</p>
+            </div>
+
+            <div id="gen" class="s-c active">
+                <div class="rule-card">
+                    <button class="rule-h" onclick="k(this)">الفصل الأول: القواعد الأساسية <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="rule-b">هنا تكتب القوانين الأساسية..</div>
+                </div>
+                <div class="rule-card">
+                    <button class="rule-h" onclick="k(this)">الفصل الثاني: حقوق المواطنين <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="rule-b">هنا تكتب قوانين الحقوق..</div>
+                </div>
+            </div>
+
+            <div id="pol" class="s-c">
+                <div class="rule-card">
+                    <button class="rule-h" onclick="k(this)">قوانين الشرطة (999) <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="rule-b">قوانين العساكر بالتفصيل هنا..</div>
+                </div>
+            </div>
+
+            <footer>RESPECT ROLEPLAY © 2026</footer>
+        </main>
     </div>
 
-    <aside class="sidebar">
-        <div class="nav-item" onclick="tab('home', this)" style="cursor:pointer; padding:15px; color:var(--p);">الرئيسية</div>
-        <div class="nav-item" onclick="tab('rules', this)" style="cursor:pointer; padding:15px;">الدستور</div>
-        <div class="nav-item" onclick="tab('apply', this)" style="cursor:pointer; padding:15px;">التقديم</div>
-    </aside>
-
-    <main>
-        <div id="home" class="page active">
-            <div class="card" style="text-align:center;">
-                <h1 style="color:var(--p);">NoVaX RP</h1>
-                <p>مرحباً بك في لوحة تحكم المواطن.</p>
-            </div>
-        </div>
-
-        <div id="rules" class="page">
-            <div class="card">
-                <h3>اختر القسم:</h3>
-                <select class="select-box" onchange="loadRules(this.value)">
-                    <option value="">-- اضغط هنا للاختيار --</option>
-                    <option value="1">القوانين العامة</option>
-                    <option value="2">قوانين السطو</option>
-                    <option value="3">الممنوعات</option>
-                </select>
-                <div id="rules-view" class="view-area">اختر من المربع أعلاه...</div>
-            </div>
-        </div>
-
-        <div id="apply" class="page">
-            <div class="card">
-                <h3>تقديم وظيفي</h3>
-                <input type="text" placeholder="الاسم.." style="width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #333; color:#fff;">
-                <button style="width:100%; padding:10px; background:var(--p); border:none; color:#fff; font-weight:bold; border-radius:8px;">إرسال</button>
-            </div>
-        </div>
-    </main>
-
     <script>
-        function tab(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-            if(btn.classList.contains('m-btn')) btn.classList.add('active');
+        // نظام الـ Accordion لفتح وإغلاق القوانين بسلاسة
+        function k(b) {
+            const card = b.parentElement;
+            const openCard = document.querySelector('.rule-card.open');
+            if(openCard && openCard !== card) openCard.classList.remove('open');
+            card.classList.toggle('open');
         }
 
-        function loadRules(v) {
-            const area = document.getElementById('rules-view');
-            if(v=="1") area.innerHTML = "• NLR: 15 دقيقة.<br>• RDM: ممنوع القتل عشوائي.";
-            else if(v=="2") area.innerHTML = "• بنك مركزي: 4 شرطة.<br>• سوبر ماركت: 2 شرطة.";
-            else if(v=="3") area.innerHTML = "• ممنوع السب (OOC).<br>• ممنوع استخدام الماكرو.";
-            else area.innerHTML = "اختر من المربع أعلاه...";
+        // نظام التبديل بين الأقسام الرئيسية
+        function t(id, el) {
+            document.querySelectorAll('.s-c').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.n-l').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+            if (window.innerWidth < 992) window.scrollTo({top: 0, behavior: 'smooth'});
         }
     </script>
 </body>
