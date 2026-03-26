@@ -3,114 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESPECT | الدستور الرسمي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Respect RP | الدستور الرسمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --p: #8a2be2; --bg: #000; --c: #080808; --b: #151515; --t: #fff; --m: #666; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: var(--t); overflow-x: hidden; }
+        /* [إعدادات الألوان المتطابقة بالملي] */
+        :root { 
+            --main: #8a2be2; 
+            --neon: #ac15fe; 
+            --bg: #000000; 
+            --card: #080808; 
+            --border: #151515; 
+            --text: #ffffff; 
+            --muted: #666666; 
+            --kick: #53fc18;
+            --discord: #5865F2;
+            --sidebar-bg: #050505;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* Navigation */
-        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--b); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; z-index: 1000; }
-        .logo { font-size: 28px; font-weight: 900; color: var(--p); letter-spacing: 2px; text-transform: uppercase; }
-        .d-btn { background: #5865F2; color: #fff; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-weight: 900; font-size: 14px; transition: 0.3s; }
-        .d-btn:hover { box-shadow: 0 0 20px var(--p); transform: translateY(-2px); }
+        /* [تنسيق الجسم العام] */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.6; scroll-behavior: smooth; }
 
-        /* Sidebar */
-        .wrapper { display: flex; margin-top: 80px; min-height: 100vh; }
-        .sidebar { width: 320px; background: #050505; border-left: 1px solid var(--b); position: fixed; right: 0; height: calc(100vh - 80px); padding: 25px 15px; overflow-y: auto; z-index: 999; scrollbar-width: none; }
+        /* [النابار - شريط التنقل] */
+        nav { 
+            position: fixed; top: 0; width: 100%; height: 90px; 
+            background: rgba(0, 0, 0, 0.95); border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 60px; z-index: 1000; backdrop-filter: blur(20px); 
+        }
+        .logo { font-size: 32px; font-weight: 900; color: var(--main); letter-spacing: 4px; text-transform: uppercase; cursor: pointer; }
+        .nav-btns { display: flex; align-items: center; gap: 20px; }
+        .btn { 
+            padding: 12px 24px; border-radius: 8px; text-decoration: none; 
+            font-weight: 800; font-size: 14px; display: flex; align-items: center; 
+            gap: 10px; transition: var(--transition); border: none; cursor: pointer; 
+        }
+        .btn-kick { background: var(--kick); color: #000; }
+        .btn-discord { background: var(--discord); color: #fff; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3); }
+
+        /* [تخطيط الصفحة الرئيسي] */
+        .wrapper { display: flex; margin-top: 90px; min-height: calc(100vh - 90px); }
+
+        /* [السايدبار العملاق - 13 قسم] */
+        .sidebar { 
+            width: 360px; background: var(--sidebar-bg); border-left: 1px solid var(--border); 
+            position: fixed; right: 0; height: calc(100vh - 90px); padding: 30px 20px; 
+            overflow-y: auto; z-index: 999; scrollbar-width: none; 
+        }
         .sidebar::-webkit-scrollbar { display: none; }
-        .n-i { display: flex; align-items: center; gap: 14px; padding: 18px; color: var(--m); cursor: pointer; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-weight: 800; font-size: 15px; border: 1px solid transparent; }
-        .n-i i { color: var(--p); width: 22px; text-align: center; font-size: 18px; opacity: 0.7; }
-        .n-i:hover, .n-i.active { background: rgba(138, 43, 226, 0.12); color: #fff; border-color: rgba(138, 43, 226, 0.2); }
-        .n-i.active i { opacity: 1; text-shadow: 0 0 10px var(--p); }
+        .sidebar-group-title { 
+            color: var(--muted); font-size: 11px; font-weight: 900; 
+            text-transform: uppercase; margin: 25px 15px 12px 0; letter-spacing: 2px; 
+        }
+        .nav-item { 
+            display: flex; align-items: center; gap: 16px; padding: 18px 22px; 
+            color: var(--muted); text-decoration: none; border-radius: 15px; 
+            margin-bottom: 8px; transition: var(--transition); font-weight: 800; 
+            font-size: 15px; cursor: pointer; border: 1px solid transparent; 
+        }
+        .nav-item i { font-size: 18px; color: var(--main); opacity: 0.5; transition: 0.3s; width: 20px; text-align: center; }
+        .nav-item:hover, .nav-item.active { background: rgba(138, 43, 226, 0.12); color: #fff; border-color: rgba(138, 43, 226, 0.2); }
+        .nav-item.active i { opacity: 1; text-shadow: 0 0 15px var(--main); }
 
-        /* Content Area */
-        main { margin-right: 320px; width: calc(100% - 320px); padding: 60px 40px; text-align: center; }
-        .hero h1 { font-size: 65px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; text-shadow: 0 0 30px rgba(138,43,226,0.4); }
-        .hero p { color: #444; font-size: 22px; font-weight: 800; margin-bottom: 70px; text-transform: uppercase; }
+        /* [منطقة المحتوى] */
+        main { margin-right: 360px; width: calc(100% - 360px); padding: 80px 60px; }
+        .hero { text-align: center; margin-bottom: 90px; }
+        .hero h1 { font-size: 80px; font-weight: 900; letter-spacing: -4px; color: #fff; text-shadow: 0 0 50px rgba(138, 43, 226, 0.4); margin-bottom: 10px; }
+        .hero p { color: #333; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; }
 
-        /* Rules Accordion */
-        .rules-group { max-width: 850px; margin: 0 auto; display: none; text-align: right; }
-        .rules-group.active { display: block; animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card { background: var(--c); border: 1px solid var(--b); border-radius: 16px; margin-bottom: 18px; transition: 0.3s; }
-        .card:hover { border-color: var(--p); box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
-        .head { width: 100%; padding: 28px; background: none; border: none; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 18px; font-weight: 900; }
-        .head i { font-size: 14px; transition: 0.4s; color: #333; }
-        .body { max-height: 0; overflow: hidden; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); background: #040404; color: #aaa; line-height: 2; padding: 0 28px; font-size: 15px; }
-        .card.open .body { max-height: 2000px; padding: 28px; border-top: 1px solid var(--b); }
-        .card.open .head i { transform: rotate(180deg); color: var(--p); }
+        /* [نظام الأكورديون للقوانين] */
+        .rules-container { max-width: 950px; margin: 0 auto; display: none; }
+        .rules-container.active { display: block; animation: sectionFade 0.6s ease; }
+        .rule-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; margin-bottom: 20px; overflow: hidden; transition: var(--transition); }
+        .rule-card:hover { border-color: var(--main); transform: translateX(-5px); }
+        .rule-header { 
+            width: 100%; padding: 35px; background: none; border: none; 
+            color: #fff; display: flex; justify-content: space-between; 
+            align-items: center; cursor: pointer; font-size: 20px; 
+            font-weight: 900; text-align: right; 
+        }
+        .rule-header .chevron { font-size: 14px; color: #333; transition: 0.5s; }
+        .rule-body { 
+            max-height: 0; overflow: hidden; transition: 0.6s var(--transition); 
+            background: #040404; padding: 0 35px; color: #888; font-size: 17px; font-weight: 500; 
+        }
+        .rule-card.open .rule-body { max-height: 3000px; padding: 35px; border-top: 1px solid var(--border); }
+        .rule-card.open .chevron { transform: rotate(180deg); color: var(--main); }
+        
+        /* [تنسيق نصوص القوانين] */
+        .law-item { margin-bottom: 20px; display: block; position: relative; padding-right: 30px; line-height: 1.8; }
+        .law-item::before { content: "◈"; position: absolute; right: 0; color: var(--main); font-weight: 900; filter: drop-shadow(0 0 5px var(--main)); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* [الفوتر] */
+        footer { margin-top: 120px; text-align: center; border-top: 1px solid var(--border); padding: 50px; color: #151515; font-weight: 900; font-size: 15px; letter-spacing: 3px; }
 
-        /* Mobile */
-        @media (max-width: 992px) {
-            .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 1px solid var(--b); display: flex; overflow-x: auto; padding: 12px; top: 0; }
-            .n-i { margin-bottom: 0; white-space: nowrap; padding: 12px 20px; font-size: 13px; }
-            main { margin-right: 0; width: 100%; padding: 30px 20px; }
-            .hero h1 { font-size: 40px; }
+        /* [الأنيميشن] */
+        @keyframes sectionFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* [التجاوب مع الجوال] */
+        @media (max-width: 1200px) {
+            nav { padding: 0 30px; }
+            .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; padding: 15px; top: 0; gap: 12px; }
+            .sidebar-group-title { display: none; }
+            .nav-item { margin-bottom: 0; white-space: nowrap; padding: 15px 25px; font-size: 13px; flex-shrink: 0; }
+            main { margin-right: 0; width: 100%; padding: 40px 20px; }
+            .hero h1 { font-size: 50px; }
         }
     </style>
 </head>
 <body>
-
-    <nav>
+     <nav>
         <div class="logo">RESPECT</div>
-        <a href="#" class="d-btn"><i class="fa-brands fa-discord"></i> تسجيل الدخول</a>
+        <div class="nav-btns">
+            <a href="https://kick.com/respect" class="btn btn-kick"><i class="fa-brands fa-kickstarter"></i> قناة كيك</a>
+            <a href="#" class="btn btn-discord"><i class="fa-brands fa-discord"></i> ديسكورد المدينة</a>
+        </div>
     </nav>
 
     <div class="wrapper">
         <aside class="sidebar">
-            <div class="n-i active" onclick="tab('1', this)"><i class="fa-solid fa-users"></i> دستور المواطنين</div>
-            <div class="n-i" onclick="tab('2', this)"><i class="fa-solid fa-shield-halved"></i> دستور العساكر</div>
-            <div class="n-i" onclick="tab('3', this)"><i class="fa-solid fa-skull"></i> دستور العصابات</div>
-            <div class="n-i" onclick="tab('4', this)"><i class="fa-solid fa-briefcase"></i> دستور الوظائف</div>
-            <div class="n-i" onclick="tab('5', this)"><i class="fa-solid fa-user-tie"></i> دستور الإدارة</div>
-            </aside>
+            <div class="sidebar-group-title">الدستور الأساسي</div>
+            <div class="nav-item active" onclick="showSection('citizens', this)"><i class="fa-solid fa-users"></i> دستور المواطنين</div>
+            <div class="nav-item" onclick="showSection('police', this)"><i class="fa-solid fa-shield-halved"></i> دستور العساكر</div>
+            <div class="nav-item" onclick="showSection('gangs', this)"><i class="fa-solid fa-skull"></i> دستور العصابات</div>
+            
+            <div class="sidebar-group-title">الأنشطة والجرائم</div>
+            <div class="nav-item" onclick="showSection('money', this)"><i class="fa-solid fa-money-bill-transfer"></i> غسيل الأموال</div>
+            <div class="nav-item" onclick="showSection('heists', this)"><i class="fa-solid fa-mask"></i> قوانين السطو</div>
+            <div class="nav-item" onclick="showSection('smuggling', this)"><i class="fa-solid fa-truck-ramp-box"></i> قوانين التهريب</div>
+            
+            <div class="sidebar-group-title">المنظومة الحكومية</div>
+            <div class="nav-item" onclick="showSection('ems', this)"><i class="fa-solid fa-hand-holding-medical"></i> قوانين المسعفين</div>
+            <div class="nav-item" onclick="showSection('realestate', this)"><i class="fa-solid fa-building-shield"></i> قوانين العقارات</div>
+            <div class="nav-item" onclick="showSection('prison', this)"><i class="fa-solid fa-handcuffs"></i> قوانين السجن</div>
+            
+            <div class="sidebar-group-title">القوانين الإدارية</div>
+            <div class="nav-item" onclick="showSection('general', this)"><i class="fa-solid fa-gavel"></i> القوانين العامة</div>
+            <div class="nav-item" onclick="showSection('jobs', this)"><i class="fa-solid fa-briefcase"></i> دستور الوظائف</div>
+            <div class="nav-item" onclick="showSection('admin', this)"><i class="fa-solid fa-user-tie"></i> دستور الإدارة</div>
+            <div class="nav-item" onclick="showSection('terms', this)"><i class="fa-solid fa-circle-exclamation"></i> الشروط والأحكام</div>
+        </aside>
 
         <main>
             <div class="hero">
                 <h1>CONSTITUTION</h1>
-                <p>الدستور الرسمي لمدينة ريسبكت</p>
+                <p>الدستور الرسمي لمدينة ريسبكت رول بلاي</p>
             </div>
 
-            <div id="1" class="rules-group active">
-                <div class="card">
-                    <button class="head" onclick="tg(this)">قوانين الـ NLR <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">ممنوع العودة لمكان الوفاة أو تذكر الأحداث لمدة 15 دقيقة كاملة.</div>
+            <div id="citizens" class="rules-container active">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين الـ NLR (حياة جديدة) <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع العودة لموقع الوفاة أو تذكر أي أحداث أدت لموتك لمدة 15 دقيقة كاملة.</span>
+                        <span class="law-item">في حال تم إنعاشك من قبل المسعف، لا يمكنك تذكر الشخص الذي أطلق النار عليك.</span>
+                        <span class="law-item">يمنع الانتقام (Revenge Kill) من الشخص الذي قتلك في نفس السيناريو.</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <button class="head" onclick="tg(this)">قوانين الـ RDM <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">ممنوع القتل العشوائي بدون سيناريو واضح وتفاعل صوتي مسبق.</div>
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين الـ RDM و VDM <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع القتل العشوائي (RDM) بدون وجود تفاعل صوتي وسيناريو مسبق واضح.</span>
+                        <span class="law-item">يمنع دهس اللاعبين بالمركبات عمداً (VDM) تحت أي ظرف كان.</span>
+                    </div>
                 </div>
             </div>
 
-            <div id="2" class="rules-group">
-                <div class="card">
-                    <button class="head" onclick="tg(this)">نظام الـ 999 <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">الالتزام بالرتب العسكرية والزي الرسمي، ويمنع استخدام القوة المفرطة.</div>
+            <div id="police" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">بروتوكول الـ 999 والطوارئ <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يجب الالتزام بالرتب العسكرية الموزعة من قبل القيادة العليا.</span>
+                        <span class="law-item">يمنع استخدام السلاح الحي إلا في حال تعرض حياة العسكري أو المدني لخطر محقق.</span>
+                        <span class="law-item">يجب توثيق كافة الاعتقالات عبر الكاميرا الجسدية (Bodycam).</span>
+                    </div>
                 </div>
             </div>
 
-            </main>
+            <div id="money" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">ضوابط غسيل الأموال <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">تتم عملية الغسيل في المواقع المخصصة فقط والمخفية داخل الخريطة.</span>
+                        <span class="law-item">يمنع الغسيل أثناء وجود بلاغ أمني نشط في المنطقة المحيطة.</span>
+                        <span class="law-item">النسبة المقتطعة من الغسيل ثابتة ولا يحق للاعب المطالبة بتغييرها.</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer>RESPECT ROLEPLAY © 2026 - ALL RIGHTS RESERVED</footer>
+        </main>
+    </div>
+                <div id="gangs" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين الـ Gang War <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع الهجوم على مقر عصابة أخرى بدون إعلان حرب رسمي (War Ticket).</span>
+                        <span class="law-item">يجب ارتداء الزي الموحد للعصابة أثناء السيناريوهات الإجرامية لتمييز الهوية.</span>
+                        <span class="law-item">يمنع التحالف بين عصابتين ضد عصابة واحدة في سيناريو واحد (Ganging Up).</span>
+                    </div>
+                </div>
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين الاختطاف والرهائن <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع اختطاف المسعفين أو العساكر أثناء أداء الواجب في الحالات الطارئة.</span>
+                        <span class="law-item">يجب طلب فدية معقولة لا تتجاوز الحد المسموح به في قوانين المدينة.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="heists" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين سطو البنوك والذهب <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يجب تواجد عدد أدنى من العساكر (مثلاً 4) لبدء سيناريو سطو كبير.</span>
+                        <span class="law-item">يمنع استخدام مركبات الطيران للهرب في سرقات المحلات الصغيرة.</span>
+                        <span class="law-item">يمنع الغدر بالرهينة بعد استلام مطالب المفاوضات.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="smuggling" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">تهريب الأسلحة والممنوعات <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">تتم عمليات التسليم في نقاط عشوائية (Black Market) وتخضع لمراقبة العساكر.</span>
+                        <span class="law-item">يمنع الهروب إلى المناطق الآمنة (Safe Zones) أثناء ملاحقة تهريب.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="prison" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">التعامل داخل السجن المركزي <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع تهريب الأدوات الحادة داخل السجن إلا عبر سيناريو تهريب خارجي.</span>
+                        <span class="law-item">يجب الالتزام بمدة السجن المقررة من قبل القاضي أو الضابط المسؤول.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">قوانين التعامل مع الطاقم الإداري <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يمنع الكذب على الإدارة في "تكت" المساعدة تحت طائلة الباند النهائي.</span>
+                        <span class="law-item">قرار الإداري في موقع السيناريو نهائي ولا يناقش إلا عبر شكوى رسمية.</span>
+                        <span class="law-item">يمنع منشن الإدارة في الديسكورد بدون سبب طارئ جداً.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="terms" class="rules-container">
+                <div class="rule-card">
+                    <button class="rule-header" onclick="tg(this)">شروط الانضمام لمدينة ريسبكت <i class="fa-solid fa-chevron-down chevron"></i></button>
+                    <div class="rule-body">
+                        <span class="law-item">يجب امتلاك ميكروفون بجودة جيدة للتواصل الصوتي.</span>
+                        <span class="law-item">يمنع السب أو الشتم بكلمات خارجة عن الرول بلاي (OOC Talk).</span>
+                        <span class="law-item">بمجرد دخولك السيرفر، أنت موافق على كافة التحديثات التي تطرأ على الدستور.</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer>RESPECT ROLEPLAY © 2026 - FINAL SOURCE CODE</footer>
+        </main>
     </div>
 
     <script>
-        function tg(b) {
-            const card = b.parentElement;
-            const isOpen = card.classList.contains('open');
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
-            if (!isOpen) card.classList.add('open');
+        // دالة تبديل الأقسام الـ 13
+        function showSection(id, element) {
+            // إخفاء كل الأقسام مع أنيميشن بسيط
+            document.querySelectorAll('.rules-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // إظهار القسم المطلوب
+            const target = document.getElementById(id);
+            if(target) {
+                target.classList.add('active');
+            }
+            
+            // تحديث شكل الزر النشط في السايدبار
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // سكرول للأعلى في حال كان المستخدم يتصفح من الموبايل
+            if (window.innerWidth < 1200) {
+                window.scrollTo({ top: 450, behavior: 'smooth' });
+            }
         }
 
-        function tab(id, el) {
-            document.querySelectorAll('.rules-group').forEach(g => g.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.n-i').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-            if (window.innerWidth < 992) window.scrollTo({ top: 350, behavior: 'smooth' });
+        // دالة فتح وإغلاق القوانين (الأكورديون)
+        function tg(btn) {
+            const card = btn.parentElement;
+            const isOpen = card.classList.contains('open');
+            
+            // إغلاق أي قانون مفتوح آخر لتسهيل القراءة
+            document.querySelectorAll('.rules-container.active .rule-card').forEach(c => {
+                c.classList.remove('open');
+            });
+            
+            if (!isOpen) {
+                card.classList.add('open');
+            }
         }
+
+        // دالة مساعدة لدعم التبديل السريع
+        function tab(id, el) { showSection(id, el); }
+        
+        console.log("Respect RP Website Clone Loaded Successfully.");
     </script>
 </body>
 </html>
