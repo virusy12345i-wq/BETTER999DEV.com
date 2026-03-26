@@ -1,0 +1,12 @@
+import clientPromise from '../../lib/mongodb';
+
+export default async function handler(req, res) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("2099_database");
+    const items = await db.collection("web_store").find({}).toArray();
+    res.status(200).json(items);
+  } catch (e) {
+    res.status(500).json({ error: "Failed to fetch data from 2099 core" });
+  }
+}
