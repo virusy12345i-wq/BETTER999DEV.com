@@ -148,6 +148,19 @@
     </div>
 
     <script>
+        function toggleAccordion(id) {
+    const content = document.getElementById(id);
+    const icon = document.getElementById('icon-' + id);
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        content.style.animation = "slideDown 0.3s ease-out";
+        icon.style.transform = "rotate(180deg)";
+    } else {
+        content.classList.add('hidden');
+        icon.style.transform = "rotate(0deg)";
+    }
+        }
+        
         const WEBHOOK_URL = "رابط_الويب_هوك_هنا";
 
         function showPage(id) {
