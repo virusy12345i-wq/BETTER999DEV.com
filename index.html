@@ -3,113 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROJECT 2099 | NEURAL INTERFACE</title>
+    <title>2099 CORE | INTERFACE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-cyan: #00ffff; --neon-purple: #bc13fe; }
         body { 
-            background: radial-gradient(circle at center, #0a0a20 0%, #020205 100%);
-            font-family: 'Cairo', sans-serif;
-            color: white;
+            background: #020205; 
+            font-family: 'Cairo', sans-serif; 
+            color: white; 
             overflow-x: hidden;
         }
         .orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .neon-border:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
-        .nav-link { transition: 0.3s; cursor: pointer; }
-        .nav-link:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .nav-btn { transition: 0.4s; cursor: pointer; padding: 10px 20px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; }
+        .nav-btn.active { background: rgba(0, 255, 255, 0.1); color: #00ffff; border: 1px solid #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <nav class="fixed top-0 w-full z-50 glass py-4 px-8 flex justify-between items-center border-b border-white/10">
-        <div class="orbitron text-2xl font-black tracking-tighter text-cyan-400">2099 CORE</div>
-        <div class="flex gap-8 font-bold text-sm uppercase tracking-widest">
-            <a href="#rules" class="nav-link">القوانين</a>
-            <a href="#store" class="nav-link">المتجر</a>
-            <a href="#apply" class="nav-link text-purple-400">التقديمات</a>
-        </div>
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass rounded-2xl p-2 flex gap-2 border border-white/10 shadow-2xl">
+        <div onclick="showPage('home')" id="btn-home" class="nav-btn active orbitron">CORE</div>
+        <div onclick="showPage('rules')" id="btn-rules" class="nav-btn">القوانين</div>
+        <div onclick="showPage('store')" id="btn-store" class="nav-btn">المتجر</div>
+        <div onclick="showPage('apply')" id="btn-apply" class="nav-btn">التقديمات</div>
     </nav>
 
-    <section class="h-screen flex flex-col justify-center items-center text-center px-4">
-        <h1 class="orbitron text-7xl md:text-9xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-cyan-500 to-purple-600 uppercase">
-            Future RP
-        </h1>
-        <p class="text-gray-400 tracking-[0.4em] uppercase text-xs md:text-sm">سيرفر المستقبل | حماية فضائية | أداء 2099</p>
-        <div class="mt-10 flex gap-4">
-            <button class="px-8 py-3 bg-cyan-500 text-black font-black rounded-full hover:scale-105 transition">دخول السيرفر</button>
-            <button class="px-8 py-3 glass rounded-full border border-white/20 hover:bg-white/5 transition">ديسكورد</button>
-        </div>
-    </section>
+    <div class="mt-24 max-w-6xl mx-auto">
+        
+        <section id="page-home" class="page-section active text-center py-20">
+            <h1 class="orbitron text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-500 uppercase">System 2099</h1>
+            <p class="mt-6 text-gray-500 tracking-[0.4em] uppercase">مرحباً بك في الواجهة العصبية للسيرفر</p>
+        </section>
 
-    <section id="store" class="py-20 max-w-7xl mx-auto px-6">
-        <h2 class="orbitron text-4xl font-black mb-12 border-r-4 border-cyan-500 pr-4">ASSET MARKETPLACE</h2>
-        <div id="shop-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="glass p-6 rounded-3xl animate-pulse text-center text-gray-500">جاري الاتصال بالنواة...</div>
-        </div>
-    </section>
+        <section id="page-rules" class="page-section">
+            <div class="glass p-8 rounded-3xl border-r-4 border-cyan-500">
+                <h2 class="text-3xl font-black mb-6 flex items-center gap-4"><span class="orbitron text-cyan-500">01</span> دستور المدينة</h2>
+                <ul class="space-y-4 text-gray-300">
+                    <li class="p-4 bg-white/5 rounded-xl border border-white/5">١. يمنع الخروج عن الرول بلاي (Power Gaming) تحت أي ظرف.</li>
+                    <li class="p-4 bg-white/5 rounded-xl border border-white/5">٢. الاحترام المتبادل بين اللاعبين هو أساس مجتمعنا الرقمي.</li>
+                    <li class="p-4 bg-white/5 rounded-xl border border-white/5">٣. يمنع استخدام أي ثغرات برمجية (Exploits)؛ نظام الحماية يراقبك.</li>
+                </ul>
+            </div>
+        </section>
 
-    <section id="apply" class="py-20 bg-black/40 px-6">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-black mb-4">بوابة التوظيف الحكومي</h2>
-            <p class="text-gray-400 mb-12 text-lg">اختر الوزارة التي ترغب بالانضمام إليها وسجل بياناتك الرقمية</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
-                    <div class="text-blue-500 text-4xl mb-4 group-hover:scale-110 transition">👮</div>
-                    <h3 class="text-xl font-bold">وزارة الداخلية</h3>
-                    <p class="text-xs text-gray-500 mt-2">Police Department</p>
+        <section id="page-store" class="page-section">
+            <h2 class="orbitron text-3xl font-black mb-8 text-cyan-400 uppercase tracking-tighter">Marketplace Assets</h2>
+            <div id="shop-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 </div>
-                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
-                    <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition">🚑</div>
-                    <h3 class="text-xl font-bold">وزارة الصحة</h3>
-                    <p class="text-xs text-gray-500 mt-2">Medical Services</p>
+        </section>
+
+        <section id="page-apply" class="page-section">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-black">بوابة التوظيف</h2>
+                <p class="text-gray-500 mt-2">اختر مسارك المهني في مستقبل 2099</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-10 rounded-3xl hover:border-blue-500 transition cursor-pointer text-center group">
+                    <div class="text-5xl mb-4 group-hover:scale-110 transition">👮</div>
+                    <h3 class="text-xl font-bold">الأمن العام</h3>
+                    <button class="mt-6 text-xs text-blue-400 uppercase tracking-widest border-b border-blue-500 pb-1">فتح الملف</button>
                 </div>
-                <div class="glass p-8 rounded-2xl neon-border transition cursor-pointer group">
-                    <div class="text-yellow-500 text-4xl mb-4 group-hover:scale-110 transition">⚖️</div>
-                    <h3 class="text-xl font-bold">وزارة العدل</h3>
-                    <p class="text-xs text-gray-500 mt-2">Department of Justice</p>
+                <div class="glass p-10 rounded-3xl hover:border-red-500 transition cursor-pointer text-center group">
+                    <div class="text-5xl mb-4 group-hover:scale-110 transition">🚑</div>
+                    <h3 class="text-xl font-bold">الخدمات الطبية</h3>
+                    <button class="mt-6 text-xs text-red-400 uppercase tracking-widest border-b border-red-500 pb-1">فتح الملف</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="py-10 text-center border-t border-white/5 text-gray-600 text-[10px] tracking-widest uppercase">
-        Developed by The Architect for 2099 Systems &copy; 2026
-    </footer>
+    </div>
 
     <script>
-        // سكريبت جلب البيانات من الداتابيز (رابط ملف store.js)
+        // وظيفة التنقل بين الصفحات بدون تحميل (SPA Logic)
+        function showPage(pageId) {
+            // إخفاء كل الصفحات
+            document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+            // إزالة حالة الـ Active من كل الأزرار
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // إظهار الصفحة المطلوبة وتفعيل زرها
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('btn-' + pageId).classList.add('active');
+        }
+
+        // كود جلب بيانات المتجر (نفسه اللي استعملناه سابقاً)
         async function fetchStore() {
             try {
                 const response = await fetch('/api/store'); 
                 const data = await response.json();
                 const container = document.getElementById('shop-container');
                 
-                if(data.length === 0) {
-                    container.innerHTML = "<p class='col-span-3 text-center text-gray-500'>المتجر فارغ حالياً سيدي.</p>";
-                    return;
-                }
-
                 container.innerHTML = data.map(item => `
-                    <div class="glass p-6 rounded-[2rem] border border-white/5 relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                        <img src="${item.itemImage}" class="w-full h-44 object-cover rounded-2xl mb-4 border border-white/10">
-                        <h3 class="orbitron text-xl font-bold tracking-tighter">${item.itemName}</h3>
-                        <div class="flex justify-between items-center mt-6">
-                            <span class="text-2xl font-black text-cyan-400">${item.itemPrice}</span>
-                            <span class="px-3 py-1 bg-white/5 rounded-full text-[10px] text-gray-400 uppercase">Qty: ${item.itemStock}</span>
+                    <div class="glass p-6 rounded-3xl border border-white/5 group hover:border-cyan-500/30 transition">
+                        <img src="${item.itemImage}" class="w-full h-40 object-cover rounded-2xl mb-4">
+                        <h3 class="orbitron text-lg font-bold">${item.itemName}</h3>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-xl text-cyan-400 font-black">${item.itemPrice}</span>
+                            <button class="px-4 py-2 bg-white/5 rounded-lg text-[10px] hover:bg-white/10">تفاصيل</button>
                         </div>
-                        <button class="w-full mt-6 py-4 glass border border-cyan-500/30 rounded-xl font-black text-xs hover:bg-cyan-500 hover:text-black transition uppercase tracking-widest">
-                            Acquire Asset
-                        </button>
                     </div>
                 `).join('');
-            } catch (e) {
-                console.error("Core Sync Error", e);
-            }
+            } catch (e) { console.error("Database sync offline."); }
         }
         fetchStore();
     </script>
