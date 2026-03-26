@@ -3,51 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Respect RP | دستور مدينة ريسبكت</title>
+    <title>RESPECT | الدستور الرسمي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #8a2be2; --bg: #000; --c: #080808; --b: #151515; --t: #fff; }
+        :root { --p: #8a2be2; --bg: #000; --c: #080808; --b: #151515; --t: #fff; --m: #666; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body { background: var(--bg); color: var(--t); overflow-x: hidden; }
 
         /* Navigation */
-        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--b); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 1000; }
-        .logo { font-size: 28px; font-weight: 900; color: var(--p); letter-spacing: 2px; }
+        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--b); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; z-index: 1000; }
+        .logo { font-size: 28px; font-weight: 900; color: var(--p); letter-spacing: 2px; text-transform: uppercase; }
         .d-btn { background: #5865F2; color: #fff; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-weight: 900; font-size: 14px; transition: 0.3s; }
-        .d-btn:hover { box-shadow: 0 0 15px var(--p); transform: scale(1.05); }
+        .d-btn:hover { box-shadow: 0 0 20px var(--p); transform: translateY(-2px); }
 
-        /* Sidebar & Layout */
+        /* Sidebar */
         .wrapper { display: flex; margin-top: 80px; min-height: 100vh; }
-        .sidebar { width: 320px; background: #050505; border-left: 1px solid var(--b); position: fixed; right: 0; height: calc(100vh - 80px); padding: 25px 15px; overflow-y: auto; z-index: 999; }
-        .n-i { display: flex; align-items: center; gap: 14px; padding: 18px; color: #666; cursor: pointer; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-weight: 800; font-size: 15px; }
-        .n-i i { color: var(--p); width: 22px; text-align: center; font-size: 18px; }
-        .n-i:hover, .n-i.active { background: rgba(138, 43, 226, 0.15); color: #fff; border: 1px solid rgba(138, 43, 226, 0.3); }
+        .sidebar { width: 320px; background: #050505; border-left: 1px solid var(--b); position: fixed; right: 0; height: calc(100vh - 80px); padding: 25px 15px; overflow-y: auto; z-index: 999; scrollbar-width: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .n-i { display: flex; align-items: center; gap: 14px; padding: 18px; color: var(--m); cursor: pointer; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-weight: 800; font-size: 15px; border: 1px solid transparent; }
+        .n-i i { color: var(--p); width: 22px; text-align: center; font-size: 18px; opacity: 0.7; }
+        .n-i:hover, .n-i.active { background: rgba(138, 43, 226, 0.12); color: #fff; border-color: rgba(138, 43, 226, 0.2); }
+        .n-i.active i { opacity: 1; text-shadow: 0 0 10px var(--p); }
 
-        /* Main Content */
+        /* Content Area */
         main { margin-right: 320px; width: calc(100% - 320px); padding: 60px 40px; text-align: center; }
-        .hero h1 { font-size: 60px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(138,43,226,0.3); }
-        .hero p { color: #555; font-size: 22px; font-weight: 700; margin-bottom: 60px; text-transform: uppercase; }
+        .hero h1 { font-size: 65px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; text-shadow: 0 0 30px rgba(138,43,226,0.4); }
+        .hero p { color: #444; font-size: 22px; font-weight: 800; margin-bottom: 70px; text-transform: uppercase; }
 
         /* Rules Accordion */
         .rules-group { max-width: 850px; margin: 0 auto; display: none; text-align: right; }
-        .rules-group.active { display: block; animation: slideUp 0.4s ease; }
-        .card { background: var(--c); border: 1px solid var(--b); border-radius: 14px; margin-bottom: 15px; transition: 0.3s; }
-        .card:hover { border-color: var(--p); }
-        .head { width: 100%; padding: 25px; background: none; border: none; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 18px; font-weight: 900; }
-        .head i { font-size: 14px; transition: 0.4s; color: #444; }
-        .body { max-height: 0; overflow: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #040404; color: #999; line-height: 1.8; padding: 0 25px; }
-        .card.open .body { max-height: 1500px; padding: 25px; border-top: 1px solid var(--b); }
+        .rules-group.active { display: block; animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card { background: var(--c); border: 1px solid var(--b); border-radius: 16px; margin-bottom: 18px; transition: 0.3s; }
+        .card:hover { border-color: var(--p); box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
+        .head { width: 100%; padding: 28px; background: none; border: none; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 18px; font-weight: 900; }
+        .head i { font-size: 14px; transition: 0.4s; color: #333; }
+        .body { max-height: 0; overflow: hidden; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); background: #040404; color: #aaa; line-height: 2; padding: 0 28px; font-size: 15px; }
+        .card.open .body { max-height: 2000px; padding: 28px; border-top: 1px solid var(--b); }
         .card.open .head i { transform: rotate(180deg); color: var(--p); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile Optimization */
+        /* Mobile */
         @media (max-width: 992px) {
-            .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 1px solid var(--b); display: flex; overflow-x: auto; padding: 12px; }
+            .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 1px solid var(--b); display: flex; overflow-x: auto; padding: 12px; top: 0; }
             .n-i { margin-bottom: 0; white-space: nowrap; padding: 12px 20px; font-size: 13px; }
             main { margin-right: 0; width: 100%; padding: 30px 20px; }
-            .hero h1 { font-size: 38px; }
+            .hero h1 { font-size: 40px; }
         }
     </style>
 </head>
@@ -59,12 +61,12 @@
     </nav>
 
     <div class="wrapper">
-        <aside class="sidebar" id="sidebar">
-            <div class="n-i active" onclick="tab('cits', this)"><i class="fa-solid fa-users"></i> دستور المواطنين</div>
-            <div class="n-i" onclick="tab('999', this)"><i class="fa-solid fa-shield-halved"></i> دستور العساكر</div>
-            <div class="n-i" onclick="tab('gangs', this)"><i class="fa-solid fa-skull"></i> دستور العصابات</div>
-            <div class="n-i" onclick="tab('jobs', this)"><i class="fa-solid fa-briefcase"></i> دستور الوظائف</div>
-            <div class="n-i" onclick="tab('staff', this)"><i class="fa-solid fa-user-tie"></i> دستور الإدارة</div>
+        <aside class="sidebar">
+            <div class="n-i active" onclick="tab('1', this)"><i class="fa-solid fa-users"></i> دستور المواطنين</div>
+            <div class="n-i" onclick="tab('2', this)"><i class="fa-solid fa-shield-halved"></i> دستور العساكر</div>
+            <div class="n-i" onclick="tab('3', this)"><i class="fa-solid fa-skull"></i> دستور العصابات</div>
+            <div class="n-i" onclick="tab('4', this)"><i class="fa-solid fa-briefcase"></i> دستور الوظائف</div>
+            <div class="n-i" onclick="tab('5', this)"><i class="fa-solid fa-user-tie"></i> دستور الإدارة</div>
             </aside>
 
         <main>
@@ -73,21 +75,21 @@
                 <p>الدستور الرسمي لمدينة ريسبكت</p>
             </div>
 
-            <div id="cits" class="rules-group active">
-                <div class="card">
-                    <button class="head" onclick="tg(this)">القوانين العامة <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">1. يمنع الـ RDM (القتل العشوائي).<br>2. يمنع الـ VDM (الدهس العشوائي).<br>3. احترام جميع اللاعبين (OOC).</div>
-                </div>
+            <div id="1" class="rules-group active">
                 <div class="card">
                     <button class="head" onclick="tg(this)">قوانين الـ NLR <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">يمنع العودة لموقع الوفاة أو تذكر الأحداث لمدة 15 دقيقة كاملة.</div>
+                    <div class="body">ممنوع العودة لمكان الوفاة أو تذكر الأحداث لمدة 15 دقيقة كاملة.</div>
+                </div>
+                <div class="card">
+                    <button class="head" onclick="tg(this)">قوانين الـ RDM <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="body">ممنوع القتل العشوائي بدون سيناريو واضح وتفاعل صوتي مسبق.</div>
                 </div>
             </div>
 
-            <div id="999" class="rules-group">
+            <div id="2" class="rules-group">
                 <div class="card">
-                    <button class="head" onclick="tg(this)">نظام المداهمات <i class="fa-solid fa-chevron-down"></i></button>
-                    <div class="body">المداهمة تتطلب إذن من رتبة عليا وسيناريو مسبق.</div>
+                    <button class="head" onclick="tg(this)">نظام الـ 999 <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="body">الالتزام بالرتب العسكرية والزي الرسمي، ويمنع استخدام القوة المفرطة.</div>
                 </div>
             </div>
 
@@ -95,7 +97,6 @@
     </div>
 
     <script>
-        // دالة فتح وإغلاق البطاقات (Accordion)
         function tg(b) {
             const card = b.parentElement;
             const isOpen = card.classList.contains('open');
@@ -103,15 +104,12 @@
             if (!isOpen) card.classList.add('open');
         }
 
-        // دالة التنقل بين الأقسام الـ 13
         function tab(id, el) {
             document.querySelectorAll('.rules-group').forEach(g => g.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.n-i').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            if (window.innerWidth < 992) {
-                window.scrollTo({ top: 400, behavior: 'smooth' });
-            }
+            if (window.innerWidth < 992) window.scrollTo({ top: 350, behavior: 'smooth' });
         }
     </script>
 </body>
