@@ -3,72 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoVaX ROLEPLAY | الموقع الرسمي</title>
+    <title>NoVaX RP | النظام المتكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --main: #9403fc; --bg: #050505; --card: #0d0d0d; --brd: #1a1a1a; --txt: #fff; --kick: #53fc18; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: var(--txt); overflow-x: hidden; scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--txt); overflow-x: hidden; }
 
         /* Navbar */
-        nav { 
-            position: fixed; top: 0; width: 100%; height: 80px; 
-            background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; 
-            align-items: center; padding: 0 50px; z-index: 1000; border-bottom: 1px solid var(--brd);
-            backdrop-filter: blur(10px);
-        }
-        .menu-btn { 
-            width: 50px; height: 50px; background: var(--main); border-radius: 10px; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: 0.3s; font-size: 24px; color: #fff;
-        }
+        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; z-index: 1000; border-bottom: 1px solid var(--brd); backdrop-filter: blur(10px); }
+        .logo { font-weight: 900; font-size: 26px; }
+        .menu-btn { width: 50px; height: 50px; background: var(--main); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; font-size: 24px; color: #fff; }
 
-        /* Sidebar Drawer */
-        .sidebar {
-            position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
-            background: #080808; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 40px 30px; border-left: 2px solid var(--brd); overflow-y: auto;
-        }
+        /* Sidebar */
+        .sidebar { position: fixed; top: 0; right: -420px; width: 420px; height: 100%; background: #080808; z-index: 2000; transition: 0.5s; padding: 40px 30px; border-left: 2px solid var(--main); overflow-y: auto; }
         .sidebar.open { right: 0; }
         .close-sidebar { position: absolute; left: 20px; top: 20px; cursor: pointer; font-size: 25px; color: var(--main); }
 
-        /* Hero Section */
-        .hero { 
-            height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center;
-            background: radial-gradient(circle at center, rgba(148, 3, 252, 0.15) 0%, transparent 70%);
-        }
+        /* Hero */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at center, rgba(148, 3, 252, 0.15) 0%, transparent 70%); }
         .logo-img { width: 160px; height: 160px; border-radius: 50%; border: 3px solid var(--main); box-shadow: 0 0 40px var(--main); margin-bottom: 25px; object-fit: cover; }
-        .hero h1 { font-size: 90px; font-weight: 900; text-shadow: 0 0 50px var(--main); }
-        .hero p { font-size: 22px; color: #888; margin-top: -5px; }
+        .hero h1 { font-size: 80px; font-weight: 900; }
         
-        .kick-btn { 
-            margin-top: 30px; padding: 15px 40px; background: var(--kick); color: #000;
-            border-radius: 10px; font-weight: 900; text-decoration: none; display: flex; align-items: center; gap: 10px;
-            transition: 0.3s; border: none; cursor: pointer; font-size: 16px;
-        }
-        .kick-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(83, 252, 24, 0.3); }
+        .kick-btn { margin-top: 20px; padding: 15px 30px; background: var(--kick); color: #000; border-radius: 10px; font-weight: 900; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; width: 100%; justify-content: center; border:none; }
+        .kick-btn:hover { transform: scale(1.02); opacity: 0.9; }
 
-        /* Stats Section */
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 50px; max-width: 1200px; margin: -50px auto 0; position: relative; z-index: 5; }
-        .stat-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--brd); text-align: center; }
-        .stat-card h2 { font-size: 40px; color: var(--main); margin-bottom: 5px; }
-        .stat-card p { color: #666; font-weight: 700; }
+        /* Laws */
+        .law-box { background: #111; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; overflow: hidden; }
+        .law-header { padding: 15px; cursor: pointer; font-weight: 800; display: flex; justify-content: space-between; background: #161616; }
+        .law-body { max-height: 0; overflow: hidden; transition: 0.3s; padding: 0 15px; color: #888; font-size: 14px; }
+        .law-box.open .law-body { max-height: 200px; padding: 15px; border-top: 1px solid #222; }
 
-        /* Laws Accordion */
-        .law-box { background: #111; border-radius: 12px; margin-bottom: 12px; border: 1px solid #222; overflow: hidden; }
-        .law-header { padding: 20px; cursor: pointer; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: #eee; }
-        .law-body { max-height: 0; overflow: hidden; transition: 0.4s; padding: 0 20px; color: #888; font-size: 15px; line-height: 1.6; }
-        .law-box.open .law-body { max-height: 300px; padding-bottom: 20px; border-top: 1px solid #222; margin-top: 10px; padding-top: 15px; }
-
+        /* Quiz Section */
+        .quiz-container { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--main); margin-top: 20px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo" style="font-weight: 900; font-size: 26px;">NoVaX <span style="color:var(--main)">RP</span></div>
+        <div class="logo">NoVaX <span style="color:var(--main)">RP</span></div>
         <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
     </nav>
 
@@ -76,75 +51,56 @@
         <div class="close-sidebar" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></div>
         
         <div id="guest-menu">
-            <h3 style="margin-bottom: 20px; color: var(--main); font-size: 24px;">مرحباً بك</h3>
-            <p style="font-size: 15px; color: #888; margin-bottom: 25px;">سجل دخولك عبر الديسكورد للوصول إلى نظام التفعيل والقوانين والتقديمات.</p>
-            <a href="رابط_الـ_OAuth2_من_ديسكورد" class="kick-btn" style="width: 100%; justify-content: center; background: var(--main); color: #fff;">
-                تسجيل الدخول <i class="fa-brands fa-discord"></i>
-            </a>
+            <h3 style="margin-top:30px; color: var(--main);">نظام التفعيل</h3>
+            <p style="color:#666; font-size:14px; margin-bottom:20px;">يجب عليك اجتياز اختبار القوانين للتفعيل.</p>
+            
+            <div class="quiz-container">
+                <p id="question" style="font-weight:800; margin-bottom:15px;">س: ماذا يعني اختصار RDM؟</p>
+                <button class="kick-btn" style="background:#222; color:#fff; font-size:13px;" onclick="checkAnswer(true)">قتل بدون سبب درامي</button>
+                <button class="kick-btn" style="background:#222; color:#fff; font-size:13px; margin-top:10px;" onclick="checkAnswer(false)">سرقة سيارة مواطن</button>
+            </div>
         </div>
 
         <div id="member-menu" class="hidden">
-            <h3 style="margin-bottom: 10px; color: var(--kick); font-size: 24px;">أنت مفعل ✅</h3>
-            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">يمكنك الآن الإطلاع على القوانين والتقديم للقطاعات.</p>
-            
-            <div class="law-box">
-                <div class="law-header" onclick="this.parentElement.classList.toggle('open')">البور جيمينج - Power Gaming <i class="fa-solid fa-plus"></i></div>
-                <div class="law-body">يمنع منعاً باتاً القيام بأفعال خارقة للطبيعة أو لا يمكن تنفيذها في الواقع، مثل التحدث وأنت مغمى عليك أو القفز بالمركبات من أماكن شاهقة والنجاة.</div>
+            <h3 style="margin-top:30px; color: var(--kick);">تم تفعيلك بنجاح ✅</h3>
+            <div id="laws-list" style="margin-top:20px;">
+                <div class="law-box">
+                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ RDM <span>+</span></div>
+                    <div class="law-body">يمنع القتل العشوائي بدون سبب درامي واضح وتحذير.</div>
+                </div>
+                <div class="law-box">
+                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ Meta Gaming <span>+</span></div>
+                    <div class="law-body">يمنع استخدام معلومات الديسكورد أو البثوث داخل اللعبة.</div>
+                </div>
+                <div class="law-box">
+                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ Power Gaming <span>+</span></div>
+                    <div class="law-body">يمنع القيام بأفعال خارقة أو غير واقعية بتاتاً.</div>
+                </div>
             </div>
-
-            <div class="law-box">
-                <div class="law-header" onclick="this.parentElement.classList.toggle('open')">القتل العشوائي - RDM <i class="fa-solid fa-plus"></i></div>
-                <div class="law-body">يمنع قتل أي لاعب بدون سبب درامي (Roleplay) واضح وبدون تحذير مسبق.</div>
-            </div>
-
-            <hr style="border:0; border-top:1px solid var(--brd); margin: 25px 0;">
-            <button class="kick-btn" style="width: 100%; background: #fff; color: #000;">التقديم على قطاع العسكر</button>
-            <button class="kick-btn" style="width: 100%; background: #fff; color: #000; margin-top: 10px;">التقديم على المسعفين</button>
-        </div>
-
-        <div id="admin-menu" class="hidden">
-            <h3 style="margin-bottom: 20px; color: #ff2d55; font-size: 24px;">لوحة الإدارة 🛠️</h3>
-            <div style="background: rgba(255,45,85,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,45,85,0.2);">
-                <p style="margin-bottom: 15px; font-weight: 700;">التحكم بنظام التقديم:</p>
-                <button class="kick-btn" style="background: #ff4444; width: 100%; margin-bottom: 10px;">إغلاق التقديمات</button>
-                <button class="kick-btn" style="background: #44ff44; width: 100%;">فتح التقديمات</button>
-            </div>
+            <button class="kick-btn" style="background:var(--main); color:#fff; margin-top:20px;">التقديم على الإدارة</button>
         </div>
     </div>
 
     <section class="hero">
         <img src="https://via.placeholder.com/160/9403fc/ffffff?text=NoVaX" class="logo-img">
-        <h1>NoVaX</h1>
-        <p>الواقعية.. الاحترام.. المتعة</p>
-        <div style="display: flex; gap: 15px;">
-            <a href="#" class="kick-btn"><i class="fa-brands fa-kickstarter"></i> قنوات كيك</a>
-            <a href="#" class="kick-btn" style="background:#fff;"><i class="fa-brands fa-discord"></i> سيرفر الديسكورد</a>
+        <h1>NoVaX <span style="color:var(--main)">RP</span></h1>
+        <p>القوانين صارمة.. والواقعية مطلقة</p>
+        <div style="display:flex; gap:15px; margin-top:30px;">
+            <a href="#" class="kick-btn" style="width:180px;">سيرفر كيك</a>
+            <a href="#" class="kick-btn" style="background:#fff; width:180px;">ديسكورد</a>
         </div>
     </section>
 
-    <section class="stats">
-        <div class="stat-card"><h2>+1,200</h2><p>عضو مفعل</p></div>
-        <div class="stat-card"><h2>24/7</h2><p>نظام متصل</p></div>
-        <div class="stat-card"><h2>ACTIVE</h2><p>إدارة متفاعلة</p></div>
-    </section>
-
     <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
-        // هذه الدالة تفحص الرابط (URL) لتعرف الرتبة بعد تسجيل الدخول
-        window.onload = function() {
-            const params = new URLSearchParams(window.location.search);
-            const role = params.get('role'); // البوت لازم يرجع المستخدم للرابط مع ?role=member
-            
-            if (role) {
+        function checkAnswer(isCorrect) {
+            if(isCorrect) {
+                alert("أحسنت سيدي! تم التحقق من فهمك للقوانين.");
                 document.getElementById('guest-menu').classList.add('hidden');
-                document.getElementById('member-menu').classList.add('hidden');
-                document.getElementById('admin-menu').classList.add('hidden');
-                
-                const targetMenu = document.getElementById(role + '-menu');
-                if (targetMenu) targetMenu.classList.remove('hidden');
+                document.getElementById('member-menu').classList.remove('hidden');
+            } else {
+                alert("إجابة خاطئة! ركز سيدي، القوانين هي أساس السيرفر.");
             }
         }
     </script>
