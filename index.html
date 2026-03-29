@@ -213,9 +213,10 @@
     // --- 2. الفحص عند التحميل ---
     window.onload = async function() {
         const token = localStorage.getItem('discord_token');
+        const localVerified = localStorage.getItem('is_whitelisted') === 'true'; // فحص محلي أسرع
+
         if (token) {
             try {
-                // جلب بيانات المستخدم الأساسية
                 const userRes = await fetch('https://discord.com/api/users/@me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -224,32 +225,28 @@
                 if (userData.id) {
                     userLoggedIn = true;
                     
-                    // محاولة جلب الرتب (هنا قمنا بإضافة فحص إضافي)
-                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    
-                    const memberData = await memberRes.json();
-                    
-                    // طباعة الرتب للـ Console للتصحيح
-                    console.log("الرتب المكتشفة:", memberData.roles);
+                    // محاولة جلب الرتب من الديسكورد
+                    let apiVerified = false;
+                    try {
+                        const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        if (memberRes.ok) {
+                            const memberData = await memberRes.json();
+                            apiVerified = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
+                        }
+                    } catch (e) { console.log("API check failed, using local status."); }
 
-                    // فحص الرتبة
-                    const isVerified = memberData.roles && (
-                        memberData.roles.includes(ROLES.VERIFIED) || 
-                        memberData.roles.includes(ROLES.ADMIN)
-                    );
-                    
-                    updateUI(userData, isVerified);
+                    // إذا نجح الفحص من الديسكورد أو كان مفعل سابقاً محلياً
+                    updateUI(userData, apiVerified || localVerified);
                 }
             } catch (err) {
-                console.error("فشل فحص الرتب:", err);
+                console.error("Auth error:", err);
             }
         }
     };
 
     function updateUI(user, hasAccess) {
-        // تحديث البروفايل
         document.querySelector('.btn-discord').style.display = 'none';
         const profile = document.getElementById('userProfile');
         profile.style.display = 'flex';
@@ -257,52 +254,71 @@
         document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
         if (hasAccess) {
-            console.log("تم التأكد: المستخدم مفعل. جاري إخفاء الأقسام...");
-            
-            // 1. إخفاء صفحة التفعيل تماماً
-            const whitelistTab = document.getElementById('whitelist');
-            if (whitelistTab) {
-                whitelistTab.style.display = 'none';
-                whitelistTab.remove(); // حذفها تماماً من الـ DOM لضمان عدم ظهورها
-            }
+            // حفظ الحالة محلياً لضمان عدم ظهور التفعيل مرة أخرى
+            localStorage.setItem('is_whitelisted', 'true');
 
-            // 2. إخفاء زر التفعيل من القائمة
+            // إخفاء قسم التفعيل والزر الخاص به
+            const whitelistSection = document.getElementById('whitelist');
+            if (whitelistSection) whitelistSection.remove();
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.innerText.trim() === "التفعيل") {
-                    link.parentElement.style.display = 'none';
+                    link.parentElement.remove();
                 }
             });
 
-            // 3. إخفاء الأقفال عن الوظائف
-            document.querySelectorAll('.lock-overlay').forEach(lock => {
-                lock.style.display = 'none';
-            });
-
-            // 4. تغيير نص التنبيه إذا وجد
-            const statusMsg = document.getElementById('lockStatusMsg');
-            if (statusMsg) statusMsg.innerText = "أنت مفعل بالفعل!";
+            // فتح الأقفال
+            document.querySelectorAll('.lock-overlay').forEach(lock => lock.remove());
+            
+            // إذا كان المستخدم في صفحة التفعيل، حوله للرئيسية
+            if (document.querySelector('.view-section#home').classList.contains('active') === false && !document.querySelector('.view-section.active')) {
+                showTab('home');
+            }
         }
     }
 
-    // --- 3. الوظائف العامة ---
+    // --- 3. الإرسال والوظائف ---
     function loginDiscord() {
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
         window.location.href = authUrl;
     }
 
     function logout() {
-        localStorage.removeItem('discord_token');
+        localStorage.clear(); // مسح كل البيانات بما فيها حالة التفعيل للتجربة
         window.location.reload();
     }
 
-    function showTab(id, el) {
-        // منع الدخول لقسم التفعيل إذا كان الشخص مفعل أصلاً
-        if (id === 'whitelist' && document.getElementById('whitelist') === null) {
-            alert("أنت مفعل بالفعل!");
-            showTab('home');
-            return;
-        }
+    document.getElementById('whitelistForm').onsubmit = async function(e) {
+        e.preventDefault();
+        if (!userLoggedIn) return alert("سجل دخولك أولاً!");
+        
+        const payload = {
+            username: "NoVaX System",
+            embeds: [{
+                title: "📝 طلب تفعيل جديد",
+                color: 0x7c3aed,
+                fields: [
+                    { name: "المستخدم", value: document.getElementById('uName').innerText },
+                    { name: "الاسم", value: document.getElementById('wName').value },
+                    { name: "العمر", value: document.getElementById('wAge').value }
+                ]
+            }]
+        };
 
+        const res = await fetch(WEBHOOKS.whitelist, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("✅ تم إرسال طلبك! سيتم تفعيلك مؤقتاً في الموقع.");
+            localStorage.setItem('is_whitelisted', 'true'); // تفعيل محلي فور الإرسال
+            window.location.reload();
+        }
+    };
+
+    function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
@@ -313,13 +329,12 @@
     }
 
     function openJobModal(title) {
-        if (!userLoggedIn) return alert("سجل دخولك أولاً!");
+        if (localStorage.getItem('is_whitelisted') !== 'true') return alert("يجب أن تكون مفعلاً للتقديم!");
         document.getElementById('modalJobTitle').innerText = title;
         document.getElementById('jobModal').style.display = 'flex';
     }
 
     function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
-    
     function toggleAccordion(el) {
         const body = el.nextElementSibling;
         body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
