@@ -174,17 +174,25 @@
     </div>
 </div>
 <script>
-    // --- 1. الإعدادات (حط روابط الويب هوك الخاصة بك هنا) ---
+    // --- 1. الإعدادات ---
     const CLIENT_ID = '1444065204051906610';
+    const GUILD_ID = '1353787720996323429'; // تم استخراج أيدي السيرفر من الرتب
     const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+    // أيديات الرتب التي أرسلتها
+    const ROLES = {
+        ADMIN: '1354015622182211587',
+        VERIFIED: '1443982445455343650',
+        UNVERIFIED: '1443982448768585841'
+    };
 
     const WEBHOOKS = {
         whitelist: "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1",
-        police: "ضع_هنا_ويبهوك_الشرطة", 
-        medic: "ضع_هنا_ويبهوك_الاسعاف"
+        police: "ويبهوك_الشرطة",
+        medic: "ويبهوك_الاسعاف"
     };
 
-    // --- 2. نظام القبض الفوري على التوكن (لمنع الـ 404) ---
+    // --- 2. القبض الفوري على التوكن ---
     (function() {
         const hash = window.location.hash;
         if (hash.includes('access_token')) {
@@ -192,7 +200,6 @@
             const token = params.get('access_token');
             if (token) {
                 localStorage.setItem('discord_token', token);
-                // تنظيف الرابط للبقاء في نفس الصفحة
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
@@ -200,157 +207,99 @@
 
     let userLoggedIn = false;
 
-    // --- 3. تشغيل النظام عند تحميل الصفحة ---
-    window.onload = function() {
-        const savedToken = localStorage.getItem('discord_token');
-        const isWhitelisted = localStorage.getItem('is_whitelisted');
+    // --- 3. تشغيل النظام وفحص الرتبة ---
+    window.onload = async function() {
+        const token = localStorage.getItem('discord_token');
+        if (token) {
+            try {
+                // جلب بيانات المستخدم الأساسية
+                const userRes = await fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const userData = await userRes.json();
 
-        if (savedToken) {
-            fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${savedToken}` }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Expired");
-                return res.json();
-            })
-            .then(user => {
-                userLoggedIn = true;
-                updateUI(user, isWhitelisted === "true");
-            })
-            .catch(() => {
-                localStorage.removeItem('discord_token');
-            });
+                if (userData.id) {
+                    userLoggedIn = true;
+                    
+                    // جلب بيانات العضو داخل السيرفر لرؤية الرتب
+                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const memberData = await memberRes.json();
+                    
+                    // التحقق من وجود رتبة مفعل أو ادمن
+                    const hasAccess = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
+                    
+                    updateUI(userData, hasAccess);
+                }
+            } catch (err) {
+                console.error("Auth Error:", err);
+                // localStorage.removeItem('discord_token'); // اختياري في حال انتهى التوكن
+            }
         }
     };
 
-    // تحديث الواجهة بناءً على حالة المستخدم
     function updateUI(user, whitelisted) {
-        // إخفاء زر الدخول وإظهار البروفايل
         document.getElementById('authArea').style.display = 'none';
         document.getElementById('userProfile').style.display = 'flex';
         document.getElementById('uName').innerText = user.username;
         document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-        
-        if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
 
-        // إذا كان المستخدم "مفعل" (Whitelist)
         if (whitelisted) {
-            // إخفاء قسم التفعيل تماماً
-            const whitelistSection = document.getElementById('whitelist');
-            if(whitelistSection) whitelistSection.style.display = 'none';
-            
-            // إخفاء زر التفعيل من القائمة العلوية
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
+            // إخفاء قسم التفعيل وأزراره
+            if(document.getElementById('whitelist')) document.getElementById('whitelist').style.display = 'none';
+            document.querySelectorAll('.nav-link').forEach(link => {
                 if(link.innerText.includes("التفعيل")) link.parentElement.style.display = 'none';
             });
-
             // فتح أقفال الوظائف
             document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
+            if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').innerText = "✅ هويتك مفعلة، يمكنك التقديم على الوظائف.";
         }
     }
 
     function loginDiscord() {
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        // الرابط الجديد مع الـ Scope المطلوب لقراءة الرتب
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
         window.location.href = authUrl;
     }
 
-    // --- 4. إرسال البيانات للديسكورد ---
-    async function sendToDiscord(type, payload, successMsg) {
+    // --- 4. إرسال الطلبات ---
+    async function sendData(type, payload, msg) {
         const url = WEBHOOKS[type] || WEBHOOKS.whitelist;
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (response.ok) {
-                alert(successMsg);
-                return true;
-            }
-        } catch (e) {
-            alert("خطأ في الاتصال بالديسكورد!");
-        }
-        return false;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) alert(msg);
+        else alert("فشل الإرسال للديسكورد!");
     }
 
-    // فورم التفعيل
-// --- تعديل فورم التفعيل (الwhitelist) ---
-document.getElementById('whitelistForm').onsubmit = async function(e) {
-    e.preventDefault();
-    if(!userLoggedIn) return alert("سجل دخولك أولاً!");
-
-    const payload = {
-        username: "نظام التفعيل - NoVaX",
-        embeds: [{
-            title: "📝 طلب تفعيل جديد",
-            color: 0x7c3aed,
-            thumbnail: { url: document.getElementById('uAvatar').src },
-            fields: [
-                { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
-                { name: "🆔 الاسم:", value: document.getElementById('wName').value, inline: true },
-                { name: "🎂 العمر:", value: document.getElementById('wAge').value, inline: true },
-                { name: "🎯 الهدف:", value: document.getElementById('wGoal').value }
-            ],
-            timestamp: new Date()
-        }]
-    };
-
-    // إرسال للديسكورد
-    const success = await sendToDiscord('whitelist', payload, "✅ تم إرسال طلبك! الآن أنت مواطن مفعل.");
-    
-    if (success) {
-        // --- السطر السحري: حفظ حالة التفعيل في المتصفح ---
-        localStorage.setItem('is_whitelisted', 'true');
-        
-        // إخفاء القسم فوراً بدون انتظار ريفريش
-        document.getElementById('whitelist').style.display = 'none';
-        document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
-        
-        // توجيهه لقسم الوظائف
-        showTab('jobs');
-        alert("تم فتح أقسام التوظيف لك بنجاح!");
-    }
-};
-
-    // فورم الوظائف
-    document.getElementById('applyJobForm').onsubmit = async function(e) {
+    document.getElementById('whitelistForm').onsubmit = function(e) {
         e.preventDefault();
-        const title = document.getElementById('modalJobTitle').innerText;
-        const type = title.includes("شرطة") ? 'police' : 'medic';
-
         const payload = {
-            username: "NoVaX Jobs",
+            username: "NoVaX System",
             embeds: [{
-                title: "💼 تقديم على: " + title,
-                color: 0x22c55e,
+                title: "📝 طلب تفعيل جديد",
+                color: 0x7c3aed,
                 fields: [
-                    { name: "👤 المقدم:", value: document.getElementById('uName').innerText },
-                    { name: "📝 المعلومات:", value: e.target.querySelector('input[type="text"]').value },
-                    { name: "🎯 السبب:", value: e.target.querySelector('textarea').value }
-                ],
-                timestamp: new Date()
+                    { name: "العضو", value: document.getElementById('uName').innerText },
+                    { name: "الاسم", value: document.getElementById('wName').value },
+                    { name: "العمر", value: document.getElementById('wAge').value }
+                ]
             }]
         };
-
-        const success = await sendToDiscord(type, payload, "✅ تم إرسال طلب التوظيف بنجاح!");
-        if (success) closeJobModal();
+        sendData('whitelist', payload, "تم إرسال طلبك للإدارة!");
     };
 
-    // --- 5. وظائف الواجهة العامة ---
+    // --- 5. وظائف عامة ---
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if(target) target.classList.add('active');
+        document.getElementById(id).classList.add('active');
         if(el) {
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             el.classList.add('active');
         }
-    }
-
-    function toggleAccordion(el) {
-        const body = el.nextElementSibling;
-        body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
     }
 
     function openJobModal(title) {
@@ -359,6 +308,11 @@ document.getElementById('whitelistForm').onsubmit = async function(e) {
     }
 
     function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
+    
+    function toggleAccordion(el) {
+        const body = el.nextElementSibling;
+        body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
+    }
 </script>
 </body>
 </html>
