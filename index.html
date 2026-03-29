@@ -174,75 +174,21 @@
     </div>
 </div>
 <script>
-    // --- إعدادات ديسكورد ---
+    // --- الإعدادات الأساسية ---
     const CLIENT_ID = '1444065204051906610'; 
     const REDIRECT_URI = window.location.href.split('#')[0];
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
 
-// --- كود الربط مع الويب هوك (Webhook) ---
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
+    let userLoggedIn = false;
+    let userWhitelisted = false;
 
-document.getElementById('whitelistForm').onsubmit = (e) => {
-    e.preventDefault();
-
-    if(!userLoggedIn) return alert("يا بطل سجل دخولك بالديسكورد أولاً!");
-
-    // تجميع البيانات من الحقول
-    const data = {
-        name: document.getElementById('wName').value,
-        age: document.getElementById('wAge').value,
-        goal: document.getElementById('wGoal').value,
-        law: document.getElementById('wLaw').value,
-        discordTag: document.getElementById('uName').innerText,
-        avatar: document.getElementById('uAvatar').src
-    };
-
-    // تجهيز الرسالة بشكل احترافي (Embed)
-    const embedMessage = {
-        username: "نظام تفعيل NoVaX",
-        avatar_url: "https://i.imgur.com/AfFp7pu.png",
-        embeds: [{
-            title: "📝 طلب تفعيل جديد (Whitelist)",
-            color: 0x7c3aed, // لون بنفسجي
-            thumbnail: { url: data.avatar },
-            fields: [
-                { name: "👤 اسم الديسكورد:", value: data.discordTag, inline: true },
-                { name: "🆔 الاسم الحقيقي:", value: data.name, inline: true },
-                { name: "🎂 العمر:", value: data.age, inline: true },
-                { name: "🎯 الهدف من الانضمام:", value: data.goal },
-                { name: "📜 شرح القانون:", value: data.law }
-            ],
-            footer: { text: "NoVaX RP System", icon_url: data.avatar },
-            timestamp: new Date()
-        }]
-    };
-
-    // إرسال البيانات للديسكورد
-    fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(embedMessage)
-    })
-    .then(() => {
-        alert("تم إرسال طلبك بنجاح! سيراجع المشرفون طلبك قريباً.");
-        // فتح الوظائف (محاكاة)
-        userWhitelisted = true;
-        document.getElementById('jobLock').style.display = 'none';
-        document.getElementById('jobLock2').style.display = 'none';
-        showTab('jobs');
-    })
-    .catch(err => {
-        console.error(err);
-        alert("حدث خطأ أثناء الإرسال، تأكد من رابط الويب هوك!");
-    });
-};
-
-    // تسجيل الدخول بالديسكورد
+    // 1. تسجيل الدخول بالديسكورد
     function loginDiscord() {
         const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = url;
     }
 
-    // التحقق من التوكن عند التحميل
+    // 2. التحقق من التوكن عند التحميل
     window.onload = () => {
         const fragment = new URLSearchParams(window.location.hash.slice(1));
         const token = fragment.get('access_token');
@@ -261,7 +207,58 @@ document.getElementById('whitelistForm').onsubmit = (e) => {
         }
     };
 
-    // التنقل بين الأقسام
+    // 3. تقديم التفعيل (Whitelist) وإرساله للديسكورد
+    document.getElementById('whitelistForm').onsubmit = function(e) {
+        e.preventDefault();
+
+        if(!userLoggedIn) {
+            alert("سجل دخولك بالديسكورد أولاً يا بطل!");
+            return;
+        }
+
+        const data = {
+            name: document.getElementById('wName').value,
+            age: document.getElementById('wAge').value,
+            goal: document.getElementById('wGoal').value,
+            law: document.getElementById('wLaw').value,
+            discordTag: document.getElementById('uName').innerText,
+            avatar: document.getElementById('uAvatar').src
+        };
+
+        const embedMessage = {
+            username: "نظام تفعيل NoVaX",
+            embeds: [{
+                title: "📝 طلب تفعيل جديد",
+                color: 0x7c3aed,
+                thumbnail: { url: data.avatar },
+                fields: [
+                    { name: "👤 الحساب:", value: data.discordTag, inline: true },
+                    { name: "🆔 الاسم:", value: data.name, inline: true },
+                    { name: "🎂 العمر:", value: data.age, inline: true },
+                    { name: "🎯 الهدف:", value: data.goal },
+                    { name: "📜 القانون:", value: data.law }
+                ],
+                footer: { text: "NoVaX RP" },
+                timestamp: new Date()
+            }]
+        };
+
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(embedMessage)
+        })
+        .then(() => {
+            alert("وصل الطلب للديسكورد بنجاح!");
+            userWhitelisted = true;
+            document.getElementById('jobLock').style.display = 'none';
+            document.getElementById('jobLock2').style.display = 'none';
+            showTab('jobs');
+        })
+        .catch(err => alert("فشل الإرسال، تأكد من الويبهوك!"));
+    };
+
+    // 4. وظائف التنقل والمودال (بدون تغيير)
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -271,90 +268,17 @@ document.getElementById('whitelistForm').onsubmit = (e) => {
         }
     }
 
-    // الأكورديون
     function toggleAccordion(el) {
         const body = el.nextElementSibling;
-        const icon = el.querySelector('i');
-        if (body.style.maxHeight) {
-            body.style.maxHeight = null;
-            icon.className = "fas fa-plus";
-        } else {
-            document.querySelectorAll('.rule-body').forEach(b => b.style.maxHeight = null);
-            body.style.maxHeight = body.scrollHeight + "px";
-            icon.className = "fas fa-minus";
-        }
+        body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
     }
 
-    // تقديم التفعيل
-    document.getElementById('whitelistForm').onsubmit = (e) => {
-        e.preventDefault();
-        if(!userLoggedIn) return alert("سجل دخولك بالديسكورد أولاً!");
-        
-        alert("تم إرسال طلب التفعيل! سيتم فتح التوظيف لك الآن (محاكاة لقبول الإدارة)");
-        userWhitelisted = true;
-        // إزالة الأقفال
-        document.getElementById('jobLock').style.display = 'none';
-        document.getElementById('jobLock2').style.display = 'none';
-        showTab('jobs');
-    };
+    function openJobModal(title) {
+        document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
+        document.getElementById('jobModal').style.display = 'flex';
+    }
 
-    // المودال
-    // --- كود ويب هوك التوظيف ---
-const JOBS_WEBHOOK_URL = "https://discord.com/api/webhooks/1487837624025481299/W0IMsY1v8KsNEA-iZyx-WqThO0_pB8H29BVtYh8WDpuOxWoH0kPl7UBvSUQ1u9FbcYEY"; 
-
-// المودال
-function openJobModal(title) {
-    document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
-    document.getElementById('jobModal').style.display = 'flex';
-}
-
-function closeJobModal() { 
-    document.getElementById('jobModal').style.display = 'none'; 
-}
-
-// إرسال طلب التوظيف للديسكورد
-document.getElementById('applyJobForm').onsubmit = (e) => {
-    e.preventDefault();
-
-    const jobData = {
-        jobTitle: document.getElementById('modalJobTitle').innerText,
-        icName: e.target.querySelector('input[type="text"]').value,
-        icID: e.target.querySelector('input[type="number"]').value,
-        reason: e.target.querySelector('textarea').value,
-        discordTag: document.getElementById('uName').innerText,
-        avatar: document.getElementById('uAvatar').src
-    };
-
-    const jobEmbed = {
-        username: "نظام توظيف NoVaX",
-        embeds: [{
-            title: "💼 " + jobData.jobTitle,
-            color: 0x22c55e, // أخضر
-            thumbnail: { url: jobData.avatar },
-            fields: [
-                { name: "👤 مقدم الطلب:", value: jobData.discordTag, inline: true },
-                { name: "🆔 الاسم والأيدي:", value: `${jobData.icName} [${jobData.icID}]`, inline: true },
-                { name: "📝 السبب والخبرات:", value: jobData.reason }
-            ],
-            footer: { text: "NoVaX Jobs", icon_url: jobData.avatar },
-            timestamp: new Date()
-        }]
-    };
-
-    fetch(JOBS_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobEmbed)
-    })
-    .then(() => {
-        alert("تم إرسال طلب التوظيف بنجاح! سيتم مراجعته.");
-        closeJobModal();
-    })
-    .catch(err => {
-        alert("خطأ في الإرسال!");
-        console.error(err);
-    });
-    };
+    function closeJobModal() { 
+        document.getElementById('jobModal').style.display = 'none'; 
+    }
 </script>
-</body>
-</html>
