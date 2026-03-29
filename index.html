@@ -181,10 +181,9 @@
 <script>
     // --- 1. الإعدادات ---
     const CLIENT_ID = '1444065204051906610';
-    const GUILD_ID = '1353787720996323429'; // تم استخراج أيدي السيرفر من الرتب
+    const GUILD_ID = '1353787720996323429'; 
     const REDIRECT_URI = window.location.origin + window.location.pathname;
 
-    // أيديات الرتب التي أرسلتها
     const ROLES = {
         ADMIN: '1354015622182211587',
         VERIFIED: '1443982445455343650',
@@ -217,7 +216,6 @@
         const token = localStorage.getItem('discord_token');
         if (token) {
             try {
-                // جلب بيانات المستخدم الأساسية
                 const userRes = await fetch('https://discord.com/api/users/@me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -226,46 +224,51 @@
                 if (userData.id) {
                     userLoggedIn = true;
                     
-                    // جلب بيانات العضو داخل السيرفر لرؤية الرتب
-                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const memberData = await memberRes.json();
-                    
-                    // التحقق من وجود رتبة مفعل أو ادمن
-                    const hasAccess = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
-                    
-                    updateUI(userData, hasAccess);
+                    // محاولة جلب الرتب (تحتاج أن يكون البوت في السيرفر)
+                    try {
+                        const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        const memberData = await memberRes.json();
+                        const hasAccess = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
+                        updateUI(userData, hasAccess);
+                    } catch (e) {
+                        // إذا فشل جلب الرتب (مثلاً المستخدم ليس في السيرفر)، نظهر له التفعيل فقط
+                        updateUI(userData, false);
+                    }
                 }
             } catch (err) {
-                console.error("Auth Error:", err);
-                // localStorage.removeItem('discord_token'); // اختياري في حال انتهى التوكن
+                localStorage.removeItem('discord_token');
             }
         }
     };
 
     function updateUI(user, whitelisted) {
         document.getElementById('authArea').style.display = 'none';
-        document.getElementById('userProfile').style.display = 'flex';
+        const profile = document.getElementById('userProfile');
+        profile.style.display = 'flex';
         document.getElementById('uName').innerText = user.username;
         document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
         if (whitelisted) {
-            // إخفاء قسم التفعيل وأزراره
             if(document.getElementById('whitelist')) document.getElementById('whitelist').style.display = 'none';
             document.querySelectorAll('.nav-link').forEach(link => {
                 if(link.innerText.includes("التفعيل")) link.parentElement.style.display = 'none';
             });
-            // فتح أقفال الوظائف
             document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
-            if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').innerText = "✅ هويتك مفعلة، يمكنك التقديم على الوظائف.";
         }
     }
 
     function loginDiscord() {
-        // الرابط الجديد مع الـ Scope المطلوب لقراءة الرتب
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
         window.location.href = authUrl;
+    }
+
+    // --- وظيفة تسجيل الخروج ---
+    function logout() {
+        localStorage.removeItem('discord_token'); // حذف التوكن
+        localStorage.removeItem('is_whitelisted'); // حذف حالة التفعيل المحلية إن وجدت
+        window.location.reload(); // إعادة تحميل الصفحة
     }
 
     // --- 4. إرسال الطلبات ---
@@ -277,7 +280,7 @@
             body: JSON.stringify(payload)
         });
         if(res.ok) alert(msg);
-        else alert("فشل الإرسال للديسكورد!");
+        else alert("فشل الإرسال!");
     }
 
     document.getElementById('whitelistForm').onsubmit = function(e) {
@@ -294,10 +297,10 @@
                 ]
             }]
         };
-        sendData('whitelist', payload, "تم إرسال طلبك للإدارة!");
+        sendData('whitelist', payload, "تم إرسال طلبك!");
     };
 
-    // --- 5. وظائف عامة ---
+    // --- وظائف عامة ---
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
