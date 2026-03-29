@@ -212,35 +212,45 @@
 
     // --- 2. الفحص الذكي عند التحميل ---
     window.onload = async function() {
-        const token = localStorage.getItem('discord_token');
-        if (token) {
-            try {
-                // جلب بيانات المستخدم
-                const userRes = await fetch('https://discord.com/api/users/@me', {
+    const token = localStorage.getItem('discord_token');
+    if (token) {
+        try {
+            // 1. جلب بيانات المستخدم الأساسية
+            const userRes = await fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userData = await userRes.json();
+
+            if (userData.id) {
+                userLoggedIn = true;
+                
+                // 2. جلب بيانات العضو داخل السيرفر (الطريقة المضمونة)
+                // تأكد أن الرابط يحتوي على guilds.members.read في الـ Scope
+                const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                const userData = await userRes.json();
+                
+                const memberData = await memberRes.json();
+                
+                // طباعة الرتب في الكونسول للتأكد (تقدر تمسح السطر بعدين)
+                console.log("رتبك الحالية:", memberData.roles);
 
-                if (userData.id) {
-                    userLoggedIn = true;
-                    
-                    // جلب الرتب من السيرفر
-                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const memberData = await memberRes.json();
-                    
-                    // هل العضو مفعل أو أدمن؟
-                    const isVerified = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
-                    
-                    // تحديث الواجهة فوراً
-                    updateUI(userData, isVerified);
-                }
-            } catch (err) {
-                console.error("خطأ في جلب البيانات:", err);
+                // 3. فحص الرتبة (مفعل أو أدمن)
+                const isVerified = memberData.roles && (
+                    memberData.roles.includes('1443982445455343650') || // رتبة مفعل
+                    memberData.roles.includes('1354015622182211587')    // رتبة أدمن
+                );
+                
+                // 4. تحديث الواجهة فوراً
+                updateUI(userData, isVerified);
             }
+        } catch (err) {
+            console.error("حدث خطأ أثناء فحص الرتب:", err);
+            // في حال فشل الفحص، نظهر الواجهة كغير مفعل
+            if(typeof userData !== 'undefined') updateUI(userData, false);
         }
-    };
+    }
+};
 
     function updateUI(user, hasAccess) {
         // إظهار البروفايل وإخفاء زر الدخول
