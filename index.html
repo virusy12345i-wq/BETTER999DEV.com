@@ -174,151 +174,126 @@
     </div>
 </div>
 <script>
- // --- 1. الإعدادات الأساسية (Client ID & Webhook) ---
-const CLIENT_ID = '1444065204051906610'; 
-const REDIRECT_URI = window.location.href.split('#')[0];
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
+    // --- 1. الإعدادات ---
+    const CLIENT_ID = '1444065204051906610'; 
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
 
-let userLoggedIn = false;
-let userWhitelisted = false;
+    let userLoggedIn = false;
 
-// --- 2. نظام تسجيل الدخول (Discord Login) ---
-function loginDiscord() {
-    const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
-    window.location.href = url;
-}
+    // --- 2. وظيفة حفظ وجلب بيانات المستخدم (عشان ما يطير التسجيل) ---
+    function checkLogin() {
+        const urlParams = new URLSearchParams(window.location.hash.slice(1));
+        let token = urlParams.get('access_token') || localStorage.getItem('discord_token');
 
-window.onload = () => {
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const token = fragment.get('access_token');
-    if (token) {
-        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => res.json())
-        .then(user => {
-            userLoggedIn = true;
-            document.getElementById('authArea').style.display = 'none';
-            document.getElementById('userProfile').style.display = 'flex';
-            document.getElementById('lockStatusMsg').style.display = 'none';
-            document.getElementById('uName').innerText = user.username;
-            document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-            window.history.replaceState({}, document.title, "/");
-        });
+        if (token) {
+            localStorage.setItem('discord_token', token); // حفظ التوكن في المتصفح
+            fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then(user => {
+                userLoggedIn = true;
+                // تحديث الواجهة
+                document.getElementById('authArea').style.display = 'none';
+                document.getElementById('userProfile').style.display = 'flex';
+                if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
+                
+                document.getElementById('uName').innerText = user.username;
+                document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                
+                // تنظيف الرابط من التوكن عشان الشكل
+                window.history.replaceState({}, document.title, window.location.pathname);
+            })
+            .catch(() => {
+                // إذا التوكن انتهى أو غلط، نمسحه
+                localStorage.removeItem('discord_token');
+            });
+        }
     }
-};
 
-// --- 3. نظام إرسال طلب التفعيل (Whitelist) ---
-document.getElementById('whitelistForm').onsubmit = function(e) {
-    e.preventDefault();
+    // تشغيل الفحص فور تحميل الصفحة
+    window.onload = checkLogin;
 
-    if(!userLoggedIn) return alert("يا وحش سجل دخولك بالديسكورد أولاً!");
-
-    const data = {
-        name: document.getElementById('wName').value,
-        age: document.getElementById('wAge').value,
-        goal: document.getElementById('wGoal').value,
-        law: document.getElementById('wLaw').value,
-        discordTag: document.getElementById('uName').innerText,
-        avatar: document.getElementById('uAvatar').src
-    };
-
-    const embedMessage = {
-        username: "نظام تفعيل NoVaX",
-        embeds: [{
-            title: "📝 طلب تفعيل جديد (Whitelist)",
-            color: 0x7c3aed, // بنفسجي
-            thumbnail: { url: data.avatar },
-            fields: [
-                { name: "👤 العضو:", value: data.discordTag, inline: true },
-                { name: "🆔 الاسم الحقيقي:", value: data.name, inline: true },
-                { name: "🎂 العمر:", value: data.age, inline: true },
-                { name: "🎯 الهدف:", value: data.goal },
-                { name: "📜 شرح القانون:", value: data.law }
-            ],
-            footer: { text: "NoVaX RP System" },
-            timestamp: new Date()
-        }]
-    };
-
-    fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(embedMessage)
-    })
-    .then(() => {
-        alert("✅ طلب التفعيل وصل للديسكورد بنجاح!");
-        userWhitelisted = true;
-        // فك القفل عن الوظائف بعد الإرسال
-        document.getElementById('jobLock').style.display = 'none';
-        document.getElementById('jobLock2').style.display = 'none';
-        showTab('jobs');
-    })
-    .catch(err => alert("❌ فشل الإرسال، تأكد من الويبهوك!"));
-};
-
-// --- 4. نظام إرسال طلب الوظائف (Jobs) ---
-document.getElementById('applyJobForm').onsubmit = function(e) {
-    e.preventDefault();
-
-    const jobData = {
-        jobTitle: document.getElementById('modalJobTitle').innerText,
-        icName: e.target.querySelector('input[type="text"]').value,
-        icID: e.target.querySelector('input[type="number"]').value,
-        reason: e.target.querySelector('textarea').value,
-        discordTag: document.getElementById('uName').innerText,
-        avatar: document.getElementById('uAvatar').src
-    };
-
-    const jobEmbed = {
-        username: "نظام توظيف NoVaX",
-        embeds: [{
-            title: "💼 طلب انضمام: " + jobData.jobTitle,
-            color: 0x22c55e, // أخضر
-            thumbnail: { url: jobData.avatar },
-            fields: [
-                { name: "👤 مقدم الطلب:", value: jobData.discordTag, inline: true },
-                { name: "🆔 الاسم والأيدي:", value: `${jobData.icName} [${jobData.icID}]`, inline: true },
-                { name: "📝 السبب والخبرة:", value: jobData.reason }
-            ],
-            footer: { text: "NoVaX Jobs" },
-            timestamp: new Date()
-        }]
-    };
-
-    fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobEmbed)
-    })
-    .then(() => {
-        alert("✅ طلب التوظيف وصل للديسكورد بنجاح!");
-        closeJobModal();
-    })
-    .catch(err => alert("❌ فشل إرسال طلب التوظيف!"));
-};
-
-// --- 5. وظائف التحكم بالواجهة (UI) ---
-function showTab(id, el) {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(el) {
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        el.classList.add('active');
+    function loginDiscord() {
+        const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        window.location.href = url;
     }
-}
 
-function toggleAccordion(el) {
-    const body = el.nextElementSibling;
-    body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
-}
+    // خروج (لو حبيت تضيف زر خروج مستقبلاً)
+    function logout() {
+        localStorage.removeItem('discord_token');
+        window.location.reload();
+    }
 
-function openJobModal(title) {
-    document.getElementById('modalJobTitle').innerText = title;
-    document.getElementById('jobModal').style.display = 'flex';
-}
+    // --- 3. إرسال التفعيل للديسكورد (Webhook) ---
+    document.getElementById('whitelistForm').onsubmit = function(e) {
+        e.preventDefault();
 
-function closeJobModal() { 
-    document.getElementById('jobModal').style.display = 'none'; 
-}
+        if(!userLoggedIn) return alert("سجل دخولك بالديسكورد أولاً!");
+
+        const payload = {
+            username: "NoVaX System",
+            embeds: [{
+                title: "📝 طلب تفعيل (Whitelist) جديد",
+                color: 0x7c3aed,
+                thumbnail: { url: document.getElementById('uAvatar').src },
+                fields: [
+                    { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
+                    { name: "🆔 الاسم الحقيقي:", value: document.getElementById('wName').value, inline: true },
+                    { name: "🎂 العمر:", value: document.getElementById('wAge').value, inline: true },
+                    { name: "🎯 الهدف:", value: document.getElementById('wGoal').value },
+                    { name: "📜 القانون:", value: document.getElementById('wLaw').value }
+                ],
+                timestamp: new Date()
+            }]
+        };
+
+        const request = new XMLHttpRequest();
+        request.open("POST", WEBHOOK_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+        request.onload = function() {
+            if (request.status >= 200 && request.status < 400) {
+                alert("✅ تم الإرسال للديسكورد بنجاح!");
+                // فك قفل الوظائف
+                document.getElementById('jobLock').style.display = 'none';
+                if(document.getElementById('jobLock2')) document.getElementById('jobLock2').style.display = 'none';
+                showTab('jobs');
+            } else {
+                alert("❌ فشل الإرسال، تأكد من إعدادات الويبهوك.");
+            }
+        };
+        request.send(JSON.stringify(payload));
+    };
+
+    // --- 4. التحكم في التبويبات والمودال ---
+    function showTab(id, el) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(id);
+        if(target) target.classList.add('active');
+        
+        if(el) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+        }
+    }
+
+    function toggleAccordion(el) {
+        const body = el.nextElementSibling;
+        body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
+    }
+
+    function openJobModal(title) {
+        document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
+        document.getElementById('jobModal').style.display = 'flex';
+    }
+
+    function closeJobModal() { 
+        document.getElementById('jobModal').style.display = 'none'; 
+    }
 </script>
 </body>
 </html>
