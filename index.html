@@ -299,16 +299,61 @@ document.getElementById('whitelistForm').onsubmit = (e) => {
     };
 
     // المودال
-    function openJobModal(title) {
-        document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
-        document.getElementById('jobModal').style.display = 'flex';
-    }
-    function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
+    // --- كود ويب هوك التوظيف ---
+const JOBS_WEBHOOK_URL = "https://discord.com/api/webhooks/1487837624025481299/W0IMsY1v8KsNEA-iZyx-WqThO0_pB8H29BVtYh8WDpuOxWoH0kPl7UBvSUQ1u9FbcYEY"; 
 
-    document.getElementById('applyJobForm').onsubmit = (e) => {
-        e.preventDefault();
-        alert("تم إرسال طلب التوظيف بنجاح! سيتم الرد عليك في الديسكورد.");
+// المودال
+function openJobModal(title) {
+    document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
+    document.getElementById('jobModal').style.display = 'flex';
+}
+
+function closeJobModal() { 
+    document.getElementById('jobModal').style.display = 'none'; 
+}
+
+// إرسال طلب التوظيف للديسكورد
+document.getElementById('applyJobForm').onsubmit = (e) => {
+    e.preventDefault();
+
+    const jobData = {
+        jobTitle: document.getElementById('modalJobTitle').innerText,
+        icName: e.target.querySelector('input[type="text"]').value,
+        icID: e.target.querySelector('input[type="number"]').value,
+        reason: e.target.querySelector('textarea').value,
+        discordTag: document.getElementById('uName').innerText,
+        avatar: document.getElementById('uAvatar').src
+    };
+
+    const jobEmbed = {
+        username: "نظام توظيف NoVaX",
+        embeds: [{
+            title: "💼 " + jobData.jobTitle,
+            color: 0x22c55e, // أخضر
+            thumbnail: { url: jobData.avatar },
+            fields: [
+                { name: "👤 مقدم الطلب:", value: jobData.discordTag, inline: true },
+                { name: "🆔 الاسم والأيدي:", value: `${jobData.icName} [${jobData.icID}]`, inline: true },
+                { name: "📝 السبب والخبرات:", value: jobData.reason }
+            ],
+            footer: { text: "NoVaX Jobs", icon_url: jobData.avatar },
+            timestamp: new Date()
+        }]
+    };
+
+    fetch(JOBS_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jobEmbed)
+    })
+    .then(() => {
+        alert("تم إرسال طلب التوظيف بنجاح! سيتم مراجعته.");
         closeJobModal();
+    })
+    .catch(err => {
+        alert("خطأ في الإرسال!");
+        console.error(err);
+    });
     };
 </script>
 </body>
