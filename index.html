@@ -179,178 +179,66 @@
     </div>
 </div>
 <script>
-    // --- 1. الإعدادات ---
-    const CLIENT_ID = '1444065204051906610';
-    const GUILD_ID = '1325063245471420498'; 
-    const REDIRECT_URI = window.location.origin + window.location.pathname;
+    // الإعدادات (تأكد من مطابقتها للبوت)
+    const BOT_API_URL = 'http://51.75.118.5:5000/api/whitelist'; 
 
-    const ROLES = {
-        ADMIN: '1354015622182211587',
-        VERIFIED: '1443982445455343650'
-    };
+    // --- دالة التقديم على الوظائف ---
+    async function submitJob(jobType) {
+        if (!userLoggedIn) return alert("سجل دخولك أولاً عبر الديسكورد!");
 
-    const WEBHOOKS = {
-        whitelist: "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1",
-        police: "ويبهوك_الشرطة",
-        medic: "ويبهوك_الاسعاف"
-    };
-
-    // نظام القبض على التوكن
-    (function() {
-        const hash = window.location.hash;
-        if (hash.includes('access_token')) {
-            const params = new URLSearchParams(hash.slice(1));
-            const token = params.get('access_token');
-            if (token) {
-                localStorage.setItem('discord_token', token);
-                window.history.replaceState({}, document.title, window.location.pathname);
+        // جلب البيانات من فورم الوظيفة (تأكد من الـ IDs في الـ HTML)
+        const payload = {
+            type: 'job_application', // نوع الطلب
+            jobName: jobType,         // اسم الوظيفة (شرطة، ميكانيكي...)
+            userId: localStorage.getItem('user_id'),
+            userName: document.getElementById('uName').innerText,
+            details: {
+                experience: document.getElementById('jobExp')?.value || 'لا يوجد',
+                reason: document.getElementById('jobReason')?.value || 'غير محدد',
+                playTime: document.getElementById('jobTime')?.value || 'غير محدد'
             }
-        }
-    })();
+        };
 
-    let userLoggedIn = false;
-
-    // --- 2. الفحص عند التحميل ---
-    window.onload = async function() {
-        const token = localStorage.getItem('discord_token');
-        const localVerified = localStorage.getItem('is_whitelisted') === 'true'; // فحص محلي أسرع
-
-        if (token) {
-            try {
-                const userRes = await fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const userData = await userRes.json();
-
-                if (userData.id) {
-                    userLoggedIn = true;
-                    
-                    // محاولة جلب الرتب من الديسكورد
-                    let apiVerified = false;
-                    try {
-                        const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-                        if (memberRes.ok) {
-                            const memberData = await memberRes.json();
-                            apiVerified = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
-                        }
-                    } catch (e) { console.log("API check failed, using local status."); }
-
-                    // إذا نجح الفحص من الديسكورد أو كان مفعل سابقاً محلياً
-                    updateUI(userData, apiVerified || localVerified);
-                }
-            } catch (err) {
-                console.error("Auth error:", err);
-            }
-        }
-    };
-
-    function updateUI(user, hasAccess) {
-        document.querySelector('.btn-discord').style.display = 'none';
-        const profile = document.getElementById('userProfile');
-        profile.style.display = 'flex';
-        document.getElementById('uName').innerText = user.username;
-        document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-
-        if (hasAccess) {
-            // حفظ الحالة محلياً لضمان عدم ظهور التفعيل مرة أخرى
-            localStorage.setItem('is_whitelisted', 'true');
-
-            // هذا يوضع داخل الجزء اللي يستلم userData
-localStorage.setItem('user_id', userData.id); 
-localStorage.setItem('user_name', userData.username);
-
-            // إخفاء قسم التفعيل والزر الخاص به
-            const whitelistSection = document.getElementById('whitelist');
-            if (whitelistSection) whitelistSection.remove();
-
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.innerText.trim() === "التفعيل") {
-                    link.parentElement.remove();
-                }
+        try {
+            const res = await fetch(BOT_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            // فتح الأقفال
-            document.querySelectorAll('.lock-overlay').forEach(lock => lock.remove());
-            
-            // إذا كان المستخدم في صفحة التفعيل، حوله للرئيسية
-            if (document.querySelector('.view-section#home').classList.contains('active') === false && !document.querySelector('.view-section.active')) {
-                showTab('home');
+            if (res.ok) {
+                alert(`✅ تم إرسال طلب انضمامك لـ ${jobType} بنجاح!`);
+                // إغلاق المودال أو تنظيف الحقول
+            } else {
+                alert("❌ فشل الإرسال، تأكد أن البوت يعمل.");
             }
+        } catch (error) {
+            alert("⚠️ خطأ في الاتصال بالسيرفر.");
         }
     }
 
-    // --- 3. الإرسال والوظائف ---
-    function loginDiscord() {
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
-        window.location.href = authUrl;
-    }
-
-    function logout() {
-        localStorage.clear(); // مسح كل البيانات بما فيها حالة التفعيل للتجربة
-        window.location.reload();
-    }
-
+    // دالة التفعيل (Whitelist) اللي سويناها قبل شوي
     document.getElementById('whitelistForm').onsubmit = async function(e) {
-    e.preventDefault();
+        e.preventDefault();
+        if (!userLoggedIn) return alert("سجل دخولك أولاً!");
 
-    // 1. التحقق من تسجيل الدخول
-    if (!userLoggedIn) return alert("سجل دخولك أولاً!");
+        const payload = {
+            type: 'whitelist', // نوع الطلب
+            userId: localStorage.getItem('user_id'),
+            userName: document.getElementById('q1').value,
+            age: document.getElementById('q2').value,
+            goal: document.getElementById('q3').value,
+            ruleExplanation: document.getElementById('q4').value
+        };
 
-    // 2. تجميع البيانات من الحقول (تأكد أن IDs الحقول مطابقة للـ HTML عندك)
-    const payload = {
-        userId: localStorage.getItem('discord_token_id') || 'unknown', // تأكد من تخزين الأيدي عند اللوجن
-        userName: document.getElementById('q1').value, // الاسم الرباعي
-        age: document.getElementById('q2').value,      // العمر الحقيقي
-        goal: document.getElementById('q3').value,     // الهدف من الانضمام
-        ruleExplanation: document.getElementById('q4').value // شرح قانون الـ Powergaming
-    };
-
-    try {
-        // 3. الإرسال لعنوان البوت (IP الاستضافة + البورت 5000)
-        const res = await fetch('http://51.75.118.5:5000/api/whitelist', {
+        const res = await fetch(BOT_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (res.ok) {
-            alert("✅ تم إرسال طلبك للإدارة! سيتم الرد عليك عبر الرسائل الخاصة.");
-            
-            // 4. تفعيل محلي مؤقت عشان ما يقدم مرة ثانية فوراً
-            localStorage.setItem('is_whitelisted', 'true');
-            window.location.reload(); 
-        } else {
-            alert("❌ فشل الإرسال، تأكد أن البوت يعمل أو تواصل مع الإدارة.");
-        }
-    } catch (error) {
-        console.error("Error sending to bot:", error);
-        alert("⚠️ خطأ في الاتصال بالسيرفر، تأكد من فتح بورت 5000 في الاستضافة.");
-    }
-};
-
-    function showTab(id, el) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if (target) target.classList.add('active');
-        if (el) {
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            el.classList.add('active');
-        }
-    }
-
-    function openJobModal(title) {
-        if (localStorage.getItem('is_whitelisted') !== 'true') return alert("يجب أن تكون مفعلاً للتقديم!");
-        document.getElementById('modalJobTitle').innerText = title;
-        document.getElementById('jobModal').style.display = 'flex';
-    }
-
-    function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
-    function toggleAccordion(el) {
-        const body = el.nextElementSibling;
-        body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
-    }
+        if (res.ok) alert("✅ تم إرسال طلب التفعيل!");
+    };
 </script>
 </body>
 </html>
