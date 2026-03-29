@@ -294,23 +294,41 @@
         else alert("خطأ في الإرسال!");
     }
 
-    document.getElementById('whitelistForm').onsubmit = function(e) {
-        e.preventDefault();
-        const payload = {
-            username: "نظام NoVaX",
-            embeds: [{
-                title: "📝 طلب تفعيل جديد",
-                color: 0x7c3aed,
-                thumbnail: { url: document.getElementById('uAvatar').src },
-                fields: [
-                    { name: "العضو", value: document.getElementById('uName').innerText },
-                    { name: "الاسم", value: document.getElementById('wName').value },
-                    { name: "العمر", value: document.getElementById('wAge').value }
-                ]
-            }]
-        };
-        sendData('whitelist', payload, "تم إرسال طلبك بنجاح!");
+   // --- تعديل فورم التفعيل لإضافة حماية تسجيل الدخول ---
+document.getElementById('whitelistForm').onsubmit = async function(e) {
+    e.preventDefault();
+
+    // 1. فحص هل المستخدم مسجل دخول؟
+    if (!userLoggedIn) {
+        alert("⚠️ خطأ: يجب عليك تسجيل الدخول بحساب الديسكورد أولاً لتتمكن من إرسال طلب التفعيل!");
+        loginDiscord(); // اختياري: تحويله لصفحة الدخول فوراً
+        return false;
+    }
+
+    // 2. إذا مسجل دخول، يكمل الإرسال طبيعي
+    const payload = {
+        username: "نظام NoVaX",
+        embeds: [{
+            title: "📝 طلب تفعيل جديد",
+            color: 0x7c3aed,
+            thumbnail: { url: document.getElementById('uAvatar').src },
+            fields: [
+                { name: "👤 العضو:", value: document.getElementById('uName').innerText },
+                { name: "🆔 الاسم:", value: document.getElementById('wName').value },
+                { name: "🎂 العمر:", value: document.getElementById('wAge').value }
+            ],
+            timestamp: new Date()
+        }]
     };
+
+    const success = await sendData('whitelist', payload, "✅ تم إرسال طلبك بنجاح! انتظر مراجعة الإدارة.");
+    
+    if (success) {
+        // حفظ حالة التفعيل مؤقتاً في المتصفح
+        localStorage.setItem('is_whitelisted', 'true');
+        window.location.reload(); 
+    }
+};
 
     // --- 5. وظائف عامة ---
     function showTab(id, el) {
