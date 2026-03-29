@@ -275,32 +275,43 @@
     }
 
     // فورم التفعيل
-    document.getElementById('whitelistForm').onsubmit = async function(e) {
-        e.preventDefault();
-        if(!userLoggedIn) return alert("يا بطل سجل دخولك أولاً!");
+// --- تعديل فورم التفعيل (الwhitelist) ---
+document.getElementById('whitelistForm').onsubmit = async function(e) {
+    e.preventDefault();
+    if(!userLoggedIn) return alert("سجل دخولك أولاً!");
 
-        const payload = {
-            username: "NoVaX System",
-            embeds: [{
-                title: "📝 طلب تفعيل جديد",
-                color: 0x7c3aed,
-                thumbnail: { url: document.getElementById('uAvatar').src },
-                fields: [
-                    { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
-                    { name: "🆔 الاسم:", value: document.getElementById('wName').value, inline: true },
-                    { name: "🎂 العمر:", value: document.getElementById('wAge').value, inline: true },
-                    { name: "🎯 الهدف:", value: document.getElementById('wGoal').value }
-                ],
-                timestamp: new Date()
-            }]
-        };
-
-        const success = await sendToDiscord('whitelist', payload, "✅ مبروك! تم إرسال طلبك وتفعيلك في النظام.");
-        if (success) {
-            localStorage.setItem('is_whitelisted', 'true');
-            window.location.reload(); // إعادة تحميل لتطبيق التغييرات وإخفاء القسم
-        }
+    const payload = {
+        username: "نظام التفعيل - NoVaX",
+        embeds: [{
+            title: "📝 طلب تفعيل جديد",
+            color: 0x7c3aed,
+            thumbnail: { url: document.getElementById('uAvatar').src },
+            fields: [
+                { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
+                { name: "🆔 الاسم:", value: document.getElementById('wName').value, inline: true },
+                { name: "🎂 العمر:", value: document.getElementById('wAge').value, inline: true },
+                { name: "🎯 الهدف:", value: document.getElementById('wGoal').value }
+            ],
+            timestamp: new Date()
+        }]
     };
+
+    // إرسال للديسكورد
+    const success = await sendToDiscord('whitelist', payload, "✅ تم إرسال طلبك! الآن أنت مواطن مفعل.");
+    
+    if (success) {
+        // --- السطر السحري: حفظ حالة التفعيل في المتصفح ---
+        localStorage.setItem('is_whitelisted', 'true');
+        
+        // إخفاء القسم فوراً بدون انتظار ريفريش
+        document.getElementById('whitelist').style.display = 'none';
+        document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
+        
+        // توجيهه لقسم الوظائف
+        showTab('jobs');
+        alert("تم فتح أقسام التوظيف لك بنجاح!");
+    }
+};
 
     // فورم الوظائف
     document.getElementById('applyJobForm').onsubmit = async function(e) {
