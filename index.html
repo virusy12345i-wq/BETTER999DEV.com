@@ -257,6 +257,10 @@
             // حفظ الحالة محلياً لضمان عدم ظهور التفعيل مرة أخرى
             localStorage.setItem('is_whitelisted', 'true');
 
+            // هذا يوضع داخل الجزء اللي يستلم userData
+localStorage.setItem('user_id', userData.id); 
+localStorage.setItem('user_name', userData.username);
+
             // إخفاء قسم التفعيل والزر الخاص به
             const whitelistSection = document.getElementById('whitelist');
             if (whitelistSection) whitelistSection.remove();
