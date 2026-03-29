@@ -178,8 +178,63 @@
     const CLIENT_ID = '1444065204051906610'; 
     const REDIRECT_URI = window.location.href.split('#')[0];
 
-    let userLoggedIn = false;
-    let userWhitelisted = false;
+// --- كود الربط مع الويب هوك (Webhook) ---
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
+
+document.getElementById('whitelistForm').onsubmit = (e) => {
+    e.preventDefault();
+
+    if(!userLoggedIn) return alert("يا بطل سجل دخولك بالديسكورد أولاً!");
+
+    // تجميع البيانات من الحقول
+    const data = {
+        name: document.getElementById('wName').value,
+        age: document.getElementById('wAge').value,
+        goal: document.getElementById('wGoal').value,
+        law: document.getElementById('wLaw').value,
+        discordTag: document.getElementById('uName').innerText,
+        avatar: document.getElementById('uAvatar').src
+    };
+
+    // تجهيز الرسالة بشكل احترافي (Embed)
+    const embedMessage = {
+        username: "نظام تفعيل NoVaX",
+        avatar_url: "https://i.imgur.com/AfFp7pu.png",
+        embeds: [{
+            title: "📝 طلب تفعيل جديد (Whitelist)",
+            color: 0x7c3aed, // لون بنفسجي
+            thumbnail: { url: data.avatar },
+            fields: [
+                { name: "👤 اسم الديسكورد:", value: data.discordTag, inline: true },
+                { name: "🆔 الاسم الحقيقي:", value: data.name, inline: true },
+                { name: "🎂 العمر:", value: data.age, inline: true },
+                { name: "🎯 الهدف من الانضمام:", value: data.goal },
+                { name: "📜 شرح القانون:", value: data.law }
+            ],
+            footer: { text: "NoVaX RP System", icon_url: data.avatar },
+            timestamp: new Date()
+        }]
+    };
+
+    // إرسال البيانات للديسكورد
+    fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(embedMessage)
+    })
+    .then(() => {
+        alert("تم إرسال طلبك بنجاح! سيراجع المشرفون طلبك قريباً.");
+        // فتح الوظائف (محاكاة)
+        userWhitelisted = true;
+        document.getElementById('jobLock').style.display = 'none';
+        document.getElementById('jobLock2').style.display = 'none';
+        showTab('jobs');
+    })
+    .catch(err => {
+        console.error(err);
+        alert("حدث خطأ أثناء الإرسال، تأكد من رابط الويب هوك!");
+    });
+};
 
     // تسجيل الدخول بالديسكورد
     function loginDiscord() {
