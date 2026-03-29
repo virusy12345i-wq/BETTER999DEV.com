@@ -210,50 +210,46 @@
 
     let userLoggedIn = false;
 
-    // --- 2. الفحص الذكي عند التحميل ---
+    // --- 2. الفحص عند التحميل ---
     window.onload = async function() {
-    const token = localStorage.getItem('discord_token');
-    if (token) {
-        try {
-            // 1. جلب بيانات المستخدم الأساسية
-            const userRes = await fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const userData = await userRes.json();
-
-            if (userData.id) {
-                userLoggedIn = true;
-                
-                // 2. جلب بيانات العضو داخل السيرفر (الطريقة المضمونة)
-                // تأكد أن الرابط يحتوي على guilds.members.read في الـ Scope
-                const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+        const token = localStorage.getItem('discord_token');
+        if (token) {
+            try {
+                // جلب بيانات المستخدم الأساسية
+                const userRes = await fetch('https://discord.com/api/users/@me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
-                const memberData = await memberRes.json();
-                
-                // طباعة الرتب في الكونسول للتأكد (تقدر تمسح السطر بعدين)
-                console.log("رتبك الحالية:", memberData.roles);
+                const userData = await userRes.json();
 
-                // 3. فحص الرتبة (مفعل أو أدمن)
-                const isVerified = memberData.roles && (
-                    memberData.roles.includes('1443982445455343650') || // رتبة مفعل
-                    memberData.roles.includes('1354015622182211587')    // رتبة أدمن
-                );
-                
-                // 4. تحديث الواجهة فوراً
-                updateUI(userData, isVerified);
+                if (userData.id) {
+                    userLoggedIn = true;
+                    
+                    // محاولة جلب الرتب (هنا قمنا بإضافة فحص إضافي)
+                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    
+                    const memberData = await memberRes.json();
+                    
+                    // طباعة الرتب للـ Console للتصحيح
+                    console.log("الرتب المكتشفة:", memberData.roles);
+
+                    // فحص الرتبة
+                    const isVerified = memberData.roles && (
+                        memberData.roles.includes(ROLES.VERIFIED) || 
+                        memberData.roles.includes(ROLES.ADMIN)
+                    );
+                    
+                    updateUI(userData, isVerified);
+                }
+            } catch (err) {
+                console.error("فشل فحص الرتب:", err);
             }
-        } catch (err) {
-            console.error("حدث خطأ أثناء فحص الرتب:", err);
-            // في حال فشل الفحص، نظهر الواجهة كغير مفعل
-            if(typeof userData !== 'undefined') updateUI(userData, false);
         }
-    }
-};
+    };
 
     function updateUI(user, hasAccess) {
-        // إظهار البروفايل وإخفاء زر الدخول
+        // تحديث البروفايل
         document.querySelector('.btn-discord').style.display = 'none';
         const profile = document.getElementById('userProfile');
         profile.style.display = 'flex';
@@ -261,31 +257,34 @@
         document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
         if (hasAccess) {
-            // --- إخفاء قسم التفعيل فوراً ---
+            console.log("تم التأكد: المستخدم مفعل. جاري إخفاء الأقسام...");
+            
+            // 1. إخفاء صفحة التفعيل تماماً
             const whitelistTab = document.getElementById('whitelist');
             if (whitelistTab) {
                 whitelistTab.style.display = 'none';
-                whitelistTab.classList.remove('active'); // إزالة حالة النشاط
+                whitelistTab.remove(); // حذفها تماماً من الـ DOM لضمان عدم ظهورها
             }
 
-            // إخفاء زر التفعيل من القائمة (المنيو)
+            // 2. إخفاء زر التفعيل من القائمة
             document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.innerText.includes("التفعيل")) {
+                if (link.innerText.trim() === "التفعيل") {
                     link.parentElement.style.display = 'none';
                 }
             });
 
-            // فتح أقفال الوظائف
-            document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
-            
-            // تحويل المستخدم تلقائياً للرئيسية إذا كان واقف على التفعيل
-            if (window.location.hash === "#whitelist") {
-                showTab('home');
-            }
+            // 3. إخفاء الأقفال عن الوظائف
+            document.querySelectorAll('.lock-overlay').forEach(lock => {
+                lock.style.display = 'none';
+            });
+
+            // 4. تغيير نص التنبيه إذا وجد
+            const statusMsg = document.getElementById('lockStatusMsg');
+            if (statusMsg) statusMsg.innerText = "أنت مفعل بالفعل!";
         }
     }
 
-    // --- 3. الأوامر والإرسال ---
+    // --- 3. الوظائف العامة ---
     function loginDiscord() {
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
         window.location.href = authUrl;
@@ -296,38 +295,14 @@
         window.location.reload();
     }
 
-    async function sendToDiscord(type, payload, msg) {
-        if (!userLoggedIn) return alert("سجل دخولك أولاً!");
-        const url = WEBHOOKS[type] || WEBHOOKS.whitelist;
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        if (res.ok) alert(msg);
-    }
-
-    document.getElementById('whitelistForm').onsubmit = function(e) {
-        e.preventDefault();
-        if (!userLoggedIn) return alert("يجب تسجيل الدخول للتقديم!");
-        
-        const payload = {
-            username: "نظام NoVaX",
-            embeds: [{
-                title: "📝 طلب تفعيل جديد",
-                color: 0x7c3aed,
-                fields: [
-                    { name: "العضو", value: document.getElementById('uName').innerText },
-                    { name: "الاسم", value: document.getElementById('wName').value },
-                    { name: "العمر", value: document.getElementById('wAge').value }
-                ]
-            }]
-        };
-        sendToDiscord('whitelist', payload, "تم إرسال طلبك!");
-    };
-
-    // التبديل بين الأقسام
     function showTab(id, el) {
+        // منع الدخول لقسم التفعيل إذا كان الشخص مفعل أصلاً
+        if (id === 'whitelist' && document.getElementById('whitelist') === null) {
+            alert("أنت مفعل بالفعل!");
+            showTab('home');
+            return;
+        }
+
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
@@ -344,6 +319,7 @@
     }
 
     function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
+    
     function toggleAccordion(el) {
         const body = el.nextElementSibling;
         body.style.maxHeight = body.style.maxHeight ? null : body.scrollHeight + "px";
