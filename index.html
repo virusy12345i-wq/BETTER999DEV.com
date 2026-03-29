@@ -176,18 +176,21 @@
 <script>
     // --- 1. الإعدادات ---
     const CLIENT_ID = '1444065204051906610'; 
-    const REDIRECT_URI = "https://discord.com/oauth2/authorize?client_id=1444065204051906610&response_type=code&redirect_uri=https%3A%2F%2Fvirusy12345i-wq.github.io%2FBETTER999DEV.com%2F&scope=identify";
+    // الرابط التلقائي لموقعك على GitHub
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
 
     let userLoggedIn = false;
 
-    // --- 2. وظيفة حفظ وجلب بيانات المستخدم (عشان ما يطير التسجيل) ---
+    // --- 2. وظيفة فحص تسجيل الدخول (LocalStorage) ---
     function checkLogin() {
-        const urlParams = new URLSearchParams(window.location.hash.slice(1));
-        let token = urlParams.get('access_token') || localStorage.getItem('discord_token');
+        // البحث عن التوكن في الرابط أو الذاكرة
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        let token = fragment.get('access_token') || localStorage.getItem('discord_token');
 
         if (token) {
-            localStorage.setItem('discord_token', token); // حفظ التوكن في المتصفح
+            localStorage.setItem('discord_token', token);
+            
             fetch('https://discord.com/api/users/@me', {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -197,7 +200,6 @@
             })
             .then(user => {
                 userLoggedIn = true;
-                // تحديث الواجهة
                 document.getElementById('authArea').style.display = 'none';
                 document.getElementById('userProfile').style.display = 'flex';
                 if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
@@ -205,68 +207,63 @@
                 document.getElementById('uName').innerText = user.username;
                 document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
                 
-                // تنظيف الرابط من التوكن عشان الشكل
+                // تنظيف الرابط بعد جلب التوكن
                 window.history.replaceState({}, document.title, window.location.pathname);
             })
             .catch(() => {
-                // إذا التوكن انتهى أو غلط، نمسحه
                 localStorage.removeItem('discord_token');
+                userLoggedIn = false;
             });
         }
     }
 
-    // تشغيل الفحص فور تحميل الصفحة
     window.onload = checkLogin;
 
     function loginDiscord() {
-        const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
-        window.location.href = url;
-    }
-
-    // خروج (لو حبيت تضيف زر خروج مستقبلاً)
-    function logout() {
-        localStorage.removeItem('discord_token');
-        window.location.reload();
+        // الرابط الصحيح الذي يطلبه الديسكورد للـ OAuth2
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        window.location.href = authUrl;
     }
 
     // --- 3. إرسال التفعيل للديسكورد (Webhook) ---
     document.getElementById('whitelistForm').onsubmit = function(e) {
         e.preventDefault();
 
-        if(!userLoggedIn) return alert("سجل دخولك بالديسكورد أولاً!");
+        if(!userLoggedIn) return alert("يا وحش سجل دخولك بالديسكورد أولاً!");
 
         const payload = {
             username: "NoVaX System",
             embeds: [{
-                title: "📝 طلب تفعيل (Whitelist) جديد",
+                title: "📝 طلب تفعيل جديد",
                 color: 0x7c3aed,
                 thumbnail: { url: document.getElementById('uAvatar').src },
                 fields: [
                     { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
-                    { name: "🆔 الاسم الحقيقي:", value: document.getElementById('wName').value, inline: true },
+                    { name: "🆔 الاسم:", value: document.getElementById('wName').value, inline: true },
                     { name: "🎂 العمر:", value: document.getElementById('wAge').value, inline: true },
                     { name: "🎯 الهدف:", value: document.getElementById('wGoal').value },
                     { name: "📜 القانون:", value: document.getElementById('wLaw').value }
                 ],
+                footer: { text: "NoVaX RP" },
                 timestamp: new Date()
             }]
         };
 
-        const request = new XMLHttpRequest();
-        request.open("POST", WEBHOOK_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-        request.onload = function() {
-            if (request.status >= 200 && request.status < 400) {
-                alert("✅ تم الإرسال للديسكورد بنجاح!");
-                // فك قفل الوظائف
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (res.ok) {
+                alert("✅ وصل الطلب للدش بنجاح!");
                 document.getElementById('jobLock').style.display = 'none';
                 if(document.getElementById('jobLock2')) document.getElementById('jobLock2').style.display = 'none';
                 showTab('jobs');
             } else {
-                alert("❌ فشل الإرسال، تأكد من إعدادات الويبهوك.");
+                alert("❌ فشل الإرسال، تأكد من الويبهوك!");
             }
-        };
-        request.send(JSON.stringify(payload));
+        });
     };
 
     // --- 4. التحكم في التبويبات والمودال ---
@@ -274,7 +271,6 @@
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         const target = document.getElementById(id);
         if(target) target.classList.add('active');
-        
         if(el) {
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             el.classList.add('active');
@@ -287,7 +283,7 @@
     }
 
     function openJobModal(title) {
-        document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
+        document.getElementById('modalJobTitle').innerText = title;
         document.getElementById('jobModal').style.display = 'flex';
     }
 
