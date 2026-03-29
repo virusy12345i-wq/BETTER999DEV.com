@@ -289,34 +289,42 @@
     }
 
     document.getElementById('whitelistForm').onsubmit = async function(e) {
-        e.preventDefault();
-        if (!userLoggedIn) return alert("سجل دخولك أولاً!");
-        
-        const payload = {
-            username: "NoVaX System",
-            embeds: [{
-                title: "📝 طلب تفعيل جديد",
-                color: 0x7c3aed,
-                fields: [
-                    { name: "المستخدم", value: document.getElementById('uName').innerText },
-                    { name: "الاسم", value: document.getElementById('wName').value },
-                    { name: "العمر", value: document.getElementById('wAge').value }
-                ]
-            }]
-        };
+    e.preventDefault();
 
-        const res = await fetch(WEBHOOKS.whitelist, {
+    // 1. التحقق من تسجيل الدخول
+    if (!userLoggedIn) return alert("سجل دخولك أولاً!");
+
+    // 2. تجميع البيانات من الحقول (تأكد أن IDs الحقول مطابقة للـ HTML عندك)
+    const payload = {
+        userId: localStorage.getItem('discord_token_id') || 'unknown', // تأكد من تخزين الأيدي عند اللوجن
+        userName: document.getElementById('q1').value, // الاسم الرباعي
+        age: document.getElementById('q2').value,      // العمر الحقيقي
+        goal: document.getElementById('q3').value,     // الهدف من الانضمام
+        ruleExplanation: document.getElementById('q4').value // شرح قانون الـ Powergaming
+    };
+
+    try {
+        // 3. الإرسال لعنوان البوت (IP الاستضافة + البورت 5000)
+        const res = await fetch('http://51.75.118.5:5000/api/whitelist', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         if (res.ok) {
-            alert("✅ تم إرسال طلبك! سيتم تفعيلك مؤقتاً في الموقع.");
-            localStorage.setItem('is_whitelisted', 'true'); // تفعيل محلي فور الإرسال
-            window.location.reload();
+            alert("✅ تم إرسال طلبك للإدارة! سيتم الرد عليك عبر الرسائل الخاصة.");
+            
+            // 4. تفعيل محلي مؤقت عشان ما يقدم مرة ثانية فوراً
+            localStorage.setItem('is_whitelisted', 'true');
+            window.location.reload(); 
+        } else {
+            alert("❌ فشل الإرسال، تأكد أن البوت يعمل أو تواصل مع الإدارة.");
         }
-    };
+    } catch (error) {
+        console.error("Error sending to bot:", error);
+        alert("⚠️ خطأ في الاتصال بالسيرفر، تأكد من فتح بورت 5000 في الاستضافة.");
+    }
+};
 
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
