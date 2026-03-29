@@ -174,116 +174,128 @@
     </div>
 </div>
 <script>
-    // --- 1. الإعدادات والروابط (ويب هوك لكل شيء) ---
+    // --- 1. الإعدادات ---
     const CLIENT_ID = '1444065204051906610';
-    const REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
+    // تحديد الرابط بدقة لتجنب الـ 404 في جيت هاب
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
     
-    const WEBHOOK_WHITELIST = "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1";
-    const WEBHOOK_POLICE = "ضع_هنا_ويبهوك_الشرطة";
-    const WEBHOOK_MEDIC = "ضع_هنا_ويبهوك_الاسعاف";
+    // ويب هوكات منفصلة لكل قناة
+    const WEBHOOKS = {
+        whitelist: "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1",
+        police: "ضع_هنا_ويبهوك_الشرطة",
+        medic: "ضع_هنا_ويبهوك_الاسعاف"
+    };
 
     let userLoggedIn = false;
 
-    // --- 2. نظام تسجيل الدخول وحل مشكلة الـ 404 والريفريش ---
-    function checkLogin() {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        let token = fragment.get('access_token') || localStorage.getItem('discord_token');
+    // --- 2. نظام الحفظ الذكي (عشان ما يطير التسجيل) ---
+    function initAuth() {
+        // أولاً: نشوف هل في توكن جديد في الرابط؟
+        const hash = window.location.hash;
+        if (hash.includes('access_token')) {
+            const params = new URLSearchParams(hash.slice(1));
+            const newToken = params.get('access_token');
+            if (newToken) {
+                localStorage.setItem('discord_token', newToken);
+                // تنظيف الرابط فوراً وبقاءك في نفس الصفحة
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
 
-        if (token) {
-            localStorage.setItem('discord_token', token);
+        // ثانياً: محاولة تسجيل الدخول بالتوكن المحفوظ
+        const savedToken = localStorage.getItem('discord_token');
+        if (savedToken) {
             fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${savedToken}` }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error("Expired");
+                return res.json();
+            })
             .then(user => {
-                if (user.id) {
-                    userLoggedIn = true;
-                    document.getElementById('authArea').style.display = 'none';
-                    document.getElementById('userProfile').style.display = 'flex';
-                    if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
-                    document.getElementById('uName').innerText = user.username;
-                    document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                    
-                    // حل مشكلة الـ 404: تنظيف الهاش بدون تغيير المسار
-                    if (window.location.hash) {
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                    }
-                }
+                userLoggedIn = true;
+                updateUI(user);
             })
-            .catch(() => localStorage.removeItem('discord_token'));
+            .catch(() => {
+                localStorage.removeItem('discord_token');
+                console.log("Session expired");
+            });
         }
     }
 
-    window.onload = checkLogin;
+    function updateUI(user) {
+        document.getElementById('authArea').style.display = 'none';
+        document.getElementById('userProfile').style.display = 'flex';
+        if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
+        document.getElementById('uName').innerText = user.username;
+        document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+    }
+
+    window.onload = initAuth;
 
     function loginDiscord() {
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
         window.location.href = authUrl;
     }
 
-    // --- 3. إرسال طلب التفعيل (Whitelist) ---
+    // --- 3. نظام الإرسال المنفصل ---
+    function sendToDiscord(type, payload, msg) {
+        const url = WEBHOOKS[type] || WEBHOOKS.whitelist;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => alert(msg))
+        .catch(() => alert("خطأ في الإرسال!"));
+    }
+
+    // فورم التفعيل
     document.getElementById('whitelistForm').onsubmit = function(e) {
         e.preventDefault();
         if(!userLoggedIn) return alert("سجل دخولك أولاً!");
 
         const payload = {
-            username: "نظام التفعيل - NoVaX",
+            username: "NoVaX Whitelist",
             embeds: [{
                 title: "📝 طلب تفعيل جديد",
                 color: 0x7c3aed,
-                thumbnail: { url: document.getElementById('uAvatar').src },
                 fields: [
-                    { name: "👤 العضو:", value: document.getElementById('uName').innerText, inline: true },
-                    { name: "🆔 الاسم:", value: document.getElementById('wName').value, inline: true },
-                    { name: "🎯 الهدف:", value: document.getElementById('wGoal').value }
-                ],
-                timestamp: new Date()
+                    { name: "العضو", value: document.getElementById('uName').innerText, inline: true },
+                    { name: "الاسم", value: document.getElementById('wName').value, inline: true },
+                    { name: "العمر", value: document.getElementById('wAge').value, inline: true },
+                    { name: "الهدف", value: document.getElementById('wGoal').value }
+                ]
             }]
         };
-
-        sendToDiscord(WEBHOOK_WHITELIST, payload, "تم إرسال طلب التفعيل!");
+        sendToDiscord('whitelist', payload, "تم إرسال طلب التفعيل بنجاح!");
         document.getElementById('jobLock').style.display = 'none';
         document.getElementById('jobLock2').style.display = 'none';
     };
 
-    // --- 4. إرسال طلبات الوظائف (ويب هوك منفصل) ---
+    // فورم الوظائف
     document.getElementById('applyJobForm').onsubmit = function(e) {
         e.preventDefault();
-        const jobTitle = document.getElementById('modalJobTitle').innerText;
-        
-        // اختيار الويب هوك المناسب بناءً على اسم الوظيفة
-        let targetWebhook = WEBHOOK_WHITELIST; // افتراضي
-        if(jobTitle.includes("شرطة")) targetWebhook = WEBHOOK_POLICE;
-        if(jobTitle.includes("إسعاف")) targetWebhook = WEBHOOK_MEDIC;
+        const title = document.getElementById('modalJobTitle').innerText;
+        const type = title.includes("شرطة") ? 'police' : 'medic';
 
         const payload = {
-            username: "نظام التوظيف - " + jobTitle,
+            username: "NoVaX Jobs",
             embeds: [{
-                title: "💼 تقديم على: " + jobTitle,
+                title: "💼 تقديم على: " + title,
                 color: 0x22c55e,
                 fields: [
-                    { name: "👤 الديسكورد:", value: document.getElementById('uName').innerText, inline: true },
-                    { name: "🆔 الاسم والأيدي:", value: e.target.querySelector('input[type="text"]').value + " [" + e.target.querySelector('input[type="number"]').value + "]", inline: true },
-                    { name: "📝 السبب:", value: e.target.querySelector('textarea').value }
-                ],
-                timestamp: new Date()
+                    { name: "الديسكورد", value: document.getElementById('uName').innerText },
+                    { name: "المعلومات", value: e.target.querySelector('input[type="text"]').value },
+                    { name: "السبب", value: e.target.querySelector('textarea').value }
+                ]
             }]
         };
-
-        sendToDiscord(targetWebhook, payload, "تم إرسال طلب التوظيف بنجاح!");
+        sendToDiscord(type, payload, "تم إرسال طلب التوظيف!");
         closeJobModal();
     };
 
-    // وظيفة الإرسال العامة
-    function sendToDiscord(url, data, successMsg) {
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(() => alert(successMsg)).catch(() => alert("فشل الإرسال!"));
-    }
-
-    // --- 5. التحكم بالواجهة ---
+    // --- 4. التحكم بالواجهة ---
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
