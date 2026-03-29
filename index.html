@@ -3,106 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoVaX RP | النظام المتكامل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800;900&display=swap" rel="stylesheet">
+    <title>NoVaX RP | النظام الشامل</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --main: #9403fc; --bg: #050505; --card: #0d0d0d; --brd: #1a1a1a; --txt: #fff; --kick: #53fc18; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: var(--txt); overflow-x: hidden; }
+        :root {
+            --primary: #7c3aed; --secondary: #00f2ff; --bg-dark: #050505;
+            --card-bg: rgba(15, 15, 15, 0.98); --text-dim: #a1a1aa;
+            --discord-color: #5865F2; --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* Navbar */
-        nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.9); display: flex; justify-content: space-between; align-items: center; padding: 0 50px; z-index: 1000; border-bottom: 1px solid var(--brd); backdrop-filter: blur(10px); }
-        .logo { font-weight: 900; font-size: 26px; }
-        .menu-btn { width: 50px; height: 50px; background: var(--main); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; font-size: 24px; color: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
 
-        /* Sidebar */
-        .sidebar { position: fixed; top: 0; right: -420px; width: 420px; height: 100%; background: #080808; z-index: 2000; transition: 0.5s; padding: 40px 30px; border-left: 2px solid var(--main); overflow-y: auto; }
-        .sidebar.open { right: 0; }
-        .close-sidebar { position: absolute; left: 20px; top: 20px; cursor: pointer; font-size: 25px; color: var(--main); }
+        body { 
+            background-color: var(--bg-dark); color: white; overflow-x: hidden;
+            background-image: linear-gradient(rgba(0,0,0,0.92), rgba(0,0,0,0.92)), url('https://wallpaperaccess.com/full/1151241.jpg');
+            background-size: cover; background-attachment: fixed;
+        }
 
-        /* Hero */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at center, rgba(148, 3, 252, 0.15) 0%, transparent 70%); }
-        .logo-img { width: 160px; height: 160px; border-radius: 50%; border: 3px solid var(--main); box-shadow: 0 0 40px var(--main); margin-bottom: 25px; object-fit: cover; }
-        .hero h1 { font-size: 80px; font-weight: 900; }
+        header { 
+            position: fixed; top: 0; width: 100%; z-index: 1000; padding: 18px 0;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .flex-nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Orbitron'; font-size: 2rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+
+        .nav-menu { display: flex; gap: 30px; list-style: none; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .nav-link.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        #userProfile { display: none; align-items: center; gap: 12px; background: rgba(124, 58, 237, 0.1); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--primary); }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        .view-section { padding: 150px 20px 100px; display: none; min-height: 100vh; }
+        .view-section.active { display: block; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* الأكورديون والقوانين */
+        .rule-item { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .rule-head { padding: 22px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 900; }
+        .rule-body { max-height: 0; overflow: hidden; transition: 0.4s ease; background: rgba(0,0,0,0.3); }
+        .rule-body p { padding: 20px; color: var(--text-dim); line-height: 1.8; }
+
+        /* التفعيل والتوظيف */
+        .form-card { max-width: 700px; margin: 0 auto; background: var(--card-bg); padding: 45px; border-radius: 25px; border: 1px solid var(--primary); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 700; color: var(--primary); }
+        .input-group input, .input-group textarea { width: 100%; background: #000; border: 1px solid #333; padding: 15px; border-radius: 12px; color: white; outline: none; }
+
+        .jobs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .job-card { background: var(--card-bg); padding: 45px; border-radius: 25px; text-align: center; border: 1px solid #222; position: relative; overflow: hidden; }
         
-        .kick-btn { margin-top: 20px; padding: 15px 30px; background: var(--kick); color: #000; border-radius: 10px; font-weight: 900; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s; cursor: pointer; width: 100%; justify-content: center; border:none; }
-        .kick-btn:hover { transform: scale(1.02); opacity: 0.9; }
+        /* قفل الأمان */
+        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; backdrop-filter: blur(8px); }
+        .lock-overlay i { font-size: 3.5rem; color: #ef4444; margin-bottom: 15px; }
 
-        /* Laws */
-        .law-box { background: #111; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; overflow: hidden; }
-        .law-header { padding: 15px; cursor: pointer; font-weight: 800; display: flex; justify-content: space-between; background: #161616; }
-        .law-body { max-height: 0; overflow: hidden; transition: 0.3s; padding: 0 15px; color: #888; font-size: 14px; }
-        .law-box.open .law-body { max-height: 200px; padding: 15px; border-top: 1px solid #222; }
+        .btn { padding: 14px 28px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; justify-content: center; }
+        .btn-discord { background: var(--discord-color); color: white; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-success { background: #22c55e; color: white; width: 100%; }
 
-        /* Quiz Section */
-        .quiz-container { background: #111; padding: 20px; border-radius: 15px; border: 1px solid var(--main); margin-top: 20px; }
-        .hidden { display: none; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: #0a0a0a; width: 90%; max-width: 650px; padding: 45px; border-radius: 25px; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
-
-    <nav>
-        <div class="logo">NoVaX <span style="color:var(--main)">RP</span></div>
-        <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
-    </nav>
-
-    <div class="sidebar" id="sidebar">
-        <div class="close-sidebar" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></div>
-        
-        <div id="guest-menu">
-            <h3 style="margin-top:30px; color: var(--main);">نظام التفعيل</h3>
-            <p style="color:#666; font-size:14px; margin-bottom:20px;">يجب عليك اجتياز اختبار القوانين للتفعيل.</p>
-            
-            <div class="quiz-container">
-                <p id="question" style="font-weight:800; margin-bottom:15px;">س: ماذا يعني اختصار RDM؟</p>
-                <button class="kick-btn" style="background:#222; color:#fff; font-size:13px;" onclick="checkAnswer(true)">قتل بدون سبب درامي</button>
-                <button class="kick-btn" style="background:#222; color:#fff; font-size:13px; margin-top:10px;" onclick="checkAnswer(false)">سرقة سيارة مواطن</button>
+<header>
+    <div class="container flex-nav">
+        <div class="logo">NoVaX</div>
+        <nav style="display: flex; align-items: center; gap: 40px;">
+            <ul class="nav-menu">
+                <li><a class="nav-link active" onclick="showTab('home', this)">الرئيسية</a></li>
+                <li><a class="nav-link" onclick="showTab('rules', this)">القوانين</a></li>
+                <li><a class="nav-link" onclick="showTab('whitelist', this)">التفعيل</a></li>
+                <li><a class="nav-link" onclick="showTab('jobs', this)">التوظيف</a></li>
+            </ul>
+            <div id="authArea">
+                <button class="btn btn-discord" onclick="loginDiscord()"><i class="fab fa-discord"></i> دخول بالديسكورد</button>
             </div>
+            <div id="userProfile"><img id="uAvatar" class="avatar" src=""><span id="uName"></span></div>
+        </nav>
+    </div>
+</header>
+
+<section id="home" class="view-section active">
+    <div class="container" style="text-align: center;">
+        <h1 style="font-size: 5rem; font-weight: 900; line-height: 1.1;">NoVaX <span style="color: var(--primary);">SYSTEM</span></h1>
+        <p style="font-size: 1.5rem; color: var(--text-dim); margin: 30px 0 50px;">بوابتك الرسمية لتقديم طلبات التفعيل والانضمام للوظائف الحكومية في مدينة NoVaX.</p>
+        <button class="btn btn-primary" style="width: auto; padding: 18px 60px;" onclick="showTab('whitelist')">ابدأ التفعيل الآن</button>
+    </div>
+</section>
+
+<section id="rules" class="view-section">
+    <div class="container" style="max-width: 850px;">
+        <h2 style="text-align: center; margin-bottom: 40px; font-size: 3rem;">قوانين NoVaX</h2>
+        <div class="rule-item">
+            <div class="rule-head" onclick="toggleAccordion(this)"><span>1. القتل العشوائي (RDM)</span> <i class="fas fa-plus"></i></div>
+            <div class="rule-body"><p>يُمنع منعاً باتاً قتل أي لاعب دون وجود سيناريو رول بلاي كامل وسبب مقنع. يجب أن يكون هناك تفاعل صوتي واضح قبل أي اشتباك.</p></div>
         </div>
-
-        <div id="member-menu" class="hidden">
-            <h3 style="margin-top:30px; color: var(--kick);">تم تفعيلك بنجاح ✅</h3>
-            <div id="laws-list" style="margin-top:20px;">
-                <div class="law-box">
-                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ RDM <span>+</span></div>
-                    <div class="law-body">يمنع القتل العشوائي بدون سبب درامي واضح وتحذير.</div>
-                </div>
-                <div class="law-box">
-                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ Meta Gaming <span>+</span></div>
-                    <div class="law-body">يمنع استخدام معلومات الديسكورد أو البثوث داخل اللعبة.</div>
-                </div>
-                <div class="law-box">
-                    <div class="law-header" onclick="this.parentElement.classList.toggle('open')">قانون الـ Power Gaming <span>+</span></div>
-                    <div class="law-body">يمنع القيام بأفعال خارقة أو غير واقعية بتاتاً.</div>
-                </div>
-            </div>
-            <button class="kick-btn" style="background:var(--main); color:#fff; margin-top:20px;">التقديم على الإدارة</button>
+        <div class="rule-item">
+            <div class="rule-head" onclick="toggleAccordion(this)"><span>2. الميتا جيمنج (Metagaming)</span> <i class="fas fa-plus"></i></div>
+            <div class="rule-body"><p>يُمنع استخدام أي معلومات حصلت عليها من خارج اللعبة (مثل الديسكورد) وتوظيفها داخل شخصيتك باللعبة.</p></div>
+        </div>
+        <div class="rule-item">
+            <div class="rule-head" onclick="toggleAccordion(this)"><span>3. الخروج من السيناريو (FailRP)</span> <i class="fas fa-plus"></i></div>
+            <div class="rule-body"><p>يجب عليك الالتزام بشخصيتك في كل الأوقات وعدم القيام بأفعال غير واقعية أو الضحك أثناء المواقف الجدية.</p></div>
         </div>
     </div>
+</section>
 
-    <section class="hero">
-        <img src="https://via.placeholder.com/160/9403fc/ffffff?text=NoVaX" class="logo-img">
-        <h1>NoVaX <span style="color:var(--main)">RP</span></h1>
-        <p>القوانين صارمة.. والواقعية مطلقة</p>
-        <div style="display:flex; gap:15px; margin-top:30px;">
-            <a href="#" class="kick-btn" style="width:180px;">سيرفر كيك</a>
-            <a href="#" class="kick-btn" style="background:#fff; width:180px;">ديسكورد</a>
+<section id="whitelist" class="view-section">
+    <div class="container">
+        <div class="form-card">
+            <h2 style="text-align: center; margin-bottom: 15px;">طلب تفعيل الهوية</h2>
+            <p id="lockStatusMsg" style="text-align: center; color: #ef4444; font-weight: 700; margin-bottom: 25px;">يجب تسجيل الدخول بالديسكورد للتقديم!</p>
+            <form id="whitelistForm">
+                <div class="input-group"><label>الاسم الرباعي</label><input type="text" id="wName" required></div>
+                <div class="input-group"><label>العمر الحقيقي</label><input type="number" id="wAge" required></div>
+                <div class="input-group"><label>ما هو هدفك من الانضمام لـ NoVaX؟</label><textarea id="wGoal" rows="3" required></textarea></div>
+                <div class="input-group"><label>اشرح قانون الـ Powergaming بمثالك الخاص</label><textarea id="wLaw" rows="3" required></textarea></div>
+                <button type="submit" class="btn btn-primary">إرسال الطلب للمراجعة</button>
+            </form>
         </div>
-    </section>
+    </div>
+</section>
 
-    <script>
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+<section id="jobs" class="view-section">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">التوظيف الحكومي</h2>
+        <div class="jobs-grid">
+            <div class="job-card">
+                <div id="jobLock" class="lock-overlay">
+                    <i class="fas fa-user-lock"></i>
+                    <h3 style="color: #ef4444;">الوصول مقيد!</h3>
+                    <p style="margin-top: 10px;">هذا القسم متاح فقط للمواطنين المفعلين (Whitelist).</p>
+                </div>
+                <i class="fas fa-shield-alt" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3>جهاز الشرطة</h3>
+                <button class="btn btn-primary" style="margin-top: 20px;" onclick="openJobModal('شرطة NoVaX')">تقديم الآن</button>
+            </div>
+            
+            <div class="job-card" style="border-color: #22c55e;">
+                <div id="jobLock2" class="lock-overlay">
+                    <i class="fas fa-user-lock"></i>
+                    <h3 style="color: #ef4444;">الوصول مقيد!</h3>
+                </div>
+                <i class="fas fa-user-md" style="font-size: 4rem; color: #22c55e; margin-bottom: 20px;"></i>
+                <h3>وزارة الصحة</h3>
+                <button class="btn btn-success" style="margin-top: 20px;" onclick="openJobModal('إسعاف NoVaX')">تقديم الآن</button>
+            </div>
+        </div>
+    </div>
+</section>
 
-        function checkAnswer(isCorrect) {
-            if(isCorrect) {
-                alert("أحسنت سيدي! تم التحقق من فهمك للقوانين.");
-                document.getElementById('guest-menu').classList.add('hidden');
-                document.getElementById('member-menu').classList.remove('hidden');
-            } else {
-                alert("إجابة خاطئة! ركز سيدي، القوانين هي أساس السيرفر.");
-            }
+<div id="jobModal" class="modal">
+    <div class="modal-box">
+        <h2 id="modalJobTitle" style="color: var(--primary); margin-bottom: 25px;"></h2>
+        <form id="applyJobForm">
+            <div class="input-group"><label>الاسم داخل اللعبة</label><input type="text" required></div>
+            <div class="input-group"><label>رقم التعريف (ID)</label><input type="number" required></div>
+            <div class="input-group"><label>لماذا تريد الانضمام لهذا القطاع؟</label><textarea rows="4" required></textarea></div>
+            <div style="display: flex; gap: 15px;">
+                <button type="submit" class="btn btn-primary">إرسال الطلب</button>
+                <button type="button" class="btn" style="background: #333; color: white;" onclick="closeJobModal()">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    // --- إعدادات ديسكورد ---
+    const CLIENT_ID = 'ضع_هنا_ID_تطبيقك'; 
+    const REDIRECT_URI = window.location.href.split('#')[0];
+
+    let userLoggedIn = false;
+    let userWhitelisted = false;
+
+    // تسجيل الدخول بالديسكورد
+    function loginDiscord() {
+        const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        window.location.href = url;
+    }
+
+    // التحقق من التوكن عند التحميل
+    window.onload = () => {
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        const token = fragment.get('access_token');
+        if (token) {
+            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.json())
+            .then(user => {
+                userLoggedIn = true;
+                document.getElementById('authArea').style.display = 'none';
+                document.getElementById('userProfile').style.display = 'flex';
+                document.getElementById('lockStatusMsg').style.display = 'none';
+                document.getElementById('uName').innerText = user.username;
+                document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                window.history.replaceState({}, document.title, "/");
+            });
         }
-    </script>
+    };
+
+    // التنقل بين الأقسام
+    function showTab(id, el) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(el) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+        }
+    }
+
+    // الأكورديون
+    function toggleAccordion(el) {
+        const body = el.nextElementSibling;
+        const icon = el.querySelector('i');
+        if (body.style.maxHeight) {
+            body.style.maxHeight = null;
+            icon.className = "fas fa-plus";
+        } else {
+            document.querySelectorAll('.rule-body').forEach(b => b.style.maxHeight = null);
+            body.style.maxHeight = body.scrollHeight + "px";
+            icon.className = "fas fa-minus";
+        }
+    }
+
+    // تقديم التفعيل
+    document.getElementById('whitelistForm').onsubmit = (e) => {
+        e.preventDefault();
+        if(!userLoggedIn) return alert("سجل دخولك بالديسكورد أولاً!");
+        
+        alert("تم إرسال طلب التفعيل! سيتم فتح التوظيف لك الآن (محاكاة لقبول الإدارة)");
+        userWhitelisted = true;
+        // إزالة الأقفال
+        document.getElementById('jobLock').style.display = 'none';
+        document.getElementById('jobLock2').style.display = 'none';
+        showTab('jobs');
+    };
+
+    // المودال
+    function openJobModal(title) {
+        document.getElementById('modalJobTitle').innerText = "تقديم على: " + title;
+        document.getElementById('jobModal').style.display = 'flex';
+    }
+    function closeJobModal() { document.getElementById('jobModal').style.display = 'none'; }
+
+    document.getElementById('applyJobForm').onsubmit = (e) => {
+        e.preventDefault();
+        alert("تم إرسال طلب التوظيف بنجاح! سيتم الرد عليك في الديسكورد.");
+        closeJobModal();
+    };
+</script>
 </body>
 </html>
