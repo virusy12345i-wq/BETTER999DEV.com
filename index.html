@@ -179,7 +179,7 @@
     </div>
 </div>
 <script>
-    // --- 1. الإعدادات ---
+    // --- 1. الإعدادات والمعلومات ---
     const CLIENT_ID = '1444065204051906610';
     const GUILD_ID = '1353787720996323429'; 
     const REDIRECT_URI = window.location.origin + window.location.pathname;
@@ -192,11 +192,11 @@
 
     const WEBHOOKS = {
         whitelist: "https://discord.com/api/webhooks/1487836085470892174/qJgbvDiM2zdSB4Pmzjz-uQeAX9zJRKxrx52nfxcG82fMbd0_ZPfjTu7VcrfmxX0PsCj1",
-        police: "ويبهوك_الشرطة",
-        medic: "ويبهوك_الاسعاف"
+        police: "ضع_هنا_ويبهوك_الشرطة", 
+        medic: "ضع_هنا_ويبهوك_الاسعاف"
     };
 
-    // --- 2. القبض الفوري على التوكن ---
+    // --- 2. القبض الفوري على التوكن (أول ما يرجع من الديسكورد) ---
     (function() {
         const hash = window.location.hash;
         if (hash.includes('access_token')) {
@@ -211,11 +211,12 @@
 
     let userLoggedIn = false;
 
-    // --- 3. تشغيل النظام وفحص الرتبة ---
+    // --- 3. تشغيل النظام وفحص الرتبة عند التحميل ---
     window.onload = async function() {
         const token = localStorage.getItem('discord_token');
         if (token) {
             try {
+                // جلب بيانات الحساب الأساسية
                 const userRes = await fetch('https://discord.com/api/users/@me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -224,16 +225,18 @@
                 if (userData.id) {
                     userLoggedIn = true;
                     
-                    // محاولة جلب الرتب (تحتاج أن يكون البوت في السيرفر)
+                    // محاولة جلب الرتب من السيرفر
                     try {
                         const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         const memberData = await memberRes.json();
+                        
+                        // التحقق هل هو مفعل أو أدمن
                         const hasAccess = memberData.roles && (memberData.roles.includes(ROLES.VERIFIED) || memberData.roles.includes(ROLES.ADMIN));
                         updateUI(userData, hasAccess);
                     } catch (e) {
-                        // إذا فشل جلب الرتب (مثلاً المستخدم ليس في السيرفر)، نظهر له التفعيل فقط
+                        // إذا مو موجود بالسيرفر أو فشل جلب الرتب
                         updateUI(userData, false);
                     }
                 }
@@ -244,34 +247,42 @@
     };
 
     function updateUI(user, whitelisted) {
-        document.getElementById('authArea').style.display = 'none';
+        // إخفاء زر الدخول وإظهار البروفايل
+        document.querySelector('.btn-discord').style.display = 'none';
         const profile = document.getElementById('userProfile');
         profile.style.display = 'flex';
+        
         document.getElementById('uName').innerText = user.username;
         document.getElementById('uAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
         if (whitelisted) {
+            // إخفاء قسم التفعيل للأبد في متصفحه
             if(document.getElementById('whitelist')) document.getElementById('whitelist').style.display = 'none';
-            document.querySelectorAll('.nav-link').forEach(link => {
+            
+            // إخفاء زر التفعيل من القائمة العلوية
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
                 if(link.innerText.includes("التفعيل")) link.parentElement.style.display = 'none';
             });
+
+            // فتح أقفال الوظائف
             document.querySelectorAll('.lock-overlay').forEach(lock => lock.style.display = 'none');
+            if(document.getElementById('lockStatusMsg')) document.getElementById('lockStatusMsg').style.display = 'none';
         }
     }
 
+    // --- تسجيل الدخول والخروج ---
     function loginDiscord() {
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds.members.read`;
         window.location.href = authUrl;
     }
 
-    // --- وظيفة تسجيل الخروج ---
     function logout() {
-        localStorage.removeItem('discord_token'); // حذف التوكن
-        localStorage.removeItem('is_whitelisted'); // حذف حالة التفعيل المحلية إن وجدت
-        window.location.reload(); // إعادة تحميل الصفحة
+        localStorage.removeItem('discord_token');
+        window.location.reload();
     }
 
-    // --- 4. إرسال الطلبات ---
+    // --- 4. إرسال البيانات للديسكورد ---
     async function sendData(type, payload, msg) {
         const url = WEBHOOKS[type] || WEBHOOKS.whitelist;
         const res = await fetch(url, {
@@ -280,16 +291,17 @@
             body: JSON.stringify(payload)
         });
         if(res.ok) alert(msg);
-        else alert("فشل الإرسال!");
+        else alert("خطأ في الإرسال!");
     }
 
     document.getElementById('whitelistForm').onsubmit = function(e) {
         e.preventDefault();
         const payload = {
-            username: "NoVaX System",
+            username: "نظام NoVaX",
             embeds: [{
                 title: "📝 طلب تفعيل جديد",
                 color: 0x7c3aed,
+                thumbnail: { url: document.getElementById('uAvatar').src },
                 fields: [
                     { name: "العضو", value: document.getElementById('uName').innerText },
                     { name: "الاسم", value: document.getElementById('wName').value },
@@ -297,10 +309,10 @@
                 ]
             }]
         };
-        sendData('whitelist', payload, "تم إرسال طلبك!");
+        sendData('whitelist', payload, "تم إرسال طلبك بنجاح!");
     };
 
-    // --- وظائف عامة ---
+    // --- 5. وظائف عامة ---
     function showTab(id, el) {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
